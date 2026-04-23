@@ -1,3 +1,3 @@
 # Nonogram
-Development Programing
-I'm learning about branch
+Development Programing.
+I'm learning about branch.
