@@ -1,6 +1,7 @@
 package controller;
 
 import model.GameModel;
+import nonogram.model.Puzzle;
 import view.GameView;
 import view.GridPanel;
 
@@ -25,16 +26,27 @@ public class GameController {
      * ボタン描画呼び出し、初期化
      */
     public void init() {
+        // PuzzleのデータをViewに渡す
+        view.render(model.getPuzzle());
+
         // 左クリック
         // 画面ボタン
         // ボタンを押したら受け取る
+        Puzzle puzzle = model.getPuzzle();
+        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
+            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
+                int finalX = x;
+                int finalY = y;
+                view.getGridPanel().getButtons()[finalX][finalY].addActionListener(e -> onCellClicked(finalX, finalY));
+            }
+        }
 
         // リセットボタン
+        view.getResetButton().addActionListener(e -> onReset());
 
         // チェックボタン
-
-        // PuzzleのデータをViewに渡す
-        view.render(model.getPuzzle());
+        view.getCheckButton().addActionListener(e -> onCheck());
+        
     }
 
     /**
