@@ -139,4 +139,8 @@ public class GameView {
     public JButton[][] getButtons() {
         return buttons;
     }
+
+    public JButton getCheckButton() {
+        return checkButton;
+    }
 }
