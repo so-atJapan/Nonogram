@@ -37,7 +37,7 @@ public class GameController {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
                 int finalX = x;
                 int finalY = y;
-                view.getGridPanel().getButtons()[finalX][finalY].addActionListener(e -> onCellClicked(finalX, finalY));
+                view.getButtons()[finalX][finalY].addActionListener(e -> onCellClicked(finalX, finalY));
             }
         }
 
