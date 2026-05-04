@@ -1,11 +1,14 @@
-package Model;
+package Nonogram.model;
 
 public class Cell {
 
     private CellState state;
 
+    public Cell(CellState state) {
+        this.state = state;
+    }
     public Cell() {
-        this.state = CellState.EMPTY;
+        this(CellState.EMPTY);
     }
 
     public CellState getState() {
