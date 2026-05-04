@@ -1,4 +1,4 @@
-package Model;
+package Nonogram.model;
 
 public class GameModel {
 
@@ -6,15 +6,15 @@ public class GameModel {
     private Cell[][] grid;
 
     // コンストラクタ
-    public GameModel() {
-        this.puzzle = new Puzzle();
+    public GameModel(Puzzle puzzle) {
+        this.puzzle = puzzle;
 
         // 初期化
-        grid = new Cell[puzzle.gridSizeY][puzzle.gridSizeX];
+        grid = new Cell[puzzle.getGridSizeX()][puzzle.getGridSizeY()];
 
-        for (int y = 0; y < puzzle.gridSizeY; y++) {
-            for (int x = 0; x < puzzle.gridSizeX; x++) {
-                grid[y][x] = new Cell();
+        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
+            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
+                grid[x][y] = new Cell();
             }
         }
     }
@@ -31,18 +31,18 @@ public class GameModel {
 
     // セル状態切り替え
     public void toggle(int x, int y) {
-        grid[y][x].toggle();
+        grid[x][y].toggle();
     }
 
     // 正誤判定
     public boolean check() {
-        boolean[][] solution = puzzle.solution;
+        Grid solution = puzzle.getSolution();
 
-        for (int y = 0; y < puzzle.gridSizeY; y++) {
-            for (int x = 0; x < puzzle.gridSizeX; x++) {
+        for (int x = 0; x < solution.getSizeX(); x++) {
+            for (int y = 0; y < solution.getSizeY(); y++) {
 
-                boolean shouldBeFilled = solution[y][x];
-                boolean isFilled = grid[y][x].getState() == CellState.FILLED;
+                boolean shouldBeFilled = solution.getCellAt(x, y).getState() == CellState.FILLED;
+                boolean isFilled = grid[x][y].getState() == CellState.FILLED;
 
                 if (shouldBeFilled != isFilled) {
                     return false;
@@ -54,9 +54,9 @@ public class GameModel {
 
     // 盤面リセット
     public void reset() {
-        for (int y = 0; y < puzzle.gridSizeY; y++) {
-            for (int x = 0; x < puzzle.gridSizeX; x++) {
-                grid[y][x].setState(CellState.EMPTY);
+        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
+            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
+                grid[x][y].setState(CellState.EMPTY);
             }
         }
     }
