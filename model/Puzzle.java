@@ -1,19 +1,79 @@
-package Model;
-import javax.swing.JFrame;
+package Nonogram.model;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+//内田
 public class Puzzle {
-   public int gridSizeX = 10;
-   public int gridSizeY = 10;
-   public boolean[][] solution = {{false,false,true,true,false,false,false,true,true,false},
-                                   {false,true,false,false,true,false,true,false,false,true},
-                                   {false,true,false,true,true,true,true,true,false,true},
-                                   {false,false,true,true,false,true,false,true,true,false},
-                                   {false,false,false,true,true,true,true,true,false,false},
-                                   {false,false,true,true,true,false,true,true,true,false},
-                                   {true,false,true,true,true,true,true,true,true,true},
-                                   {true,false,true,true,true,true,true,true,true,true},
-                                   {true,false,true,true,true,true,true,true,true,true},
-                                   {false,true,true,true,true,true,true,true,true,false}};
-   public int[][] rowHints = {{3},{2,1},{1,1,5},{1,8},{2,6},{3,4},{2,6},{1,8},{1,1,5},{2,3}};
-   public int[][] colHints = {{2,2},{1,1,1,1},{1,5,1},{2,1,2},{5},{3,3},{1,8},{1,8},{1,8},{8}};
+
+   //属性
+   private int puzzleId;
+   private String title;
+   private int gridSizeX;
+   private int gridSizeY;
+   private Difficulty difficulty;
+   private boolean isPublic;
+   private LocalDateTime createdAt;
+   private String createdBy; //Playerクラス追加予定
+   private Grid solution;
+   private Clue clue;
+
+
+   //ゲッター
+   public int getPuzzleId() {return puzzleId;}
+   public String getTitle() {return title;}
+   public int getGridSizeX() {return gridSizeX;}
+   public int getGridSizeY() {return gridSizeY;}
+   public Difficulty getDifficulty() {return difficulty;}
+   public boolean getIsPublic(){return isPublic;}
+   public LocalDateTime getCreatedAt() {return createdAt;}
+   public String getCreatedBy() {return createdBy;}
+   public Grid getSolution() {return solution;}
+   public Clue getClue() {return clue;}
+
+   //セッター
+   public void setPuzzleId(int puzzleId) {this.puzzleId = puzzleId;}
+   public void setTitle(String title) {this.title = title;}
+   public void setGridSizeX(int gridSizeX) {this.gridSizeX = gridSizeX;}
+   public void setGridSizeY(int gridSizeY) {this.gridSizeY = gridSizeY;}
+   public void setDifficulty(Difficulty difficulty) {this.difficulty = difficulty;}
+   public void setIsPublic(boolean isPublic){this.isPublic = isPublic;}
+   public void setCreatedAt(LocalDateTime createdAt) {this.createdAt = createdAt;}
+   public void setCreatedBy(String createdBy) {this.createdBy = createdBy;}
+   public void setSolution(Grid solution) {this.solution = solution;}
+   public void setClue(Clue clue) {this.clue = clue;}
+   
+   
+   public void setDifficulty(String difficulty) {
+      switch (difficulty) {
+         case "EASY":
+               this.difficulty = Difficulty.EASY;
+            break;
+         case "NORMAL":
+               this.difficulty = Difficulty.NORMAL;
+            break;
+         case "HARD":
+               this.difficulty = Difficulty.HARD;
+            break;
+         case "EXPERT":
+               this.difficulty = Difficulty.EXPERT;
+            break;
+         default:
+            System.out.println("エラー"); //エクセプション処理予定
+            break;
+      }
+   }
+   public void setCreatedAt(String createdAt) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      this.createdAt = LocalDateTime.parse("2024-05-02 12:48:35", formatter);
+   }
+   public void setSolution(String solution) {
+      String[] temp1 = solution.split(" ");
+      String[][] temp2 = new String[temp1.length][0];
+      for (int i = 0; i < temp1.length; i++) {
+         temp2[i] = temp1[i].split(",");
+      }
+      this.solution = new Grid(temp2.length, temp2[0].length, temp2);
+   }
+
 }
