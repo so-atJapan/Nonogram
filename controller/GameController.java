@@ -1,9 +1,8 @@
-package controller;
+package Nonogram.controller;
 
-import model.GameModel;
-import nonogram.model.Puzzle;
-import view.GameView;
-import view.GridPanel;
+import Nonogram.model.GameModel;
+import Nonogram.model.Puzzle;
+import Nonogram.view.GameView;
 
 public class GameController {
 
@@ -42,7 +41,7 @@ public class GameController {
         }
 
         // リセットボタン
-        view.getResetButton().addActionListener(e -> onReset());
+        // view.getResetButton().addActionListener(e -> onReset());
 
         // チェックボタン
         view.getCheckButton().addActionListener(e -> onCheck());
@@ -57,7 +56,7 @@ public class GameController {
      */
     public void onCellClicked(int x, int y) {
         model.toggle(x, y);
-        view.updateCell(x, y, model.getGrid());
+        view.updateCell(x, y, model.getCell());
     }
 
     /**
@@ -65,7 +64,7 @@ public class GameController {
      */
     public void onReset() {
         model.reset();
-        view.updateCell(0, 0, model.getGrid());
+        view.updateCell(0, 0, model.getCell());
     }
 
     /**
