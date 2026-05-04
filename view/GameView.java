@@ -1,10 +1,11 @@
-package view;
+package Nonogram.view;
 
-import model.Puzzle;
-import model.Cell;
+import Nonogram.model.Puzzle;
+import Nonogram.model.Cell;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GameView {
 
@@ -22,8 +23,8 @@ public class GameView {
 
     // パズル描画
     public void render(Puzzle puzzle) {
-        this.rows = puzzle.gridSizeY;
-        this.cols = puzzle.gridSizeX;
+        this.rows = puzzle.getGridSizeY();
+        this.cols = puzzle.getGridSizeX();
 
         frame = new JFrame("Nonogram");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,35 +56,38 @@ public class GameView {
             }
         }
 
-        // ===== 行ヒント（左）=====
-        int[][] rowHints = puzzle.colHints;
-        for (int i = 0; i < rowHints.length; i++) {
-            StringBuilder text = new StringBuilder();
+    // ===== 行ヒント（左）=====
+    ArrayList<ArrayList<Integer>> rowHints = puzzle.getClue().getRowClues();
 
-            for (int num : rowHints[i]) {
-                text.append(num).append(" ");
-            }
+    for (int i = 0; i < rowHints.size(); i++) {
+        StringBuilder text = new StringBuilder();
 
-            JLabel label = new JLabel(text.toString(), SwingConstants.RIGHT);
-            label.setPreferredSize(new Dimension(cellSize * 2, cellSize));
-            hintPanelSide.add(label);
+        for (int num : rowHints.get(i)) {
+            text.append(num).append(" ");
         }
 
-        // ===== 列ヒント（上）=====
-        int[][] colHints = puzzle.rowHints;
-        for (int i = 0; i < colHints.length; i++) {
-            StringBuilder text = new StringBuilder("<html>");
+        JLabel label = new JLabel(text.toString(), SwingConstants.RIGHT);
+        label.setPreferredSize(new Dimension(cellSize * 2, cellSize));
+        hintPanelSide.add(label);
+    }
 
-            for (int num : colHints[i]) {
-                text.append(num).append("<br>");
-            }
 
-            text.append("</html>");
+    // ===== 列ヒント（上）=====
+    ArrayList<ArrayList<Integer>> colHints = puzzle.getClue().getColClues();
 
-            JLabel label = new JLabel(text.toString(), SwingConstants.CENTER);
-            label.setPreferredSize(new Dimension(cellSize, cellSize * 2));
-            hintPanelTop.add(label);
+    for (int i = 0; i < colHints.size(); i++) {
+        StringBuilder text = new StringBuilder("<html>");
+
+        for (int num : colHints.get(i)) {
+            text.append(num).append("<br>");
         }
+
+        text.append("</html>");
+
+        JLabel label = new JLabel(text.toString(), SwingConstants.CENTER);
+        label.setPreferredSize(new Dimension(cellSize, cellSize * 2));
+        hintPanelTop.add(label);
+    }
 
         // ===== チェックボタン（下）=====
         checkButton = new JButton("確認");
@@ -110,7 +114,7 @@ public class GameView {
     public void updateCell(int x, int y, Cell[][] cells) {
         JButton btn = buttons[x][y];
 
-        switch (cells[x][y].state) {
+        switch (cells[x][y].getState()) {
             case FILLED:
                 btn.setBackground(Color.BLACK);
                 btn.setText("");
