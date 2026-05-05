@@ -23,8 +23,8 @@ public class GameView {
 
     // パズル描画
     public void render(Puzzle puzzle) {
-        this.rows = puzzle.getGridSizeY();
-        this.cols = puzzle.getGridSizeX();
+        this.rows = puzzle.getGridSizeX();
+        this.cols = puzzle.getGridSizeY();
 
         frame = new JFrame("Nonogram");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
