@@ -11,7 +11,7 @@ public class PuzzleList {
         this.puzzleList = new ArrayList<Puzzle>();
     }
 
-    public void init(){
+    public void initialize(){
         this.puzzleList = dao.getPuzzleAll();
     }
 
