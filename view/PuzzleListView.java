@@ -25,6 +25,8 @@ public class PuzzleListView{
 
     private ArrayList<Puzzle> puzzleList;
 
+    private Button[] selectButtons;
+
     public PuzzleListView(Stage stage){
         this.stage = stage;
     }
@@ -35,8 +37,11 @@ public class PuzzleListView{
         
         Label selectLabel = new Label("問題選択");
         selectLabel.setFont(new Font(20));
+
+
         int length = this.puzzleList.size();
-        Button[] selectButtons = new Button[length];
+
+        selectButtons = new Button[length];
         ContextMenu[] contextMenus = new ContextMenu[length];
         MenuItem[][] menuItems = new MenuItem[length][3];
         
@@ -77,9 +82,9 @@ public class PuzzleListView{
             menuItems[index][2] = new MenuItem("削除");
             menuItems[index][2].setStyle("-fx-font-size: 17px;");
             contextMenus[index] = new ContextMenu(menuItems[index][0],menuItems[index][1],menuItems[index][2]);
-            // selectButtons[index].setOnContextMenuRequested(e -> {
-            //     contextMenus[index].show(selectButtons[index], e.getScreenX(), e.getScreenY());
-            // });            
+            selectButtons[index].setOnContextMenuRequested(e -> {
+                contextMenus[index].show(selectButtons[index], e.getScreenX(), e.getScreenY());
+            });           
         }
         
         
@@ -107,6 +112,8 @@ public class PuzzleListView{
         stage.centerOnScreen();
         stage.show();
     }
+
+    public Button[] getSelectButtons() {return selectButtons;}
  
     // /**
     //  * コンストラクタ
