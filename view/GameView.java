@@ -22,6 +22,7 @@ public class GameView {
     private GridPane gridPanel;
     private Button[][] buttons;
     private Button checkButton;
+    private Label timerLabel;
  
     private int rows;
     private int cols;
@@ -50,9 +51,11 @@ public class GameView {
         int hintAreaWidth  = maxRowHintCols * cellSize; // 左ヒントエリアの幅
         int hintAreaHeight = maxColHintRows * cellSize; // 上ヒントエリアの高さ
  
-        // ===== 左上コーナー（空白）=====
-        Label cornerLabel = new Label();
-        cornerLabel.setPrefSize(hintAreaWidth, hintAreaHeight);
+        // ===== 左上コーナー（タイマー）=====
+        timerLabel = new Label("00:00");
+        timerLabel.setPrefSize(hintAreaWidth, hintAreaHeight);
+        timerLabel.setAlignment(Pos.CENTER);
+        timerLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
  
         // ===== 列ヒント（上）=====
         // 各列を VBox（下揃え）で表現し、横に HBox で並べる
@@ -147,7 +150,7 @@ public class GameView {
         //  [ hintPanelSide | gridPanel     ]
         //  [   checkButton（全幅）         ]
         //
-        HBox topRow = new HBox(cornerLabel, hintPanelTop);
+        HBox topRow = new HBox(timerLabel, hintPanelTop);
         topRow.setSpacing(0);
  
         HBox midRow = new HBox(hintPanelSide, gridPanel);
@@ -204,6 +207,13 @@ public class GameView {
                 btn.setStyle(base + "-fx-background-color: white; -fx-text-fill: black;");
                 break;
         }
+    }
+ 
+    // タイマー更新（Controllerから秒数で受け取り mm:ss 形式で表示）
+    public void updateTimer(int totalSeconds) {
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
     }
  
     // 結果表示
