@@ -1,15 +1,3 @@
-package View;
-
-import java.util.List;
-import java.util.function.Consumer;
-
-import Model.Puzzle;
-import javafx.collections.FXCollections;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.BorderPane;
-
-public class PuzzleListView extends BorderPane {
 package Nonogram.view;
  
 import java.util.ArrayList;
@@ -25,26 +13,29 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
  
-public class PuzzleListView extends BorderPane {
+public class PuzzleListView{
  
-    private ArrayList<Puzzle> puzzleList;
     private Stage stage;
+    private Scene scene;
 
-    public PuzzleListView(Stage stage, PuzzleList puzzleList){
+    private ArrayList<Puzzle> puzzleList;
+
+    public PuzzleListView(Stage stage){
         this.stage = stage;
-        this.puzzleList = puzzleList.getPuzzleList();
     }
+    
+    public void initialize(PuzzleList puzzleList){
 
-    public void initialize(){
+        this.puzzleList = puzzleList.getPuzzleList();
+        
         Label selectLabel = new Label("問題選択");
         selectLabel.setFont(new Font(20));
-        int length = puzzleList.size();
+        int length = this.puzzleList.size();
         Button[] selectButtons = new Button[length];
         ContextMenu[] contextMenus = new ContextMenu[length];
         MenuItem[][] menuItems = new MenuItem[length][3];
@@ -75,7 +66,7 @@ public class PuzzleListView extends BorderPane {
         
         for (int i = 0; i < length; i++) {
             int index = i;
-            String tatle = puzzleList.get(index).getTitle();
+            String tatle = this.puzzleList.get(index).getTitle();
             selectButtons[index] = new Button(tatle);
             selectButtons[index].setPrefSize(140, 40);
             selectButtons[index].setFont(new Font(20));
@@ -104,8 +95,16 @@ public class PuzzleListView extends BorderPane {
         hBox.setPrefWidth(155);
 
         VBox selectVBox = new VBox(menuBar,selectLabel,hBox);
-        Scene scene = new Scene(selectVBox, 300, 500);
+        scene = new Scene(selectVBox, 300, 500);
+    }
+
+    // パズル描画
+    public void render() {
+        stage.setTitle("Nonogram");
         stage.setScene(scene);
+        stage.setResizable(false);
+        stage.sizeToScene();
+        stage.centerOnScreen();
         stage.show();
     }
  
@@ -183,74 +182,3 @@ public class PuzzleListView extends BorderPane {
     // }
  
 }
-    private ListView<Puzzle> puzzleListView;
-
-    /**
-     * コンストラクタ
-     */
-    public PuzzleListView() {
-
-        puzzleListView = new ListView<>();
-
-        // ListView内の表示形式
-        puzzleListView.setCellFactory(param -> new ListCell<>() {
-
-            @Override
-            protected void updateItem(Puzzle puzzle, boolean empty) {
-                super.updateItem(puzzle, empty);
-
-                if (empty || puzzle == null) {
-                    setText(null);
-
-                } else {
-
-                    setText(
-                        "タイトル : " + puzzle.getTitle()
-                        + " / 難易度 : " + puzzle.getDifficulty()
-                        + " / サイズ : "
-                        + puzzle.getGridSizeX()
-                        + "x"
-                        + puzzle.getGridSizeY()
-                    );
-                }
-            }
-        });
-
-        setCenter(puzzleListView);
-    }
-
-    /**
-     * パズル一覧表示
-     *
-     * @param puzzles
-     */
-    public void displayPuzzles(List<Puzzle> puzzles) {
-
-        puzzleListView.setItems(
-            FXCollections.observableArrayList(puzzles)
-        );
-    }
-
-    /**
-     * パズル選択イベント設定
-     *
-     * @param handler
-     */
-    public void setOnPuzzleSelected(Consumer<Puzzle> handler) {
-
-        puzzleListView
-            .getSelectionModel()
-            .selectedItemProperty()
-            .addListener((observable, oldValue, newValue) -> {
-
-                if (newValue != null) {
-                    handler.accept(newValue);
-                }
-            });
-    }
-
-}
-
-
-
-
