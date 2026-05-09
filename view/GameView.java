@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class GameView {
  
     private Stage stage;
+    private Scene scene;
  
     private GridPane gridPanel;
     private Button[][] buttons;
@@ -34,42 +35,43 @@ public class GameView {
     public GameView(Stage stage) {
         this.stage = stage;
     }
- 
-    // パズル描画
-    public void render(Puzzle puzzle) {
+
+    //初期化
+    public void initialize(Puzzle puzzle){
+
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
- 
+    
         ArrayList<ArrayList<Integer>> rowHints = puzzle.getClue().getRowClues();
         ArrayList<ArrayList<Integer>> colHints = puzzle.getClue().getColClues();
- 
+    
         // ヒントの最大数から左・上のヒントエリアサイズを決定
         int maxColHintRows = colHints.stream().mapToInt(ArrayList::size).max().orElse(1);
         int maxRowHintCols = rowHints.stream().mapToInt(ArrayList::size).max().orElse(1);
- 
+    
         // すべて cellSize 単位で計算
         int hintAreaWidth  = maxRowHintCols * cellSize; // 左ヒントエリアの幅
         int hintAreaHeight = maxColHintRows * cellSize; // 上ヒントエリアの高さ
- 
+    
         // ===== 左上コーナー（タイマー）=====
         timerLabel = new Label("00:00");
         timerLabel.setPrefSize(hintAreaWidth, hintAreaHeight);
         timerLabel.setAlignment(Pos.CENTER);
         timerLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
- 
+    
         // ===== 列ヒント（上）=====
         // 各列を VBox（下揃え）で表現し、横に HBox で並べる
         HBox hintPanelTop = new HBox();
         hintPanelTop.setSpacing(0);
- 
+    
         for (int col = 0; col < cols; col++) {
             VBox colBox = new VBox();
             colBox.setPrefSize(cellSize, hintAreaHeight);
             colBox.setAlignment(Pos.BOTTOM_CENTER);
             colBox.setSpacing(0);
- 
+    
             ArrayList<Integer> hints = colHints.get(col);
- 
+    
             // 上を空白で埋めて下揃えにする
             for (int p = 0; p < maxColHintRows - hints.size(); p++) {
                 Label pad = new Label();
@@ -89,20 +91,20 @@ public class GameView {
             }
             hintPanelTop.getChildren().add(colBox);
         }
- 
+    
         // ===== 行ヒント（左）=====
         // 各行を HBox（右揃え）で表現し、縦に VBox で並べる
         VBox hintPanelSide = new VBox();
         hintPanelSide.setSpacing(0);
- 
+    
         for (int row = 0; row < rows; row++) {
             HBox rowBox = new HBox();
             rowBox.setPrefSize(hintAreaWidth, cellSize);
             rowBox.setAlignment(Pos.CENTER_RIGHT);
             rowBox.setSpacing(0);
- 
+    
             ArrayList<Integer> hints = rowHints.get(row);
- 
+    
             // 左を空白で埋めて右揃えにする
             for (int p = 0; p < maxRowHintCols - hints.size(); p++) {
                 Label pad = new Label();
@@ -122,28 +124,28 @@ public class GameView {
             }
             hintPanelSide.getChildren().add(rowBox);
         }
- 
+    
         // ===== グリッド =====
         gridPanel = new GridPane();
         buttons = new Button[rows][cols];
- 
+    
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 Button btn = new Button();
                 btn.setPrefSize(cellSize, cellSize);
                 btn.setFocusTraversable(false);
                 applyCellStyle(btn, "empty");
- 
+    
                 buttons[row][col] = btn;
                 gridPanel.add(btn, col, row);
             }
         }
- 
+    
         // ===== チェックボタン（下）=====
         checkButton = new Button("確認");
         checkButton.setMaxWidth(Double.MAX_VALUE);
         checkButton.setPrefHeight(36);
- 
+    
         // ===== 全体レイアウト =====
         //
         //  [ cornerLabel   | hintPanelTop  ]
@@ -152,15 +154,19 @@ public class GameView {
         //
         HBox topRow = new HBox(timerLabel, hintPanelTop);
         topRow.setSpacing(0);
- 
+    
         HBox midRow = new HBox(hintPanelSide, gridPanel);
         midRow.setSpacing(0);
- 
+    
         VBox root = new VBox(topRow, midRow, checkButton);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
+    
+        scene = new Scene(root);
+    }
  
-        Scene scene = new Scene(root);
+    // パズル描画
+    public void render() {
         stage.setTitle("Nonogram");
         stage.setScene(scene);
         stage.setResizable(false);
