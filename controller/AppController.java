@@ -5,15 +5,26 @@ import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
 import Nonogram.view.GameView;
 import Nonogram.view.PuzzleListView;
+import javafx.stage.Stage;
  
 /**
  * @author 太田
  */
 public class AppController {
  
+    private Stage stage;
     private Puzzle pendingPuzzle;
     private PuzzleListController puzzleListController;
     private GameController gameController;
+
+    /**
+     * コンストラクタ
+     * 
+     * @param stage
+     */
+    public AppController(Stage stage) {
+        this.stage = stage;
+    }
  
     /**
      * 起動時の最初の画面(今回は選択画面から)
@@ -54,8 +65,9 @@ public class AppController {
      */
     public void showPuzzleList() {
         // View・Model・Controllerを生成
-        PuzzleListView listView   = new PuzzleListView();
         PuzzleList     puzzleList = new PuzzleList();
+        puzzleList.initialize();
+        PuzzleListView listView   = new PuzzleListView(stage);
         puzzleListController = new PuzzleListController(listView, puzzleList, this);
  
         // 初期データを読み込む（View.displayPuzzles()で描画）
