@@ -50,14 +50,14 @@ public class AppController {
         }
     }
  
-    // /**
-    //  * 渡されたパズルのセット
-    //  *
-    //  * @param puzzle 開始するパズル
-    //  */
-    // public void setPendingPuzzle(Puzzle puzzle) {
-    //     this.pendingPuzzle = puzzle;
-    // }
+    /**
+     * 渡されたパズルのセット
+     *
+     * @param puzzle 開始するパズル
+     */
+    public void setPendingPuzzle(Puzzle puzzle) {
+        this.pendingPuzzle = puzzle;
+    }
  
     /**
      * パズル選択画面生成
@@ -85,7 +85,7 @@ public class AppController {
     //     gameController = new GameController(model, view);
     //
     //     // ゲームを初期化（ボタンイベント登録など）
-    //     gameController.init();
+    //     gameController.initialize();
     // }
  
 }
