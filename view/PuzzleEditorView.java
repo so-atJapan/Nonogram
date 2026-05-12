@@ -4,25 +4,35 @@ import Nonogram.model.Cell;
 import Nonogram.model.Grid;
 import Nonogram.model.Puzzle;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
  
 import java.util.ArrayList;
  
-public class GameView {
+public class PuzzleEditorView {
+
+    private SemiModal semiModal;
  
     private Stage stage;
     private Scene scene;
  
     private GridPane gridPanel;
     private Button[][] buttons;
+    private Button settingButton;
     private Button checkButton;
     private Label timerLabel;
  
@@ -33,12 +43,15 @@ public class GameView {
     private final int cellSize = 20;
  
     // コンストラクト
-    public GameView(Stage stage) {
+    public PuzzleEditorView(Stage stage) {
         this.stage = stage;
     }
 
     //初期化
     public void initialize(Puzzle puzzle){
+
+        this.semiModal = new SemiModal(this.stage);
+        this.semiModal.initialize(puzzle);
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
@@ -136,33 +149,47 @@ public class GameView {
                 btn.setPrefSize(cellSize, cellSize);
                 btn.setFocusTraversable(false);
                 applyCellStyle(btn, "empty");
-    
+                
                 buttons[row][col] = btn;
                 gridPanel.add(btn, col, row);
+                
+                updateCell(row, col, puzzle.getSolution());
             }
         }
     
-        // ===== チェックボタン（下）=====
+        // ===== 下部ボタン（設定 : 確認 = 1 : 3）=====
+        settingButton = new Button("設定");
         checkButton = new Button("確認");
+
+        // 横方向に伸ばせるようにする
+        settingButton.setMaxWidth(Double.MAX_VALUE);
         checkButton.setMaxWidth(Double.MAX_VALUE);
+
+        // 高さ統一
+        settingButton.setPrefHeight(36);
         checkButton.setPrefHeight(36);
-    
+
+        // 比率設定
+        HBox.setHgrow(settingButton, Priority.ALWAYS);
+        HBox.setHgrow(checkButton, Priority.ALWAYS);
+
+        // 下部ボタンレイアウト
+        HBox bottomButtons = new HBox(settingButton, checkButton);
+        bottomButtons.setSpacing(0);
+
+        // 1:3 の比率
+        settingButton.prefWidthProperty().bind(bottomButtons.widthProperty().multiply(0.25));
+        checkButton.prefWidthProperty().bind(bottomButtons.widthProperty().multiply(0.75));
+
+
         // ===== 全体レイアウト =====
-        //
-        //  [ cornerLabel   | hintPanelTop  ]
-        //  [ hintPanelSide | gridPanel     ]
-        //  [   checkButton（全幅）         ]
-        //
-        HBox topRow = new HBox(timerLabel, hintPanelTop);
-        topRow.setSpacing(0);
-    
-        HBox midRow = new HBox(hintPanelSide, gridPanel);
+        HBox midRow = new HBox(gridPanel);
         midRow.setSpacing(0);
-    
-        VBox root = new VBox(topRow, midRow, checkButton);
+
+        VBox root = new VBox(midRow, bottomButtons);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
-    
+
         scene = new Scene(root);
     }
  
@@ -175,7 +202,20 @@ public class GameView {
         stage.centerOnScreen();
         stage.show();
     }
- 
+
+    //セミモーダル描画
+    public void semiModalRender(Puzzle puzzle){
+        this.semiModal.setTitleTextField(puzzle.getTitle());
+        this.semiModal.setRowTextField(puzzle.getGridSizeX());
+        this.semiModal.setColTextField(puzzle.getGridSizeY());
+        this.semiModal.render();
+    }
+    
+    // 設定確定
+    public void settingConfirm(){
+        this.semiModal.settingConfirm();
+    }
+
     // セル更新（row, col の順で統一）
     public void updateCell(int row, int col, Grid grid) {
         Button btn = buttons[row][col];
@@ -223,14 +263,6 @@ public class GameView {
         timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
     }
  
-    // 結果表示
-    public void showResult(boolean result) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("結果");
-        alert.setHeaderText(null);
-        alert.setContentText(result ? "クリア！おめでとう！" : "不正解... もう一度！");
-        alert.showAndWait();
-    }
  
     public Stage getStage() {
         return stage;
@@ -240,8 +272,28 @@ public class GameView {
         return buttons;
     }
  
+    public Button getSettingButton() {
+        return settingButton;
+    }
+
+    public Button getOkButton() {
+        return this.semiModal.getOkButton();
+    }
+ 
     public Button getCheckButton() {
         return checkButton;
+    }
+
+    public String getTitleTextField(){
+        return this.semiModal.getTitleTextField();
+    }
+
+    public String getGridSizeX(){
+        return this.semiModal.getGridSizeX();
+    }
+
+    public String getGridSizeY(){
+        return this.semiModal.getGridSizeY();
     }
 }
  
