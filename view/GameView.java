@@ -1,6 +1,5 @@
 package Nonogram.view;
  
-import Nonogram.model.Cell;
 import Nonogram.model.Grid;
 import Nonogram.model.Puzzle;
 import javafx.geometry.Insets;
