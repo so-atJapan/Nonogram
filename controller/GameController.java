@@ -1,13 +1,23 @@
 package Nonogram.controller;
 
+
+import Nonogram.model.CellState;
 import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
+import Nonogram.model.Timer;
 import Nonogram.view.GameView;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.scene.input.MouseButton;
+import javafx.util.Duration;
 
 public class GameController {
 
     private GameModel model;
     private GameView view;
+    Timer timer = new Timer();
+    private Timeline timeline;
+
 
     /**
      * コンストラクタ
@@ -37,15 +47,27 @@ public class GameController {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
                 int finalX = x;
                 int finalY = y;
-                view.getButtons()[finalX][finalY].setOnAction(e -> onCellClicked(finalX, finalY));
+                view.getButtons()[finalX][finalY].setOnMouseClicked((e) -> {
+                    if (e.getButton() == MouseButton.PRIMARY) {
+                        onCellLeftClicked(finalX, finalY);
+                    } else if (e.getButton() == MouseButton.SECONDARY) {
+                        onCellRightClicked(finalX, finalY);
+                    }
+                });
+                
             }
         }
- 
+
         // リセットボタン
-        // view.getResetButton().setOnAction(e -> onReset());
- 
+        // view.getResetButton().addActionListener(e -> onReset());
+
         // チェックボタン
         view.getCheckButton().setOnAction(e -> onCheck());
+
+
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> view.updateTimer(timer.tick())));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
         
     }
 
@@ -55,18 +77,31 @@ public class GameController {
      * @param x クリックされたセルのX座標
      * @param y クリックされたセルのY座標
      */
-    public void onCellClicked(int x, int y) {
-        model.toggle(x, y);
+    public void onCellLeftClicked(int x, int y) {
+        
+        model.toggle(x, y, CellState.FILLED);
         view.updateCell(x, y, model.getGrid());
     }
 
     /**
-     * リセットボタンが押されたときの処理。
+     * セルが右クリックされた時の処理
+     * 
+     * @param x
+     * @param y
      */
-    public void onReset() {
-        model.reset();
-        view.updateCell(0, 0, model.getGrid());
+    public void onCellRightClicked(int x, int y) {
+        
+        model.toggle(x, y, CellState.MARKED);
+        view.updateCell(x, y, model.getGrid());
     }
+
+    // /**
+    //  * リセットボタンが押されたときの処理。
+    //  */
+    // public void onReset() {
+    //     model.reset();
+    //     view.updateCell(0, 0, model.getCell());
+    // }
 
     /**
      * チェックボタンが押されたときの処理。
