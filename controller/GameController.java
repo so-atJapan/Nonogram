@@ -24,7 +24,7 @@ public class GameController {
      * ゲームを起動
      * ボタン描画呼び出し、初期化
      */
-    public void init() {
+    public void initialize() {
         // PuzzleのデータをViewに渡す
         view.initialize(model.getPuzzle());
         view.render();
