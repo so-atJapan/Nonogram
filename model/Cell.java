@@ -15,8 +15,12 @@ public class Cell {
         return state;
     }
 
-    public void toggle() {
-        state = state.next();
+    public void toggle(CellState cellState) {
+        if (cellState == this.state) {
+            this.state = CellState.EMPTY;
+        } else {
+            this.state = cellState;
+        }
     }
 
     public void setState(CellState state) {

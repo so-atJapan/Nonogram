@@ -30,8 +30,8 @@ public class GameModel {
     }
 
     // セル状態切り替え
-    public void toggle(int x, int y) {
-        grid.getCellAt(x, y).toggle();
+    public void toggle(int x, int y, CellState cellState) {
+        grid.getCellAt(x, y).toggle(cellState);
     }
 
     // 正誤判定
