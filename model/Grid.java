@@ -8,6 +8,7 @@ public class Grid {
     public Grid(int sizeX, int sizeY){
         this.sizeX = sizeX;
         this.sizeY = sizeY;
+        this.cells = new Cell[sizeX][sizeY];
     }
     public Grid(int sizeX, int sizeY, String[][] cells){
         this(sizeX, sizeY);

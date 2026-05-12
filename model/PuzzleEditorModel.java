@@ -1,12 +1,12 @@
 package Nonogram.model;
 
-public class GameModel {
+public class PuzzleEditorModel {
 
     private Puzzle puzzle;
     private Grid grid;
 
     // コンストラクタ
-    public GameModel(Puzzle puzzle) {
+    public PuzzleEditorModel(Puzzle puzzle) {
         this.puzzle = puzzle;
 
         // 初期化
@@ -14,7 +14,14 @@ public class GameModel {
 
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
-                grid.setCellAt(x, y, CellState.EMPTY);
+                switch (puzzle.getSolution().getCellAt(x, y).getState()) {
+                    case FILLED:
+                        grid.setCellAt(x, y, CellState.FILLED);
+                        break;
+                    default:
+                        grid.setCellAt(x, y, CellState.EMPTY);
+                        break;
+                }
             }
         }
     }
@@ -34,24 +41,6 @@ public class GameModel {
         grid.getCellAt(x, y).toggle();
     }
 
-    // 正誤判定
-    public boolean check() {
-        Grid solution = puzzle.getSolution();
-
-        for (int x = 0; x < solution.getSizeX(); x++) {
-            for (int y = 0; y < solution.getSizeY(); y++) {
-
-                boolean shouldBeFilled = solution.getCellAt(x, y).getState() == CellState.FILLED;
-                boolean isFilled = grid.getCellAt(x, y).getState() == CellState.FILLED;
-
-                if (shouldBeFilled != isFilled) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     // 盤面リセット
     public void reset() {
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
@@ -59,5 +48,9 @@ public class GameModel {
                 grid.getCellAt(x, y).setState(CellState.EMPTY);
             }
         }
+    }
+
+    public void updatePuzzleTitle(String title){
+        puzzle.setTitle(title);
     }
 }

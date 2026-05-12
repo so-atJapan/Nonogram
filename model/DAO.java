@@ -25,12 +25,6 @@ public class DAO {
 
 public  ArrayList<Puzzle> getPuzzleAll(){
     ArrayList<Puzzle> puzzleList = new ArrayList<Puzzle>();
-    System.out.println(System.getProperty("user.dir"));
-    System.out.println(System.getProperty("user.dir"));
-    System.out.println(System.getProperty("user.dir"));
-    System.out.println(System.getProperty("user.dir"));
-    System.out.println(System.getProperty("user.dir"));
-    System.out.println(System.getProperty("user.dir"));
 
     try (
         Connection connection = DriverManager.getConnection(DB_PATH);
