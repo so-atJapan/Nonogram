@@ -13,6 +13,7 @@ _これも強調_
 __同じくもっと強調__
 
 [文字列](URL)
+[Google検索](https://www.google.com/?hl=ja)
 
 ![猫](cat.jpg)
 ![画像名](相対パスまたは絶対パス)
