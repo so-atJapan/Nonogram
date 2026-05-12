@@ -37,8 +37,32 @@ public class PuzzleEditorModel {
     }
 
     // セル状態切り替え
-    public void toggle(int x, int y) {
-        grid.getCellAt(x, y).toggle();
+    public void toggle(int x, int y, CellState cellState) {
+        grid.getCellAt(x, y).toggle(cellState);
+    }
+
+    //グリッド更新
+    public void gridReSize(){
+        Grid reSizedGrid = new Grid(puzzle.getGridSizeX(), puzzle.getGridSizeY());
+        Grid oldGrid = this.grid;
+
+        for (int x = 0; x < oldGrid.getSizeX(); x++) {
+            for (int y = 0; y < oldGrid.getSizeY(); y++) {
+
+                if(x >= reSizedGrid.getSizeX() || y >= reSizedGrid.getSizeY()) continue;
+
+                switch (oldGrid.getCellAt(x, y).getState()) {
+                    case FILLED:
+                        reSizedGrid.setCellAt(x, y, CellState.FILLED);
+                        break;
+                    default:
+                        reSizedGrid.setCellAt(x, y, CellState.EMPTY);
+                        break;
+                }
+            }
+        }
+
+        this.grid = reSizedGrid;
     }
 
     // 盤面リセット
@@ -52,5 +76,13 @@ public class PuzzleEditorModel {
 
     public void updatePuzzleTitle(String title){
         puzzle.setTitle(title);
+    }
+
+    public void updatePuzzleGridSizeX(int gridSizeX){
+        puzzle.setGridSizeX(gridSizeX);
+    }
+
+    public void updatePuzzleGridSizeY(int gridSizeY){
+        puzzle.setGridSizeY(gridSizeY);
     }
 }

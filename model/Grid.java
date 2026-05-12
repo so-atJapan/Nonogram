@@ -9,6 +9,7 @@ public class Grid {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.cells = new Cell[sizeX][sizeY];
+        this.setEMPTY();
     }
     public Grid(int sizeX, int sizeY, String[][] cells){
         this(sizeX, sizeY);
@@ -45,6 +46,14 @@ public class Grid {
 
     public void setCellAt(int x, int y, CellState cellState){
         this.cells[x][y] = new Cell(cellState);
+    }
+
+    private void setEMPTY(){
+        for (int x = 0; x < sizeX; x++) {
+            for (int y = 0; y < sizeY; y++) {
+                this.setCellAt(x, y, CellState.EMPTY);
+            }
+        }
     }
 
 }
