@@ -28,18 +28,14 @@ public class PuzzleListController {
         this.puzzlelist = puzzlelist;
         this.appController = appController;
 
-        for (int i = 0; i < view.getSelectButtons().length; i++) {
-            int index = i;
-                view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
-        }
-        // view.getCreateButton().setOnAction(e -> onCreatePuzzle());
-        // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
+        bindViewEvents();
     }
 
     /**
      * パズル一覧を読み込みViewに表示させる
      */
     public void loadPuzzles() {
+        view.initialize(puzzlelist);
         view.render();
     }
 
@@ -49,10 +45,11 @@ public class PuzzleListController {
      * @param puzzle 選択されたパズル
      * @return
      */
-    public void onSelectPuzzle(Puzzle puzzle) {
-        appController.setPendingPuzzle(puzzle);
-        appController.navigateTo("game");
-    }
+    // public Puzzle onSelectPuzzle(Puzzle puzzle) {
+    //     appController.setPendingPuzzle(puzzle);
+    //     appController.navigateTo("game");
+    //     return puzzle;
+    // }
 
     // /**
     //  * パズル作成(拡張)
@@ -77,5 +74,14 @@ public class PuzzleListController {
     //     view.updateFilter(d);
     //     view.displayPuzzles(filtered);
     // }
+
+    /**
+     * コンストラクタ時実行、ボタン接続
+     */
+    private void bindViewEvents() {
+        // view.setOnPuzzleSelected(this::onSelectPuzzle);
+        // view.getCreateButton().setOnAction(e -> onCreatePuzzle());
+        // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
+    }
 
 }

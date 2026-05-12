@@ -24,7 +24,7 @@ public class GameController {
      * ゲームを起動
      * ボタン描画呼び出し、初期化
      */
-    public void initialize() {
+    public void init() {
         // PuzzleのデータをViewに渡す
         view.initialize(model.getPuzzle());
         view.render();
@@ -40,10 +40,10 @@ public class GameController {
                 view.getButtons()[finalX][finalY].setOnAction(e -> onCellClicked(finalX, finalY));
             }
         }
-
+ 
         // リセットボタン
-        // view.getResetButton().addActionListener(e -> onReset());
-
+        // view.getResetButton().setOnAction(e -> onReset());
+ 
         // チェックボタン
         view.getCheckButton().setOnAction(e -> onCheck());
         
@@ -57,16 +57,16 @@ public class GameController {
      */
     public void onCellClicked(int x, int y) {
         model.toggle(x, y);
-        view.updateCell(x, y, model.getCell());
+        view.updateCell(x, y, model.getGrid());
     }
 
-    // /**
-    //  * リセットボタンが押されたときの処理。
-    //  */
-    // public void onReset() {
-    //     model.reset();
-    //     view.updateCell(0, 0, model.getCell());
-    // }
+    /**
+     * リセットボタンが押されたときの処理。
+     */
+    public void onReset() {
+        model.reset();
+        view.updateCell(0, 0, model.getGrid());
+    }
 
     /**
      * チェックボタンが押されたときの処理。
