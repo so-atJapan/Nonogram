@@ -143,11 +143,11 @@ public class SemiModal {
         return titleTextField.getText();
     }
 
-    public String getGridSizeX(){
-        return rowTextField.getText();
+    public int getGridSizeX(){
+        return Integer.parseInt(rowTextField.getText());
     }
 
-    public String getGridSizeY(){
-        return colTextField.getText();
+    public int getGridSizeY(){
+        return Integer.parseInt(colTextField.getText());
     }
 }

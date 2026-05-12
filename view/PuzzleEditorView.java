@@ -35,9 +35,8 @@ public class PuzzleEditorView {
     private Button settingButton;
     private Button checkButton;
     private Label timerLabel;
- 
-    private int rows;
-    private int cols;
+
+    private HBox midRow;
  
     // ここだけ変えれば全体のサイズが変わる（ヒントもグリッドも同じ値で統一）
     private final int cellSize = 20;
@@ -53,98 +52,14 @@ public class PuzzleEditorView {
         this.semiModal = new SemiModal(this.stage);
         this.semiModal.initialize(puzzle);
 
-        this.rows = puzzle.getGridSizeX();
-        this.cols = puzzle.getGridSizeY();
-    
-        ArrayList<ArrayList<Integer>> rowHints = puzzle.getClue().getRowClues();
-        ArrayList<ArrayList<Integer>> colHints = puzzle.getClue().getColClues();
-    
-        // ヒントの最大数から左・上のヒントエリアサイズを決定
-        int maxColHintRows = colHints.stream().mapToInt(ArrayList::size).max().orElse(1);
-        int maxRowHintCols = rowHints.stream().mapToInt(ArrayList::size).max().orElse(1);
-    
-        // すべて cellSize 単位で計算
-        int hintAreaWidth  = maxRowHintCols * cellSize; // 左ヒントエリアの幅
-        int hintAreaHeight = maxColHintRows * cellSize; // 上ヒントエリアの高さ
-    
-        // ===== 左上コーナー（タイマー）=====
-        timerLabel = new Label("00:00");
-        timerLabel.setPrefSize(hintAreaWidth, hintAreaHeight);
-        timerLabel.setAlignment(Pos.CENTER);
-        timerLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-    
-        // ===== 列ヒント（上）=====
-        // 各列を VBox（下揃え）で表現し、横に HBox で並べる
-        HBox hintPanelTop = new HBox();
-        hintPanelTop.setSpacing(0);
-    
-        for (int col = 0; col < cols; col++) {
-            VBox colBox = new VBox();
-            colBox.setPrefSize(cellSize, hintAreaHeight);
-            colBox.setAlignment(Pos.BOTTOM_CENTER);
-            colBox.setSpacing(0);
-    
-            ArrayList<Integer> hints = colHints.get(col);
-    
-            // 上を空白で埋めて下揃えにする
-            for (int p = 0; p < maxColHintRows - hints.size(); p++) {
-                Label pad = new Label();
-                pad.setPrefSize(cellSize, cellSize);
-                colBox.getChildren().add(pad);
-            }
-            for (int num : hints) {
-                Label lbl = new Label(String.valueOf(num));
-                lbl.setPrefSize(cellSize, cellSize);
-                lbl.setAlignment(Pos.CENTER);
-                lbl.setStyle(
-                    "-fx-border-color: #cccccc;" +
-                    "-fx-border-width: 0 0.5 0.5 0.5;" +
-                    "-fx-font-size: 11px;"
-                );
-                colBox.getChildren().add(lbl);
-            }
-            hintPanelTop.getChildren().add(colBox);
-        }
-    
-        // ===== 行ヒント（左）=====
-        // 各行を HBox（右揃え）で表現し、縦に VBox で並べる
-        VBox hintPanelSide = new VBox();
-        hintPanelSide.setSpacing(0);
-    
-        for (int row = 0; row < rows; row++) {
-            HBox rowBox = new HBox();
-            rowBox.setPrefSize(hintAreaWidth, cellSize);
-            rowBox.setAlignment(Pos.CENTER_RIGHT);
-            rowBox.setSpacing(0);
-    
-            ArrayList<Integer> hints = rowHints.get(row);
-    
-            // 左を空白で埋めて右揃えにする
-            for (int p = 0; p < maxRowHintCols - hints.size(); p++) {
-                Label pad = new Label();
-                pad.setPrefSize(cellSize, cellSize);
-                rowBox.getChildren().add(pad);
-            }
-            for (int num : hints) {
-                Label lbl = new Label(String.valueOf(num));
-                lbl.setPrefSize(cellSize, cellSize);
-                lbl.setAlignment(Pos.CENTER);
-                lbl.setStyle(
-                    "-fx-border-color: #cccccc;" +
-                    "-fx-border-width: 0.5 0.5 0.5 0;" +
-                    "-fx-font-size: 11px;"
-                );
-                rowBox.getChildren().add(lbl);
-            }
-            hintPanelSide.getChildren().add(rowBox);
-        }
+
     
         // ===== グリッド =====
         gridPanel = new GridPane();
-        buttons = new Button[rows][cols];
+        buttons = new Button[puzzle.getGridSizeX()][puzzle.getGridSizeY()];
     
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
+        for (int row = 0; row < puzzle.getGridSizeX(); row++) {
+            for (int col = 0; col < puzzle.getGridSizeY(); col++) {
                 Button btn = new Button();
                 btn.setPrefSize(cellSize, cellSize);
                 btn.setFocusTraversable(false);
@@ -183,7 +98,7 @@ public class PuzzleEditorView {
 
 
         // ===== 全体レイアウト =====
-        HBox midRow = new HBox(gridPanel);
+        midRow = new HBox(gridPanel);
         midRow.setSpacing(0);
 
         VBox root = new VBox(midRow, bottomButtons);
@@ -217,10 +132,10 @@ public class PuzzleEditorView {
     }
 
     // セル更新（row, col の順で統一）
-    public void updateCell(int row, int col, Grid grid) {
-        Button btn = buttons[row][col];
- 
-        switch (grid.getCellAt(row, col).getState()) {
+    public void updateCell(int x, int y, Grid grid) {
+        Button btn = buttons[x][y];
+
+        switch (grid.getCellAt(x, y).getState()) {
             case FILLED:
                 applyCellStyle(btn, "filled");
                 btn.setText("");
@@ -234,6 +149,30 @@ public class PuzzleEditorView {
                 btn.setText("");
                 break;
         }
+    }
+
+    // グリッド更新
+    public void gridReSize(Grid grid) {
+
+        this.gridPanel = new GridPane();
+        this.buttons = new Button[grid.getSizeX()][grid.getSizeY()];
+    
+        for (int x = 0; x < grid.getSizeX(); x++) {
+            for (int y = 0; y < grid.getSizeY(); y++) {
+                Button btn = new Button();
+                btn.setPrefSize(cellSize, cellSize);
+                btn.setFocusTraversable(false);
+                applyCellStyle(btn, "empty");
+                
+                buttons[x][y] = btn;
+                gridPanel.add(btn, y, x);
+                
+                updateCell(x, y, grid);
+            }
+        }
+
+        midRow.getChildren().setAll(gridPanel);
+
     }
  
     // セルスタイル適用
@@ -288,11 +227,11 @@ public class PuzzleEditorView {
         return this.semiModal.getTitleTextField();
     }
 
-    public String getGridSizeX(){
+    public int getGridSizeX(){
         return this.semiModal.getGridSizeX();
     }
 
-    public String getGridSizeY(){
+    public int getGridSizeY(){
         return this.semiModal.getGridSizeY();
     }
 }
