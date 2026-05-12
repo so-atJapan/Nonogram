@@ -74,18 +74,18 @@ public class AppController {
         puzzleListController.loadPuzzles();
     }
  
-    // /**
-    //  * ゲーム画面生成
-    //  * ViewがScene・Stage・表示まで自己完結する
-    //  */
-    // public void showGame() {
-    //     // MVC各層を生成
-    //     GameModel model = new GameModel(pendingPuzzle);
-    //     GameView  view  = new GameView();
-    //     gameController = new GameController(model, view);
-    //
-    //     // ゲームを初期化（ボタンイベント登録など）
-    //     gameController.init();
-    // }
+    /**
+     * ゲーム画面生成
+     * ViewがScene・Stage・表示まで自己完結する
+     */
+    public void showGame() {
+        // MVC各層を生成
+        GameModel model = new GameModel(pendingPuzzle);
+        GameView  view  = new GameView(stage);
+        gameController = new GameController(model, view);
+
+        // ゲームを初期化（ボタンイベント登録など）
+        gameController.initialize();
+    }
  
 }
