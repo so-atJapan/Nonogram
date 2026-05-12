@@ -40,6 +40,7 @@ public class PuzzleListController {
      * パズル一覧を読み込みViewに表示させる
      */
     public void loadPuzzles() {
+        view.initialize(puzzlelist);
         view.render();
     }
 
@@ -49,10 +50,11 @@ public class PuzzleListController {
      * @param puzzle 選択されたパズル
      * @return
      */
-    public void onSelectPuzzle(Puzzle puzzle) {
-        appController.setPendingPuzzle(puzzle);
-        appController.navigateTo("game");
-    }
+    // public Puzzle onSelectPuzzle(Puzzle puzzle) {
+    //     appController.setPendingPuzzle(puzzle);
+    //     appController.navigateTo("game");
+    //     return puzzle;
+    // }
 
     // /**
     //  * パズル作成(拡張)
@@ -77,5 +79,6 @@ public class PuzzleListController {
     //     view.updateFilter(d);
     //     view.displayPuzzles(filtered);
     // }
+
 
 }
