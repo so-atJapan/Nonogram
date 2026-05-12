@@ -1,5 +1,6 @@
 package Nonogram.controller;
 
+import Nonogram.model.CellState;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleEditorModel;
 import Nonogram.view.PuzzleEditorView;
@@ -64,7 +65,7 @@ public class PuzzleEditorController {
      * @param y クリックされたセルのY座標
      */
     public void onCellClicked(int x, int y) {
-        model.toggle(x, y);
+        model.toggle(x, y, CellState.FILLED);
         view.updateCell(x, y, model.getGrid());
     }
 
@@ -73,9 +74,22 @@ public class PuzzleEditorController {
      */
     public void onSettingConfirm() {
         model.updatePuzzleTitle(view.getTitleTextField());
-        System.out.println(view.getGridSizeX());
-        System.out.println(view.getGridSizeY());
+        model.updatePuzzleGridSizeX(view.getGridSizeX());
+        model.updatePuzzleGridSizeY(view.getGridSizeY());
+        model.gridReSize();
+        view.gridReSize(model.getGrid());
         view.settingConfirm();
+
+        Puzzle puzzle = model.getPuzzle();
+        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
+            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
+                int finalX = x;
+                int finalY = y;
+                view.getButtons()[finalX][finalY].setOnAction(e -> onCellClicked(finalX, finalY));
+            }
+        }
+
+        view.render();
     }
 
     /**
