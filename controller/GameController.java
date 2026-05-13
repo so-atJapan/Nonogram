@@ -62,7 +62,7 @@ public class GameController {
         // view.getResetButton().addActionListener(e -> onReset());
 
         // チェックボタン
-        view.getCheckButton().setOnAction(e -> onCheck());
+        view.getCheckButton().setOnAction(e -> onJudge());
 
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> view.updateTimer(timer.tick())));
@@ -106,7 +106,7 @@ public class GameController {
     /**
      * チェックボタンが押されたときの処理。
      */
-    public void onCheck() {
+    public void onJudge() {
         boolean result = model.check();
         view.showResult(result);
     }

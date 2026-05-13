@@ -2,8 +2,10 @@ package Nonogram.controller;
  
 import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
+import Nonogram.model.PuzzleEditorModel;
 import Nonogram.model.PuzzleList;
 import Nonogram.view.GameView;
+import Nonogram.view.PuzzleEditorView;
 import Nonogram.view.PuzzleListView;
 import javafx.stage.Stage;
  
@@ -16,6 +18,7 @@ public class AppController {
     private Puzzle pendingPuzzle;
     private PuzzleListController puzzleListController;
     private GameController gameController;
+    private PuzzleEditorController puzzleEditorController;
 
     /**
      * コンストラクタ
@@ -43,21 +46,24 @@ public class AppController {
             case "list":
                 showPuzzleList();
                 break;
-            // case "game":
-            //     showGame();
-            //     break;
+            case "game":
+                showGame();
+                break;
+            case "editor":
+                showEditor();
+                break;
             // 将来に拡張地
         }
     }
  
-    // /**
-    //  * 渡されたパズルのセット
-    //  *
-    //  * @param puzzle 開始するパズル
-    //  */
-    // public void setPendingPuzzle(Puzzle puzzle) {
-    //     this.pendingPuzzle = puzzle;
-    // }
+    /**
+     * 渡されたパズルのセット
+     *
+     * @param puzzle 開始するパズル
+     */
+    public void setPendingPuzzle(Puzzle puzzle) {
+        this.pendingPuzzle = puzzle;
+    }
  
     /**
      * パズル選択画面生成
@@ -68,10 +74,9 @@ public class AppController {
         PuzzleList     puzzleList = new PuzzleList();
         puzzleList.initialize();
         PuzzleListView listView   = new PuzzleListView(stage);
+        listView.initialize(puzzleList);
         puzzleListController = new PuzzleListController(listView, puzzleList, this);
- 
-        // 初期データを読み込む（View.displayPuzzles()で描画）
-        puzzleListController.loadPuzzles();
+        puzzleListController.initialize();
     }
  
     /**
@@ -86,6 +91,18 @@ public class AppController {
 
         // ゲームを初期化（ボタンイベント登録など）
         gameController.initialize();
+    }
+
+    /**
+     * 編集画面生成
+     */
+    public void showEditor() {
+        Puzzle target = this.pendingPuzzle;
+        PuzzleEditorModel model = new PuzzleEditorModel(target);
+        PuzzleEditorView  view  = new PuzzleEditorView(stage);
+ 
+        puzzleEditorController = new PuzzleEditorController(model, view);
+        puzzleEditorController.initialize();
     }
  
 }

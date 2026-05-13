@@ -26,22 +26,22 @@ public class PuzzleListController {
     public PuzzleListController(PuzzleListView view, PuzzleList puzzlelist, AppController appController) {
         this.view = view;
         this.puzzlelist = puzzlelist;
-        this.appController = appController;
-
-        // for (int i = 0; i < view.getSelectButtons().length; i++) {
-        //     int index = i;
-        //         view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
-        // }
-        // view.getCreateButton().setOnAction(e -> onCreatePuzzle());
-        // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
+        this.appController = appController;        
     }
 
-    /**
-     * パズル一覧を読み込みViewに表示させる
-     */
-    public void loadPuzzles() {
-        view.initialize(puzzlelist);
+    public void initialize() {
         view.render();
+        for (int i = 0; i < view.getSelectButtons().length; i++) {
+            int index = i;
+            view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
+        }
+
+        for (int i = 0; i < view.getEditMenuItems().length; i++) {
+            int index = i;
+            view.getEditMenuItems()[index].setOnAction(e -> onEditPuzzle(puzzlelist.getPuzzleList().get(index)));
+        }
+        
+        // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
     }
 
     /**
@@ -50,19 +50,21 @@ public class PuzzleListController {
      * @param puzzle 選択されたパズル
      * @return
      */
-    // public Puzzle onSelectPuzzle(Puzzle puzzle) {
-    //     appController.setPendingPuzzle(puzzle);
-    //     appController.navigateTo("game");
-    //     return puzzle;
-    // }
+    public Puzzle onSelectPuzzle(Puzzle puzzle) {
+        appController.setPendingPuzzle(puzzle);
+        appController.navigateTo("game");
+        return puzzle;
+    }
 
-    // /**
-    //  * パズル作成(拡張)
-    //  */
-    // public void onCreatedPuzzle() {
-    //     view.showCreateButton();
-    //     appController.navigateTo("editor");
-    // }
+    /**
+     * パズル編集
+     * 
+     * @param puzzle
+     */
+    public void onEditPuzzle(Puzzle puzzle) {
+        appController.setPendingPuzzle(puzzle);
+        appController.navigateTo("editor");
+    }
 
     // /**
     //  * 難易度
