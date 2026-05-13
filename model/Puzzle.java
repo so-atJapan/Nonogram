@@ -63,10 +63,7 @@ public class Puzzle {
             break;
       }
    }
-   public void setCreatedAt(String createdAt) {
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      this.createdAt = LocalDateTime.parse("2024-05-02 12:48:35", formatter);
-   }
+   
    public void setSolution(String solution) {
       String[] temp1 = solution.split(" ");
       String[][] temp2 = new String[temp1.length][0];

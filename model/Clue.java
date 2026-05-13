@@ -32,4 +32,51 @@ public class Clue {
         return temp2;
     }
 
+    public String rowToString(){
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int x = 0; x < rowClues.size(); x++) {
+            for (int y = 0; y < rowClues.get(x).size(); y++) {
+
+                sb.append(rowClues.get(x).get(y));
+
+                if (y != rowClues.get(x).size() - 1) {
+                    sb.append(",");
+                }
+            }
+
+            if (x != rowClues.size() - 1) {
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString();
+
+    }
+
+    public String colToString(){
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int x = 0; x < colClues.size(); x++) {
+            for (int y = 0; y < colClues.get(x).size(); y++) {
+
+                sb.append(colClues.get(x).get(y));
+
+                if (y != colClues.get(x).size() - 1) {
+                    sb.append(",");
+                }
+            }
+
+            if (x != colClues.size() - 1) {
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString();
+
+    }
+
+
 }

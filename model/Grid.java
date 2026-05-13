@@ -56,4 +56,30 @@ public class Grid {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int x = 0; x < sizeX; x++) {
+            for (int y = 0; y < sizeY; y++) {
+
+                if (this.cells[x][y].getState() == CellState.FILLED) {
+                    sb.append(1);
+                } else {
+                    sb.append(0);
+                }
+
+                if (y != sizeY - 1) {
+                    sb.append(",");
+                }
+            }
+
+            if (x != sizeX - 1) {
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString();
+    }
+
 }

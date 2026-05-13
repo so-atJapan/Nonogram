@@ -5,6 +5,8 @@ public class PuzzleEditorModel {
     private Puzzle puzzle;
     private Grid grid;
 
+    private static DAO dao = new DAO();
+
     // コンストラクタ
     public PuzzleEditorModel(Puzzle puzzle) {
         this.puzzle = puzzle;
@@ -84,5 +86,9 @@ public class PuzzleEditorModel {
 
     public void updatePuzzleGridSizeY(int gridSizeY){
         puzzle.setGridSizeY(gridSizeY);
+    }
+
+    public void updateDB(){
+        dao.updatePuzzle(this.puzzle);
     }
 }
