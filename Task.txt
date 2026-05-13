@@ -1,9 +1,7 @@
-・Editor　内田なう
 ・リザルト
-・AppController整える
 ・ホーム画面
 ・盤面ログ
-・PlayerTable
+・PlayerTable 内田やります（5/14)
 ・ソルバー
 .クリアレコード（DB）
 ・設定
