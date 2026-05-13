@@ -89,6 +89,8 @@ public class PuzzleEditorModel {
     }
 
     public void updateDB(){
+        puzzle.setClue(Clue.fromGrid(this.grid));
+        puzzle.setSolution(this.grid);
         dao.updatePuzzle(this.puzzle);
     }
 }
