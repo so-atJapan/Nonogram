@@ -26,6 +26,7 @@ public class PuzzleListView{
     private ArrayList<Puzzle> puzzleList;
 
     private Button[] selectButtons;
+    private MenuItem[] editMenuItems;
 
     public PuzzleListView(Stage stage){
         this.stage = stage;
@@ -43,7 +44,8 @@ public class PuzzleListView{
 
         selectButtons = new Button[length];
         ContextMenu[] contextMenus = new ContextMenu[length];
-        MenuItem[][] menuItems = new MenuItem[length][3];
+        editMenuItems = new MenuItem[length];
+        MenuItem[] deleteMenuItems = new MenuItem[length];
         
         Menu menu1 = new Menu("メニュー");
         MenuItem homeMenuItem = new MenuItem("ホーム");
@@ -75,18 +77,16 @@ public class PuzzleListView{
             selectButtons[index] = new Button(tatle);
             selectButtons[index].setPrefSize(140, 40);
             selectButtons[index].setFont(new Font(20));
-            menuItems[index][0] = new MenuItem("追加");
-            menuItems[index][0].setStyle("-fx-font-size: 17px;");
-            menuItems[index][1] = new MenuItem("編集");
-            menuItems[index][1].setStyle("-fx-font-size: 17px;");
-            menuItems[index][2] = new MenuItem("削除");
-            menuItems[index][2].setStyle("-fx-font-size: 17px;");
-            contextMenus[index] = new ContextMenu(menuItems[index][0],menuItems[index][1],menuItems[index][2]);
+            editMenuItems[index] = new MenuItem("編集");
+            editMenuItems[index].setStyle("-fx-font-size: 17px;");
+            deleteMenuItems[index] = new MenuItem("削除");
+            deleteMenuItems[index].setStyle("-fx-font-size: 17px;");
+            contextMenus[index] = new ContextMenu(editMenuItems[index], deleteMenuItems[index]);
             selectButtons[index].setOnContextMenuRequested(e -> {
                 contextMenus[index].show(selectButtons[index], e.getScreenX(), e.getScreenY());
             });           
         }
-        
+ 
         
         
         VBox temp1VBox = new VBox();
@@ -114,6 +114,8 @@ public class PuzzleListView{
     }
 
     public Button[] getSelectButtons() {return selectButtons;}
+    
+    public MenuItem[] getEditMenuItems() {return editMenuItems;}
  
  
 }
