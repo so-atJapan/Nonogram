@@ -94,9 +94,8 @@ public class DAO {
             ps.setString(10, puzzle.getClue().colToString());
             ps.setInt(11, puzzle.getPuzzleId());
 
-            int result = ps.executeUpdate();
+            ps.executeUpdate();
 
-            System.out.println(result + "件更新しました");
 
         } catch (Exception e) {
             e.printStackTrace();
