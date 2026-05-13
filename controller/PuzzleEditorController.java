@@ -104,6 +104,6 @@ public class PuzzleEditorController {
      * チェックボタンが押されたときの処理。
      */
     public void onCheck() {
-        System.out.println("BD処理");
+        model.updateDB();
     }
 }

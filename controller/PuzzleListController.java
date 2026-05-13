@@ -28,10 +28,10 @@ public class PuzzleListController {
         this.puzzlelist = puzzlelist;
         this.appController = appController;
 
-        for (int i = 0; i < view.getSelectButtons().length; i++) {
-            int index = i;
-                view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
-        }
+        // for (int i = 0; i < view.getSelectButtons().length; i++) {
+        //     int index = i;
+        //         view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
+        // }
         // view.getCreateButton().setOnAction(e -> onCreatePuzzle());
         // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
     }
