@@ -1,26 +1,20 @@
 package Nonogram;
 
-import Nonogram.model.GameModel;
-import Nonogram.model.PuzzleList;
-import Nonogram.view.GameView;
+import Nonogram.controller.AppController;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
+public class Main extends Application{
 
-import Nonogram.controller.GameController;
-
-public class Main {
-    public static void main(String[] args) {
-
-        int puzzle_id = 1;
-
-
-        PuzzleList puzzleList = new PuzzleList();
-        puzzleList.init();
-        GameModel gameModel = new GameModel(puzzleList.getPuzzleList().get(puzzle_id));
-        GameView gameView = new GameView();
-        GameController gameController = new GameController(gameModel, gameView);
-
-        gameController.init();
-
+    @Override
+    public void start(Stage stage) throws Exception {
         
+        AppController appController = new AppController(stage);
+        appController.initialize();
+        
+    }
+    
+    public static void main(String[] args) {
+        launch(args);  
     }
 }
