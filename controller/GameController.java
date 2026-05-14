@@ -1,23 +1,14 @@
 package Nonogram.controller;
 
-
 import Nonogram.model.CellState;
-import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
-import Nonogram.model.Timer;
-import Nonogram.view.GameView;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.scene.input.MouseButton;
-import javafx.util.Duration;
+import Nonogram.model.PuzzleEditorModel;
+import Nonogram.view.PuzzleEditorView;
 
-public class GameController {
+public class PuzzleEditorController {
 
-    private GameModel model;
-    private GameView view;
-    Timer timer = new Timer();
-    private Timeline timeline;
-
+    private PuzzleEditorModel model;
+    private PuzzleEditorView view;
 
     /**
      * コンストラクタ
@@ -25,9 +16,10 @@ public class GameController {
      * @param model 
      * @param view  
      */
-    public GameController(GameModel model, GameView view) {
+    public PuzzleEditorController(PuzzleEditorModel model, PuzzleEditorView view) {
         this.model = model;
         this.view  = view;
+
     }
 
     /**
@@ -37,8 +29,7 @@ public class GameController {
     public void initialize() {
         // PuzzleのデータをViewに渡す
         view.initialize(model.getPuzzle());
-        view.render();
-
+        
         // 左クリック
         // 画面ボタン
         // ボタンを押したら受け取る
@@ -47,28 +38,25 @@ public class GameController {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
                 int finalX = x;
                 int finalY = y;
-                view.getButtons()[finalX][finalY].setOnMouseClicked((e) -> {
-                    if (e.getButton() == MouseButton.PRIMARY) {
-                        onCellLeftClicked(finalX, finalY);
-                    } else if (e.getButton() == MouseButton.SECONDARY) {
-                        onCellRightClicked(finalX, finalY);
-                    }
-                });
-                
+                view.getButtons()[finalX][finalY].setOnAction(e -> onCellClicked(finalX, finalY));
             }
         }
-
-        // リセットボタン
-        // view.getResetButton().addActionListener(e -> onReset());
-
-        // チェックボタン
-        view.getCheckButton().setOnAction(e -> onJudge());
-
-
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> view.updateTimer(timer.tick())));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
         
+        // リセットボタン
+        // view.getResetButton().setOnAction(e -> onReset());
+        
+        // 設定ボタン
+        view.getSettingButton().setOnAction(e -> view.semiModalRender(model.getPuzzle()));
+        
+        //　OKボタン
+        view.getOkButton().setOnAction(e -> onSettingConfirm());
+        
+        // チェックボタン
+        view.getCheckButton().setOnAction(e -> onCheck());
+        
+        // 描画
+        view.render();
+        view.semiModalRender(model.getPuzzle());
     }
 
     /**
@@ -77,37 +65,46 @@ public class GameController {
      * @param x クリックされたセルのX座標
      * @param y クリックされたセルのY座標
      */
-    public void onCellLeftClicked(int x, int y) {
-        
+    public void onCellClicked(int x, int y) {
         model.toggle(x, y, CellState.FILLED);
         view.updateCell(x, y, model.getGrid());
     }
 
     /**
-     * セルが右クリックされた時の処理
-     * 
-     * @param x
-     * @param y
+     * 設定の決定ボタンが押されたときの処理。
      */
-    public void onCellRightClicked(int x, int y) {
-        
-        model.toggle(x, y, CellState.MARKED);
-        view.updateCell(x, y, model.getGrid());
+    public void onSettingConfirm() {
+        model.updatePuzzleTitle(view.getTitleTextField());
+        model.updatePuzzleGridSizeX(view.getGridSizeX());
+        model.updatePuzzleGridSizeY(view.getGridSizeY());
+        model.gridReSize();
+        view.gridReSize(model.getGrid());
+        view.settingConfirm();
+
+        Puzzle puzzle = model.getPuzzle();
+        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
+            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
+                int finalX = x;
+                int finalY = y;
+                view.getButtons()[finalX][finalY].setOnAction(e -> onCellClicked(finalX, finalY));
+            }
+        }
+
+        view.render();
     }
 
-    // /**
-    //  * リセットボタンが押されたときの処理。
-    //  */
-    // public void onReset() {
-    //     model.reset();
-    //     view.updateCell(0, 0, model.getCell());
-    // }
+    /**
+     * リセットボタンが押されたときの処理。
+     */
+    public void onReset() {
+        model.reset();
+        view.updateCell(0, 0, model.getGrid());
+    }
 
     /**
      * チェックボタンが押されたときの処理。
      */
-    public void onJudge() {
-        boolean result = model.check();
-        view.showResult(result);
+    public void onCheck() {
+        model.updateDB();
     }
 }
