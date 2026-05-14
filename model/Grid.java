@@ -44,6 +44,28 @@ public class Grid {
         return cells;
     }
 
+    public Cell[] getRow(int x){
+        return cells[x];
+    }
+
+    public Cell[] getCol(int y){
+        Cell[] temp = new Cell[sizeX];
+        for (int x = 0; x < temp.length; x++) {
+            temp[x] = this.cells[x][y];
+        }
+        return temp;
+    }
+
+    public void setRow(Cell[] row, int x){
+        cells[x] = row;
+    }
+
+    public void setCol(Cell[] col, int y){
+        for (int x = 0; x < col.length; x++) {
+            cells[x][y] = col[x];
+        }
+    }
+    
     public void setCellAt(int x, int y, CellState cellState){
         this.cells[x][y] = new Cell(cellState);
     }
