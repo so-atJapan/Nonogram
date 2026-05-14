@@ -11,6 +11,9 @@ import javafx.animation.Timeline;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class GameController {
 
     private GameModel model;
@@ -19,6 +22,11 @@ public class GameController {
     private Timeline timeline;
     private int startX;
     private int startY;
+
+    // ドラッグ中に適用するアクション（FILLED or MARKED or EMPTY）
+    private CellState dragAction = null;
+    // ドラッグ中に処理済みのセルを記録
+    private final Set<String> draggedCells = new HashSet<>();
 
 
     /**
@@ -70,6 +78,16 @@ public class GameController {
                     startX = finalX;
                     startY = finalY;
 
+                    // 開始セルをtoggleし、その結果をドラッグ中のアクションとして固定
+                    if (e.isPrimaryButtonDown()) {
+                        dragAction = onCellLeftClicked(finalX, finalY);
+                    } else if (e.isSecondaryButtonDown()) {
+                        dragAction = onCellRightClicked(finalX, finalY);
+                    }
+
+                    draggedCells.clear();
+                    draggedCells.add(finalX + "," + finalY);
+
                     // フルドラッグ開始（必須）
                     button.startFullDrag();
                 });
@@ -87,14 +105,18 @@ public class GameController {
                         return;
                     }
 
-                    // 左ドラッグ
-                    if (e.isPrimaryButtonDown()) {
-                        onCellLeftClicked(finalX, finalY);
+                    // 同一セルへの重複適用を防止
+                    String key = finalX + "," + finalY;
+                    if (draggedCells.contains(key)) return;
+                    draggedCells.add(key);
 
-                    // 右ドラッグ
-                    } else if (e.isSecondaryButtonDown()) {
-                        onCellRightClicked(finalX, finalY);
-                    }
+                    applyDragAction(finalX, finalY);
+                });
+
+                // ドラッグ終了時にリセット
+                button.setOnMouseReleased(e -> {
+                    dragAction = null;
+                    draggedCells.clear();
                 });
             }
         }
@@ -117,11 +139,14 @@ public class GameController {
      *
      * @param x クリックされたセルのX座標
      * @param y クリックされたセルのY座標
+     * @return  更新後のセルの状態を返す
      */
-    public void onCellLeftClicked(int x, int y) {
+    public CellState onCellLeftClicked(int x, int y) {
         
         model.toggle(x, y, CellState.FILLED);
         view.updateCell(x, y, model.getGrid());
+
+        return model.getGrid().getCellAt(x, y).getState();
     }
 
     /**
@@ -129,10 +154,25 @@ public class GameController {
      * 
      * @param x
      * @param y
+     * @return
      */
-    public void onCellRightClicked(int x, int y) {
+    public CellState onCellRightClicked(int x, int y) {
         
         model.toggle(x, y, CellState.MARKED);
+        view.updateCell(x, y, model.getGrid());
+
+        return model.getGrid().getCellAt(x, y).getState();
+    }
+
+    /**
+     * ドラッグ中に確定済みアクションをセルへ適用する
+     *
+     * @param x 適用するセルのX座標
+     * @param y 適用するセルのY座標
+     */
+    private void applyDragAction(int x, int y) {
+        if (dragAction == null) return;
+        model.setState(x, y, dragAction);
         view.updateCell(x, y, model.getGrid());
     }
 
