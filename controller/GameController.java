@@ -4,7 +4,6 @@ package Nonogram.controller;
 import Nonogram.model.CellState;
 import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
-import Nonogram.model.Solver;
 import Nonogram.model.Timer;
 import Nonogram.view.GameView;
 import javafx.animation.KeyFrame;
@@ -19,6 +18,7 @@ public class GameController {
 
     private GameModel model;
     private GameView view;
+    private AppController appController;
     Timer timer = new Timer();
     private Timeline timeline;
     private int startX;
@@ -36,9 +36,10 @@ public class GameController {
      * @param model 
      * @param view  
      */
-    public GameController(GameModel model, GameView view) {
+    public GameController(GameModel model, GameView view, AppController appController) {
         this.model = model;
         this.view  = view;
+        this.appController = appController;
     }
 
     /**
@@ -189,11 +190,13 @@ public class GameController {
      * チェックボタンが押されたときの処理。
      */
     public void onJudge() {
-        // boolean result = model.check();
-        // view.showResult(result);
-        Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
-        solver.solveStepByStep();
-        model.setGrid(solver.getGrid());
-        view.updateCellAll(solver.getGrid());
+        boolean result = model.check();
+        if (result) {
+            timeline.stop();
+            appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getElapsedSeconds());
+            appController.navigateTo("result");
+        } else {
+            view.showResult(false);
+        }
     }
 }
