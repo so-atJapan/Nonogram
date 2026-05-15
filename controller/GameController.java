@@ -14,6 +14,9 @@ import javafx.util.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * ゲーム画面の操作と判定を管理するコントローラクラス
+ */
 public class GameController {
 
     private GameModel model;
@@ -35,6 +38,7 @@ public class GameController {
      *
      * @param model 
      * @param view  
+     * @param appController 画面遷移を管理するコントローラ
      */
     public GameController(GameModel model, GameView view, AppController appController) {
         this.model = model;
@@ -189,11 +193,15 @@ public class GameController {
     /**
      * チェックボタンが押されたときの処理。
      */
+    /**
+     * チェックボタンが押されたときの処理
+     * 正解の場合はリザルト画面に必要なデータをAppControllerへ渡す
+     */
     public void onJudge() {
         boolean result = model.check();
         if (result) {
             timeline.stop();
-            appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getElapsedSeconds());
+            appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getTickSeconds());
             appController.navigateTo("result");
         } else {
             view.showResult(false);
