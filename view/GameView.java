@@ -194,6 +194,14 @@ public class GameView {
                 break;
         }
     }
+    public void updateCellAll(Grid grid) {
+
+        for (int x = 0; x < grid.getSizeX(); x++) {
+            for (int y = 0; y < grid.getSizeY(); y++) {
+                updateCell(x, y, grid);
+            }
+        }
+    }
  
     // セルスタイル適用
     private void applyCellStyle(Button btn, String state) {
