@@ -21,4 +21,8 @@ public class Timer {
         timeCount++;
         return timeCount;
     }
+
+    public int getElapsedSeconds() {
+        return timeCount;
+    }
 }
