@@ -4,13 +4,20 @@ import java.util.ArrayList;
 
 public class Solver {
     private Clue clue;
-    public Grid grid;
+    private Grid grid;
     private ArrayList<Grid> gridLogs;
 
-    public Solver(Clue clue){
+    public Solver(Clue clue, Grid grid){
         this.clue = clue;
-        this.grid = new Grid(clue.getRowClues().size(), clue.getColClues().size());
+        this.grid = grid;
         this.gridLogs = new ArrayList<Grid>();
+    }
+    public Solver(Clue clue){
+        this(clue, new Grid(clue.getRowClues().size(), clue.getColClues().size()));
+    }
+
+    public Grid getGrid() {
+        return grid;
     }
     
     public void solveAtOnce(){
@@ -39,9 +46,7 @@ public class Solver {
     private void step1Line(ArrayList<Integer> question, Cell[] line){
         Cell[][] patterns = generatePatterns(line.length, question);
         commit1(patterns, line);
-
     }
-
 
     public Cell[][] generatePatterns(int width, ArrayList<Integer> questionNum) {
 
@@ -140,7 +145,6 @@ public class Solver {
         }
     }
 
-
     private void commit1(Cell[][] patterns, Cell[] line) {
 
         // 現在の確定情報と矛盾するパターンを除外
@@ -161,8 +165,9 @@ public class Solver {
         }
 
         // 全パターンで共通するセルを確定
-        Cell[] allMarked = new Cell[line.length]; // 全パターンで白(✕) → 白確定
-        Cell[] allFilled = new Cell[line.length]; // 全パターンで黒    → 黒確定
+        // パターン内の白はEMPTY、黒はFILLEDで表現されている
+        Cell[] allMarked = new Cell[line.length]; // 全パターンでEMPTY → MARKED（白）確定
+        Cell[] allFilled = new Cell[line.length]; // 全パターンでFILLED → FILLED（黒）確定
         for (int i = 0; i < line.length; i++) {
             allMarked[i] = new Cell(CellState.MARKED);
             allFilled[i] = new Cell(CellState.FILLED);
@@ -171,7 +176,7 @@ public class Solver {
         for (int i = 0; i < patterns.length; i++) {
             if (patterns[i] == null) continue;
             for (int j = 0; j < line.length; j++) {
-                if (patterns[i][j].getState() != CellState.MARKED) {
+                if (patterns[i][j].getState() != CellState.EMPTY) {   // 修正：EMPTY で比較
                     allMarked[j].setState(CellState.EMPTY);
                 }
                 if (patterns[i][j].getState() != CellState.FILLED) {

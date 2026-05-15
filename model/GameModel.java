@@ -64,4 +64,8 @@ public class GameModel {
     public void setState(int x, int y, CellState state) {
         grid.getCellAt(x, y).setState(state);
     }
+
+    public void setGrid(Grid grid) {
+        this.grid = grid;
+    }
 }

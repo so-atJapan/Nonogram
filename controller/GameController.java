@@ -4,6 +4,7 @@ package Nonogram.controller;
 import Nonogram.model.CellState;
 import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
+import Nonogram.model.Solver;
 import Nonogram.model.Timer;
 import Nonogram.view.GameView;
 import javafx.animation.KeyFrame;
@@ -188,7 +189,11 @@ public class GameController {
      * チェックボタンが押されたときの処理。
      */
     public void onJudge() {
-        boolean result = model.check();
-        view.showResult(result);
+        // boolean result = model.check();
+        // view.showResult(result);
+        Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
+        solver.solveStepByStep();
+        model.setGrid(solver.getGrid());
+        view.updateCellAll(solver.getGrid());
     }
 }
