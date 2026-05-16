@@ -22,6 +22,8 @@ public class GameView {
  
     private GridPane gridPanel;
     private Button[][] buttons;
+    private Button prevButton;
+    private Button nextButton;
     private Button checkButton;
     private Label timerLabel;
  
@@ -142,9 +144,21 @@ public class GameView {
         }
     
         // ===== チェックボタン（下）=====
+        prevButton = new Button("<");
+        prevButton.setPrefHeight(36);
+        prevButton.setPrefWidth(48);
+
+        nextButton = new Button(">");
+        nextButton.setPrefHeight(36);
+        nextButton.setPrefWidth(48);
+
         checkButton = new Button("確認");
-        checkButton.setMaxWidth(Double.MAX_VALUE);
+        checkButton.setMaxWidth(Double.MAX_VALUE);  // 残りの幅を全部占有
         checkButton.setPrefHeight(36);
+
+        HBox bottomRow = new HBox(prevButton, nextButton, checkButton);
+        HBox.setHgrow(checkButton, javafx.scene.layout.Priority.ALWAYS);  // checkButtonを伸ばす
+        bottomRow.setSpacing(0);
     
         // ===== 全体レイアウト =====
         //
@@ -158,7 +172,7 @@ public class GameView {
         HBox midRow = new HBox(hintPanelSide, gridPanel);
         midRow.setSpacing(0);
     
-        VBox root = new VBox(topRow, midRow, checkButton);
+        VBox root = new VBox(topRow, midRow, bottomRow);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
     
@@ -249,6 +263,14 @@ public class GameView {
  
     public Button getCheckButton() {
         return checkButton;
+    }
+
+    public Button getPrevButton() {
+        return prevButton;
+    }
+
+    public Button getNextButton() {
+        return nextButton;
     }
 }
  

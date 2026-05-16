@@ -78,6 +78,27 @@ public class Grid {
         }
     }
 
+    public Grid copy(){
+        Grid copyGrid = new Grid(this.sizeX, this.sizeY);
+
+        for (int x = 0; x < this.sizeX; x++) {
+            for (int y = 0; y < this.sizeY; y++) {
+                switch (this.cells[x][y].getState()) {
+                    case CellState.EMPTY:
+                        copyGrid.setCellAt(x, y, CellState.EMPTY);
+                        break;
+                    case CellState.MARKED:
+                        copyGrid.setCellAt(x, y, CellState.MARKED);
+                        break;
+                    case CellState.FILLED:
+                        copyGrid.setCellAt(x, y, CellState.FILLED);
+                        break;
+                }
+            }
+        }
+        return copyGrid;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

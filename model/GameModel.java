@@ -4,6 +4,7 @@ public class GameModel {
 
     private Puzzle puzzle;
     private Grid grid;
+    private GridLog gridLog;
 
     // コンストラクタ
     public GameModel(Puzzle puzzle) {
@@ -17,6 +18,8 @@ public class GameModel {
                 grid.setCellAt(x, y, CellState.EMPTY);
             }
         }
+
+        this.gridLog = new GridLog(grid);
     }
 
     // Puzzle取得
@@ -67,5 +70,23 @@ public class GameModel {
 
     public void setGrid(Grid grid) {
         this.grid = grid;
+    }
+
+    public void pushGridLog(){
+        this.gridLog.push(this.grid);
+        this.grid = this.gridLog.get();
+    }
+    
+    public void undoGridLog(){
+        this.gridLog.undo();
+        this.grid = this.gridLog.get();
+    }
+    
+    public void redoGridLog(){
+        this.gridLog.redo();
+    }
+    
+    public Grid getCurrentLog(){
+        return this.gridLog.get();
     }
 }

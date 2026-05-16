@@ -1,9 +1,5 @@
 package Nonogram.model;
 
-/**
- * ゲーム中の経過時間を管理するクラス
- * 太田
- */
 public class Timer {
 
 
@@ -26,12 +22,7 @@ public class Timer {
         return timeCount;
     }
 
-    /**
-     * 現在の経過秒数を取得する
-     * 
-     * @return 経過秒数
-     */
-    public int getTickSeconds() {
+    public int getElapsedSeconds() {
         return timeCount;
     }
 }

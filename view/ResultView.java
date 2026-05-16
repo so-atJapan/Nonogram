@@ -13,10 +13,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-/**
- * リザルト画面を表示するViewクラス
- * 太田
- */
 public class ResultView {
 
     private Stage stage;
@@ -26,20 +22,10 @@ public class ResultView {
 
     private final int CELLSIZE = 24;
 
-    /**
-     * コンストラクタ
-     * 
-     * @param stage 画面表示に使用するStage
-     */
     public ResultView(Stage stage) {
         this.stage = stage;
     }
 
-    /**
-     * リザルト画面の部品を生成する
-     * 
-     * @param model リザルト画面で表示するデータ
-     */
     public void initialize(ResultModel model) {
         Label titleLabel = new Label("クリア");
         titleLabel.setFont(new Font(28));
@@ -64,21 +50,10 @@ public class ResultView {
         scene = new Scene(root);
     }
 
-    /**
-     * リザルト情報を画面に反映する
-     * 
-     * @param result 表示するリザルトデータ
-     */
     public void displayResult(ResultModel result) {
         updateTimer(result.getTickSeconds());
     }
 
-    /**
-     * 完成したノノグラムの盤面を生成する
-     * 
-     * @param grid 完成時の盤面
-     * @return 盤面表示用のGridPane
-     */
     private GridPane createCompletedGrid(Grid grid) {
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
@@ -103,9 +78,6 @@ public class ResultView {
         return gridPane;
     }
 
-    /**
-     * リザルト画面をStageに表示する
-     */
     public void render() {
         stage.setTitle("Nonogram Result");
         stage.setScene(scene);
@@ -115,11 +87,6 @@ public class ResultView {
         stage.show();
     }
 
-    /**
-     * 経過時間の表示を更新する
-     * 
-     * @param totalSeconds クリアまでにかかった秒数
-     */
     public void updateTimer(int totalSeconds) {
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
@@ -127,11 +94,6 @@ public class ResultView {
 
     }
 
-    /**
-     * 問題リストに戻るボタンを取得する
-     * 
-     * @return 問題リストに戻るボタン
-     */
     public Button showHomeButton() {
         return backButton;
     }

@@ -14,9 +14,6 @@ import javafx.util.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * ゲーム画面の操作と判定を管理するコントローラクラス
- */
 public class GameController {
 
     private GameModel model;
@@ -38,7 +35,6 @@ public class GameController {
      *
      * @param model 
      * @param view  
-     * @param appController 画面遷移を管理するコントローラ
      */
     public GameController(GameModel model, GameView view, AppController appController) {
         this.model = model;
@@ -123,12 +119,20 @@ public class GameController {
                 button.setOnMouseReleased(e -> {
                     dragAction = null;
                     draggedCells.clear();
+
+                    model.pushGridLog();
                 });
             }
         }
 
         // リセットボタン
         // view.getResetButton().addActionListener(e -> onReset());
+
+        // undoボタン
+        view.getPrevButton().setOnAction(e -> onUndo());
+
+        // redoボタン
+        view.getNextButton().setOnAction(e -> onRedo());
 
         // チェックボタン
         view.getCheckButton().setOnAction(e -> onJudge());
@@ -193,18 +197,27 @@ public class GameController {
     /**
      * チェックボタンが押されたときの処理。
      */
-    /**
-     * チェックボタンが押されたときの処理
-     * 正解の場合はリザルト画面に必要なデータをAppControllerへ渡す
-     */
     public void onJudge() {
         boolean result = model.check();
         if (result) {
             timeline.stop();
-            appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getTickSeconds());
+            appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getElapsedSeconds());
             appController.navigateTo("result");
         } else {
             view.showResult(false);
         }
     }
+
+    public void onUndo(){
+        model.undoGridLog();
+        model.setGrid(model.getCurrentLog().copy());
+        view.updateCellAll(model.getGrid());
+    }
+
+    public void onRedo(){
+        model.redoGridLog();
+        model.setGrid(model.getCurrentLog().copy());
+        view.updateCellAll(model.getGrid());
+    }
+
 }
