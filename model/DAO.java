@@ -8,20 +8,20 @@ public class DAO {
     private final String DB_PATH = "jdbc:sqlite:src\\Nonogram\\model\\Nonogram.DB";
 
     private final String SELECT_ALL_PUZZLES =
-        "SELECT\r\n" + //
-        "    p.puzzle_id,\r\n" + //
-        "    p.title,\r\n" + //
-        "    p.grid_size_x,\r\n" + //
-        "    p.grid_size_y,\r\n" + //
-        "    d.difficulty_name AS difficulty,\r\n" + //
-        "    p.is_public,\r\n" + //
-        "    p.created_at,\r\n" + //
-        "    p.created_by,\r\n" + //
-        "    p.solution,\r\n" + //
-        "    p.clue_row,\r\n" + //
-        "    p.clue_col\r\n" + //
-        "FROM puzzles p\r\n" + //
-        "JOIN difficulty d\r\n" + //
+        "SELECT" +
+        "    p.puzzle_id," +
+        "    p.title," +
+        "    p.grid_size_x," +
+        "    p.grid_size_y," +
+        "    d.difficulty_name AS difficulty," +
+        "    p.is_public," +
+        "    p.created_at," +
+        "    p.created_by," +
+        "    p.solution," +
+        "    p.clue_row," +
+        "    p.clue_col" +
+        "FROM puzzles p" +
+        "JOIN difficulty d" +
         "    ON p.difficulty_id = d.difficulty_id;";
 
     private final String UPDATE_PUZZLE =
@@ -42,6 +42,9 @@ public class DAO {
         "    clue_row = ?, " +
         "    clue_col = ? " +
         "WHERE puzzle_id = ?";
+
+    private final String SELECT_PASSWORD_HASH =
+    "SELECT password_hash FROM players WHERE e_mail = ?";
 
     public  ArrayList<Puzzle> getPuzzleAll(){
         ArrayList<Puzzle> puzzleList = new ArrayList<Puzzle>();
@@ -100,6 +103,27 @@ public class DAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getPasswordHash(String email) {
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(SELECT_PASSWORD_HASH);
+        ) {
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("password_hash");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }

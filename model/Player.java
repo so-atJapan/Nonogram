@@ -25,7 +25,7 @@ public class Player extends GuestPlayer{
      * @param password
      * @return 正しければtrue
      */
-    public boolean login(String password) {
+    public boolean login(String email, String password) {
 
         String hashAlgorithm = "SHA-256";
         StringBuffer stringBuffer = new StringBuffer();
@@ -45,7 +45,7 @@ public class Player extends GuestPlayer{
 		}
 
         String reqPass = stringBuffer.toString();
-        String checkPass = this.dao.getPassWordHash();
+        String checkPass = this.dao.getPasswordHash(email);
         if (reqPass.equals(checkPass)) {
             System.out.println("ログイン成功");
             return true;
