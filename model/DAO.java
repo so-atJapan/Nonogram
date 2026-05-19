@@ -18,9 +18,9 @@ public class DAO {
         "    p.created_at," +
         "    p.created_by," +
         "    p.solution," +
-        "    p.clue_row," +
-        "    p.clue_col" +
-        "FROM puzzles p" +
+        "    p.clue_row, " +
+        "    p.clue_col " +
+        "FROM puzzles p " +
         "JOIN difficulty d" +
         "    ON p.difficulty_id = d.difficulty_id;";
 

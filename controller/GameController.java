@@ -22,7 +22,7 @@ public class GameController {
     private GameModel model;
     private GameView view;
     private AppController appController;
-    Timer timer = new Timer();
+    private Timer timer = new Timer();
     private Timeline timeline;
     private int startX;
     private int startY;
@@ -74,6 +74,10 @@ public class GameController {
                         onCellLeftClicked(finalX, finalY);
                     } else if (e.getButton() == MouseButton.SECONDARY) {
                         onCellRightClicked(finalX, finalY);
+                    } else if (e.getButton() == MouseButton.BACK) {
+                        onUndo();
+                    } else if (e.getButton() == MouseButton.FORWARD) {
+                        onRedo();
                     }
                 });
 
@@ -124,6 +128,7 @@ public class GameController {
                     dragAction = null;
                     draggedCells.clear();
 
+                    if(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)
                     model.pushGridLog();
                 });
             }
