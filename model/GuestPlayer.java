@@ -1,5 +1,18 @@
 package Nonogram.model;
 
-public class GuestPlayer {
-    public void play() {}
+public class GuestPlayer extends Player {
+
+    public GuestPlayer(){
+        super("No Name");
+    }
+    
+    @Override
+    public int getPlayerId() {
+        return 0;
+    }
+
+    @Override
+    public String getEMail() {
+        return null;
+    }
 }
