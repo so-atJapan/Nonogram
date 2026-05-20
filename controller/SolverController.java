@@ -4,6 +4,7 @@ package Nonogram.controller;
 import Nonogram.model.CellState;
 import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
+import Nonogram.model.Solver;
 import Nonogram.model.SolverModel;
 import Nonogram.model.Timer;
 import Nonogram.view.GameView;
@@ -218,6 +219,11 @@ public class SolverController {
         // } else {
         //     view.showResult(false);
         // }
+
+        Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
+        solver.solveStepByStep();
+        model.setGrid(solver.getGrid());
+        view.updateCellAll(solver.getGrid());
     }
 
     public void onUndo(){
