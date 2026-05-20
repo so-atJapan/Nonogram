@@ -1,14 +1,27 @@
 package Nonogram.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import Nonogram.model.CellState;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleEditorModel;
 import Nonogram.view.PuzzleEditorView;
+import javafx.scene.input.MouseButton;
 
 public class PuzzleEditorController {
 
     private PuzzleEditorModel model;
     private PuzzleEditorView view;
+
+    private int startX;
+    private int startY;
+
+    // ドラッグ中に適用するアクション（FILLED or MARKED or EMPTY）
+    private CellState dragAction = null;
+    // ドラッグ中に処理済みのセルを記録
+    private final Set<String> draggedCells = new HashSet<>();
+
 
     /**
      * コンストラクタ
@@ -29,18 +42,10 @@ public class PuzzleEditorController {
     public void initialize() {
         // PuzzleのデータをViewに渡す
         view.initialize(model.getPuzzle());
+
+
+        bindAllCellEvents();
         
-        // 左クリック
-        // 画面ボタン
-        // ボタンを押したら受け取る
-        Puzzle puzzle = model.getPuzzle();
-        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
-            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
-                int finalX = x;
-                int finalY = y;
-                view.getButtons()[finalX][finalY].setOnAction(e -> onCellClicked(finalX, finalY));
-            }
-        }
         
         // リセットボタン
         // view.getResetButton().setOnAction(e -> onReset());
@@ -64,9 +69,25 @@ public class PuzzleEditorController {
      *
      * @param x クリックされたセルのX座標
      * @param y クリックされたセルのY座標
+     * @return  更新後のセルの状態を返す
      */
-    public void onCellClicked(int x, int y) {
+    public CellState onCellLeftClicked(int x, int y) {
+        
         model.toggle(x, y, CellState.FILLED);
+        view.updateCell(x, y, model.getGrid());
+
+        return model.getGrid().getCellAt(x, y).getState();
+    }
+
+    /**
+     * ドラッグ中に確定済みアクションをセルへ適用する
+     *
+     * @param x 適用するセルのX座標
+     * @param y 適用するセルのY座標
+     */
+    private void applyDragAction(int x, int y) {
+        if (dragAction == null) return;
+        model.setState(x, y, dragAction);
         view.updateCell(x, y, model.getGrid());
     }
 
@@ -81,16 +102,21 @@ public class PuzzleEditorController {
         view.gridReSize(model.getGrid());
         view.settingConfirm();
 
-        Puzzle puzzle = model.getPuzzle();
-        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
-            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
-                int finalX = x;
-                int finalY = y;
-                view.getButtons()[finalX][finalY].setOnAction(e -> onCellClicked(finalX, finalY));
-            }
-        }
+        bindAllCellEvents();
 
         view.render();
+    }
+
+    public void onUndo(){
+        model.undoGridLog();
+        model.setGrid(model.getCurrentLog().copy());
+        view.updateCellAll(model.getGrid());
+    }
+
+    public void onRedo(){
+        model.redoGridLog();
+        model.setGrid(model.getCurrentLog().copy());
+        view.updateCellAll(model.getGrid());
     }
 
     /**
@@ -106,5 +132,71 @@ public class PuzzleEditorController {
      */
     public void onCheck() {
         model.updateDB();
+    }
+
+    // 全イベントをまとめて設定するメソッド
+    private void bindAllCellEvents() {
+        Puzzle puzzle = model.getPuzzle();
+        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
+            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
+                int finalX = x;
+                int finalY = y;
+
+                var button = view.getButtons()[finalX][finalY];
+
+                // クリック（単体操作用）
+                button.setOnMouseClicked(e -> {
+                    if (e.getButton() == MouseButton.PRIMARY) {
+                        onCellLeftClicked(finalX, finalY);
+                    } else if (e.getButton() == MouseButton.BACK) {
+                        onUndo();
+                    } else if (e.getButton() == MouseButton.FORWARD) {
+                        onRedo();
+                    }
+                });
+
+                // ドラッグ開始
+                button.setOnDragDetected(e -> {
+
+                    // スタート位置を保存
+                    startX = finalX;
+                    startY = finalY;
+
+                    // 開始セルをtoggleし、その結果をドラッグ中のアクションとして固定
+                    if (e.isPrimaryButtonDown()) {
+                        dragAction = onCellLeftClicked(finalX, finalY);
+                    }
+
+                    draggedCells.clear();
+                    draggedCells.add(finalX + "," + finalY);
+
+                    // フルドラッグ開始
+                    button.startFullDrag();
+                });
+
+                // ドラッグ中にマスへ入ったとき
+                button.setOnMouseDragEntered(e -> {
+
+                    // 直線判定（縦 or 横のみ許可、斜めは禁止）
+                    int dx = finalX - startX;
+                    int dy = finalY - startY;
+
+                    // 同一セルへの重複適用を防止
+                    if (dx != 0 && dy != 0) return;
+                    String key = finalX + "," + finalY;
+                    if (draggedCells.contains(key)) return;
+                    draggedCells.add(key);
+                    applyDragAction(finalX, finalY);
+                });
+
+                // ドラッグ終了時にリセット
+                button.setOnMouseReleased(e -> {
+                    dragAction = null;
+                    draggedCells.clear();
+                    if (e.getButton() == MouseButton.PRIMARY)
+                        model.pushGridLog();
+                });
+            }
+        }
     }
 }

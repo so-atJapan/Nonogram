@@ -1,15 +1,13 @@
 package Nonogram.model;
 
-public class PuzzleEditorModel {
+public class SolverModel {
 
     private Puzzle puzzle;
     private Grid grid;
     private GridLog gridLog;
 
-    private static DAO dao = new DAO();
-
     // コンストラクタ
-    public PuzzleEditorModel(Puzzle puzzle) {
+    public SolverModel(Puzzle puzzle) {
         this.puzzle = puzzle;
 
         // 初期化
@@ -17,14 +15,7 @@ public class PuzzleEditorModel {
 
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
-                switch (puzzle.getSolution().getCellAt(x, y).getState()) {
-                    case FILLED:
-                        grid.setCellAt(x, y, CellState.FILLED);
-                        break;
-                    default:
-                        grid.setCellAt(x, y, CellState.EMPTY);
-                        break;
-                }
+                grid.setCellAt(x, y, CellState.EMPTY);
             }
         }
 
@@ -46,28 +37,22 @@ public class PuzzleEditorModel {
         grid.getCellAt(x, y).toggle(cellState);
     }
 
-    //グリッド更新
-    public void gridReSize(){
-        Grid reSizedGrid = new Grid(puzzle.getGridSizeX(), puzzle.getGridSizeY());
-        Grid oldGrid = this.grid;
+    // 正誤判定
+    public boolean check() {
+        Grid solution = puzzle.getSolution();
 
-        for (int x = 0; x < oldGrid.getSizeX(); x++) {
-            for (int y = 0; y < oldGrid.getSizeY(); y++) {
+        for (int x = 0; x < solution.getSizeX(); x++) {
+            for (int y = 0; y < solution.getSizeY(); y++) {
 
-                if(x >= reSizedGrid.getSizeX() || y >= reSizedGrid.getSizeY()) continue;
+                boolean shouldBeFilled = solution.getCellAt(x, y).getState() == CellState.FILLED;
+                boolean isFilled = grid.getCellAt(x, y).getState() == CellState.FILLED;
 
-                switch (oldGrid.getCellAt(x, y).getState()) {
-                    case FILLED:
-                        reSizedGrid.setCellAt(x, y, CellState.FILLED);
-                        break;
-                    default:
-                        reSizedGrid.setCellAt(x, y, CellState.EMPTY);
-                        break;
+                if (shouldBeFilled != isFilled) {
+                    return false;
                 }
             }
         }
-
-        this.grid = reSizedGrid;
+        return true;
     }
 
     // 盤面リセット
@@ -103,23 +88,5 @@ public class PuzzleEditorModel {
     
     public Grid getCurrentLog(){
         return this.gridLog.get();
-    }
-
-    public void updatePuzzleTitle(String title){
-        puzzle.setTitle(title);
-    }
-
-    public void updatePuzzleGridSizeX(int gridSizeX){
-        puzzle.setGridSizeX(gridSizeX);
-    }
-
-    public void updatePuzzleGridSizeY(int gridSizeY){
-        puzzle.setGridSizeY(gridSizeY);
-    }
-
-    public void updateDB(){
-        puzzle.setClue(Clue.fromGrid(this.grid));
-        puzzle.setSolution(this.grid);
-        dao.updatePuzzle(this.puzzle);
     }
 }
