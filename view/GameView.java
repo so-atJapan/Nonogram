@@ -190,20 +190,20 @@ public class GameView {
     }
  
     // セル更新（row, col の順で統一）
-    public void updateCell(int row, int col, Grid grid) {
-        Button btn = buttons[row][col];
+    public void updateCell(int x, int y, Grid grid) {
+        Button btn = buttons[x][y];
 
-        switch (grid.getCellAt(row, col).getState()) {
+        switch (grid.getCellAt(x, y).getState()) {
             case FILLED:
-                applyCellStyle(btn, "filled", row, col);  // ← 追加
+                applyCellStyle(btn, "filled", x, y);  // ← 追加
                 btn.setText("");
                 break;
             case MARKED:
-                applyCellStyle(btn, "marked", row, col);  // ← 追加
+                applyCellStyle(btn, "marked", x, y);  // ← 追加
                 btn.setText("✕");
                 break;
             default:
-                applyCellStyle(btn, "empty", row, col);   // ← 追加
+                applyCellStyle(btn, "empty", x, y);   // ← 追加
                 btn.setText("");
                 break;
         }

@@ -16,7 +16,7 @@ public class SolverMain extends Application{
         
         PuzzleList puzzleList = new PuzzleList();
         puzzleList.initialize();
-        Puzzle puzzle = puzzleList.getPuzzleList().get(2);
+        Puzzle puzzle = puzzleList.getPuzzleList().get(9);
 
         SolverModel solverModel = new SolverModel(puzzle);
         SolverView solverView = new SolverView(stage);

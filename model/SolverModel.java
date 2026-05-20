@@ -37,24 +37,6 @@ public class SolverModel {
         grid.getCellAt(x, y).toggle(cellState);
     }
 
-    // 正誤判定
-    public boolean check() {
-        Grid solution = puzzle.getSolution();
-
-        for (int x = 0; x < solution.getSizeX(); x++) {
-            for (int y = 0; y < solution.getSizeY(); y++) {
-
-                boolean shouldBeFilled = solution.getCellAt(x, y).getState() == CellState.FILLED;
-                boolean isFilled = grid.getCellAt(x, y).getState() == CellState.FILLED;
-
-                if (shouldBeFilled != isFilled) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     // 盤面リセット
     public void reset() {
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {

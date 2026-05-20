@@ -2,6 +2,7 @@ package Nonogram.controller;
 
 
 import Nonogram.model.CellState;
+import Nonogram.model.Clue;
 import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
 import Nonogram.model.Solver;
@@ -220,6 +221,8 @@ public class SolverController {
         //     view.showResult(false);
         // }
 
+        this.applyClue();
+
         Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
         solver.solveStepByStep();
         model.setGrid(solver.getGrid());
@@ -236,6 +239,14 @@ public class SolverController {
         model.redoGridLog();
         model.setGrid(model.getCurrentLog().copy());
         view.updateCellAll(model.getGrid());
+    }
+
+    private void applyClue(){
+        String rowClue = view.getRowClueFields();
+        String colClue = view.getColClueFields();
+
+        Clue clue = new Clue(rowClue, colClue);
+        model.getPuzzle().setClue(clue);
     }
 
 }

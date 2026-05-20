@@ -28,15 +28,15 @@ public class SolverView {
     private Button checkButton;
     private Label timerLabel;
 
-    // ヒント入力フィールド: [行インデックス][スロットインデックス（左→右、maxRowHintCols個固定）]
-    private TextField[][] rowHintFields;
-    // ヒント入力フィールド: [列インデックス][スロットインデックス（上→下、maxColHintRows個固定）]
-    private TextField[][] colHintFields;
+    // ヒント入力フィールド: [行インデックス][スロットインデックス（左→右、maxRowClueCols個固定）]
+    private TextField[][] rowClueFields;
+    // ヒント入力フィールド: [列インデックス][スロットインデックス（上→下、maxColClueRows個固定）]
+    private TextField[][] colClueFields;
 
     private int rows;
     private int cols;
-    private int maxRowHintCols;
-    private int maxColHintRows;
+    private int maxRowClueCols;
+    private int maxColClueRows;
 
     // ここだけ変えれば全体のサイズが変わる（ヒントもグリッドも同じ値で統一）
     private final int cellSize = 20;
@@ -52,71 +52,71 @@ public class SolverView {
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
 
-        ArrayList<ArrayList<Integer>> rowHints = puzzle.getClue().getRowClues();
-        ArrayList<ArrayList<Integer>> colHints = puzzle.getClue().getColClues();
+        ArrayList<ArrayList<Integer>> rowClues = puzzle.getClue().getRowClues();
+        ArrayList<ArrayList<Integer>> colClues = puzzle.getClue().getColClues();
 
         // ヒントの最大数から左・上のヒントエリアサイズを決定
-        maxColHintRows = colHints.stream().mapToInt(ArrayList::size).max().orElse(1);
-        maxRowHintCols = rowHints.stream().mapToInt(ArrayList::size).max().orElse(1);
+        maxColClueRows = colClues.stream().mapToInt(ArrayList::size).max().orElse(1);
+        maxRowClueCols = rowClues.stream().mapToInt(ArrayList::size).max().orElse(1);
 
         // すべて cellSize 単位で計算
-        int hintAreaWidth  = maxRowHintCols * cellSize; // 左ヒントエリアの幅
-        int hintAreaHeight = maxColHintRows * cellSize; // 上ヒントエリアの高さ
+        int clueAreaWidth  = maxRowClueCols * cellSize; // 左ヒントエリアの幅
+        int clueAreaHeight = maxColClueRows * cellSize; // 上ヒントエリアの高さ
 
         // ===== 左上コーナー（タイマー）=====
         timerLabel = new Label("00:00");
-        timerLabel.setPrefSize(hintAreaWidth, hintAreaHeight);
+        timerLabel.setPrefSize(clueAreaWidth, clueAreaHeight);
         timerLabel.setAlignment(Pos.CENTER);
         timerLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
         // ===== 列ヒント（上）=====
-        // 各列を maxColHintRows 個の TextField（上→下）で統一
-        colHintFields = new TextField[cols][maxColHintRows];
-        HBox hintPanelTop = new HBox();
-        hintPanelTop.setSpacing(0);
+        // 各列を maxClueRows 個の TextField（上→下）で統一
+        colClueFields = new TextField[cols][maxColClueRows];
+        HBox cluePanelTop = new HBox();
+        cluePanelTop.setSpacing(0);
 
         for (int col = 0; col < cols; col++) {
             VBox colBox = new VBox();
-            colBox.setPrefSize(cellSize, hintAreaHeight);
+            colBox.setPrefSize(cellSize, clueAreaHeight);
             colBox.setAlignment(Pos.BOTTOM_CENTER);
             colBox.setSpacing(0);
 
-            ArrayList<Integer> hints = colHints.get(col);
-            int padding = maxColHintRows - hints.size();
+            ArrayList<Integer> clues = colClues.get(col);
+            int padding = maxColClueRows - clues.size();
 
-            for (int slot = 0; slot < maxColHintRows; slot++) {
+            for (int slot = 0; slot < maxColClueRows; slot++) {
                 // slot < padding の間は空白マス、以降は実際のヒント値
-                String initialValue = (slot < padding) ? "" : String.valueOf(hints.get(slot - padding));
-                TextField tf = createHintField(initialValue);
-                colHintFields[col][slot] = tf;
+                String initialValue = (slot < padding) ? "" : String.valueOf(clues.get(slot - padding));
+                TextField tf = createClueField(initialValue);
+                colClueFields[col][slot] = tf;
                 colBox.getChildren().add(tf);
             }
-            hintPanelTop.getChildren().add(colBox);
+            cluePanelTop.getChildren().add(colBox);
         }
 
         // ===== 行ヒント（左）=====
-        // 各行を maxRowHintCols 個の TextField（左→右）で統一
-        rowHintFields = new TextField[rows][maxRowHintCols];
-        VBox hintPanelSide = new VBox();
-        hintPanelSide.setSpacing(0);
+        // 各行を maxClueCols 個の TextField（左→右）で統一
+        rowClueFields = new TextField[rows][maxRowClueCols];
+        VBox cluePanelSide = new VBox();
+        cluePanelSide.setSpacing(0);
 
         for (int row = 0; row < rows; row++) {
             HBox rowBox = new HBox();
-            rowBox.setPrefSize(hintAreaWidth, cellSize);
+            rowBox.setPrefSize(clueAreaWidth, cellSize);
             rowBox.setAlignment(Pos.CENTER_RIGHT);
             rowBox.setSpacing(0);
 
-            ArrayList<Integer> hints = rowHints.get(row);
-            int padding = maxRowHintCols - hints.size();
+            ArrayList<Integer> clues = rowClues.get(row);
+            int padding = maxRowClueCols - clues.size();
 
-            for (int slot = 0; slot < maxRowHintCols; slot++) {
+            for (int slot = 0; slot < maxRowClueCols; slot++) {
                 // slot < padding の間は空白マス、以降は実際のヒント値
-                String initialValue = (slot < padding) ? "" : String.valueOf(hints.get(slot - padding));
-                TextField tf = createHintField(initialValue);
-                rowHintFields[row][slot] = tf;
+                String initialValue = (slot < padding) ? "" : String.valueOf(clues.get(slot - padding));
+                TextField tf = createClueField(initialValue);
+                rowClueFields[row][slot] = tf;
                 rowBox.getChildren().add(tf);
             }
-            hintPanelSide.getChildren().add(rowBox);
+            cluePanelSide.getChildren().add(rowBox);
         }
 
         // ===== グリッド =====
@@ -153,14 +153,14 @@ public class SolverView {
 
         // ===== 全体レイアウト =====
         //
-        //  [ cornerLabel   | hintPanelTop  ]
-        //  [ hintPanelSide | gridPanel     ]
+        //  [ cornerLabel   | cluePanelTop  ]
+        //  [ cluePanelSide | gridPanel     ]
         //  [   bottomRow（全幅）           ]
         //
-        HBox topRow = new HBox(timerLabel, hintPanelTop);
+        HBox topRow = new HBox(timerLabel, cluePanelTop);
         topRow.setSpacing(0);
 
-        HBox midRow = new HBox(hintPanelSide, gridPanel);
+        HBox midRow = new HBox(cluePanelSide, gridPanel);
         midRow.setSpacing(0);
 
         VBox root = new VBox(topRow, midRow, bottomRow);
@@ -176,7 +176,7 @@ public class SolverView {
      * - Enter キーまたはフォーカスアウト時に確定（不正値は空欄に戻す）
      * - 空欄は「ヒントなし」を意味する（0 への補正はしない）
      */
-    private TextField createHintField(String initialValue) {
+    private TextField createClueField(String initialValue) {
         TextField tf = new TextField(initialValue);
         tf.setPrefSize(cellSize, cellSize);
         tf.setAlignment(Pos.CENTER);
@@ -292,47 +292,40 @@ public class SolverView {
     public Button getPrevButton() { return prevButton; }
     public Button getNextButton() { return nextButton; }
 
-    /**
-     * 行ヒントの全 TextField を返す。
-     * rowHintFields[row][slot]  slot: 0=左端 〜 maxRowHintCols-1=右端
-     * 空欄（""）はそのスロットにヒントなしを意味する。
-     */
-    public TextField[][] getRowHintFields() { return rowHintFields; }
+    public String getRowClueFields() {
+        StringBuilder sb = new StringBuilder();
 
-    /**
-     * 列ヒントの全 TextField を返す。
-     * colHintFields[col][slot]  slot: 0=上端 〜 maxColHintRows-1=下端
-     * 空欄（""）はそのスロットにヒントなしを意味する。
-     */
-    public TextField[][] getColHintFields() { return colHintFields; }
-
-    /**
-     * 指定行のヒント値リストを返す（空欄スロットは除外）。
-     * Controller 側で Clue を再構築する際に使用する。
-     */
-    public ArrayList<Integer> getRowHintValues(int row) {
-        ArrayList<Integer> values = new ArrayList<>();
-        for (int slot = 0; slot < maxRowHintCols; slot++) {
-            String text = rowHintFields[row][slot].getText().trim();
-            if (!text.isEmpty()) {
-                values.add(Integer.parseInt(text));
+        for (int row = 0; row < rows; row++) {
+            StringBuilder rowLine = new StringBuilder();
+            for (int slot = 0; slot < maxRowClueCols; slot++) {
+                String val = rowClueFields[row][slot].getText().trim();
+                if (!val.isEmpty()) {
+                    if (rowLine.length() > 0) rowLine.append(",");
+                    rowLine.append(val);
+                }
             }
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(rowLine.length() > 0 ? rowLine.toString() : "0");
         }
-        return values;
+        return sb.toString();
     }
 
-    /**
-     * 指定列のヒント値リストを返す（空欄スロットは除外）。
-     * Controller 側で Clue を再構築する際に使用する。
-     */
-    public ArrayList<Integer> getColHintValues(int col) {
-        ArrayList<Integer> values = new ArrayList<>();
-        for (int slot = 0; slot < maxColHintRows; slot++) {
-            String text = colHintFields[col][slot].getText().trim();
-            if (!text.isEmpty()) {
-                values.add(Integer.parseInt(text));
+    public String getColClueFields() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int col = 0; col < cols; col++) {
+            StringBuilder colLine = new StringBuilder();
+            for (int slot = 0; slot < maxColClueRows; slot++) {
+                String val = colClueFields[col][slot].getText().trim();
+                if (!val.isEmpty()) {
+                    if (colLine.length() > 0) colLine.append(",");
+                    colLine.append(val);
+                }
             }
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(colLine.length() > 0 ? colLine.toString() : "0");
         }
-        return values;
+        return sb.toString();
     }
+
 }

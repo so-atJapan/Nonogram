@@ -37,6 +37,9 @@ public class PuzzleEditorView {
     private Label timerLabel;
 
     private HBox midRow;
+
+    private int rows;
+    private int cols;
  
     // ここだけ変えれば全体のサイズが変わる（ヒントもグリッドも同じ値で統一）
     private final int cellSize = 20;
@@ -52,23 +55,24 @@ public class PuzzleEditorView {
         this.semiModal = new SemiModal(this.stage);
         this.semiModal.initialize(puzzle);
 
-
+        this.rows = puzzle.getGridSizeX();
+        this.cols = puzzle.getGridSizeY();
     
         // ===== グリッド =====
         gridPanel = new GridPane();
         buttons = new Button[puzzle.getGridSizeX()][puzzle.getGridSizeY()];
     
-        for (int row = 0; row < puzzle.getGridSizeX(); row++) {
-            for (int col = 0; col < puzzle.getGridSizeY(); col++) {
+        for (int x = 0; x < puzzle.getGridSizeX(); x++) {
+            for (int y = 0; y < puzzle.getGridSizeY(); y++) {
                 Button btn = new Button();
                 btn.setPrefSize(cellSize, cellSize);
                 btn.setFocusTraversable(false);
-                applyCellStyle(btn, "empty");
+                applyCellStyle(btn, "empty", x, y);
                 
-                buttons[row][col] = btn;
-                gridPanel.add(btn, col, row);
+                buttons[x][y] = btn;
+                gridPanel.add(btn, y, x);
                 
-                updateCell(row, col, puzzle.getSolution());
+                updateCell(x, y, puzzle.getSolution());
             }
         }
     
@@ -137,15 +141,15 @@ public class PuzzleEditorView {
 
         switch (grid.getCellAt(x, y).getState()) {
             case FILLED:
-                applyCellStyle(btn, "filled");
+                applyCellStyle(btn, "filled", x, y);
                 btn.setText("");
                 break;
             case MARKED:
-                applyCellStyle(btn, "marked");
+                applyCellStyle(btn, "marked", x, y);
                 btn.setText("✕");
                 break;
             default:
-                applyCellStyle(btn, "empty");
+                applyCellStyle(btn, "empty", x, y);
                 btn.setText("");
                 break;
         }
@@ -162,7 +166,7 @@ public class PuzzleEditorView {
                 Button btn = new Button();
                 btn.setPrefSize(cellSize, cellSize);
                 btn.setFocusTraversable(false);
-                applyCellStyle(btn, "empty");
+                applyCellStyle(btn, "empty", x, y);
                 
                 buttons[x][y] = btn;
                 gridPanel.add(btn, y, x);
@@ -185,12 +189,22 @@ public class PuzzleEditorView {
     }
  
     // セルスタイル適用
-    private void applyCellStyle(Button btn, String state) {
-        String base =
+    private void applyCellStyle(Button btn, String state, int row, int col) {
+        // 5マスごとに太い線（0行目・0列目も太く）
+        double top    = (row % 5 == 0) ? 2.0 : 0.5;
+        double left   = (col % 5 == 0) ? 2.0 : 0.5;
+        // 右端・下端も太く
+        double bottom = (row == rows - 1) ? 2.0 : 0.5;
+        double right  = (col == cols - 1) ? 2.0 : 0.5;
+
+        String border =
             "-fx-border-color: #555555;" +
-            "-fx-border-width: 1;" +
+            "-fx-border-width: " + top + " " + right + " " + bottom + " " + left + ";";
+
+        String base = border +
             "-fx-padding: 0;" +
             "-fx-font-size: 11px;";
+
         switch (state) {
             case "filled":
                 btn.setStyle(base + "-fx-background-color: #222222; -fx-text-fill: #222222;");
