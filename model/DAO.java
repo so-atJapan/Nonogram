@@ -72,7 +72,20 @@ public class DAO {
         "WHERE puzzle_id = ?";
 
     private final String SELECT_PASSWORD_HASH =
-    "SELECT password_hash FROM players WHERE e_mail = ?";
+        "SELECT password_hash FROM players WHERE e_mail = ?";
+
+    private final String INSERT_PLAYER = 
+        "INSERT INTO players ( " +
+        "    user_name, " +
+        "    password_hash, " +
+        "    e_mail " +
+        "    ) " +
+        "VALUES ( " +
+        "    ?, " +
+        "    ?, " +
+        "    ? " +
+        "    ); ";
+    
 
     public  ArrayList<Puzzle> getPuzzleAll(){
         ArrayList<Puzzle> puzzleList = new ArrayList<Puzzle>();
