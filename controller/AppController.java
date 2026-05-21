@@ -11,6 +11,7 @@ import Nonogram.model.SignupModel;
 import Nonogram.model.SolverModel;
 import Nonogram.view.GameView;
 import Nonogram.view.LoginView;
+import Nonogram.view.HomeView;
 import Nonogram.view.PuzzleEditorView;
 import Nonogram.view.PuzzleListView;
 import Nonogram.view.ResultView;
@@ -48,7 +49,7 @@ public class AppController {
      * 起動時の初期画面を表示する
      */
     public void initialize() {
-        navigateTo("list");
+        navigateTo("home");
     }
 
     /**
@@ -58,11 +59,23 @@ public class AppController {
      */
     public void navigateTo(String destination) {
         switch (destination) {
+            case "home":
+                showHome();
+                break;
+            case "login":
+                showSolver();
+                break;
+            case "signup":
+                showSolver();
+                break;
             case "list":
                 showPuzzleList();
                 break;
             case "game":
                 showGame();
+                break;
+            case "create":
+                showCreate();
                 break;
             case "editor":
                 showEditor();
@@ -73,25 +86,10 @@ public class AppController {
             case "solver":
                 showSolver();
                 break;
-            case "login":
-                showSolver();
-                break;
-            case "signup":
-                showSolver();
-                break;
             default:
                 showPuzzleList();
                 break;
         }
-    }
-
-    /**
-     * アプリ全体で使用しているStageを取得する
-     *
-     * @return 画面表示に使用するStage
-     */
-    public Stage getStage() {
-        return stage;
     }
 
     /**
@@ -114,6 +112,18 @@ public class AppController {
         this.pendingPuzzle = puzzle;
         this.completedGrid = completedGrid;
         this.tickSeconds = elapsedSeconds;
+    }
+
+    /**
+     * ホーム画面を生成して表示する
+     */
+    public void showHome() {
+
+        HomeView homeView = new HomeView(stage);
+
+        HomeController homeController = new HomeController(homeView, this);
+        homeController.initialize();
+
     }
 
     /**
@@ -142,14 +152,25 @@ public class AppController {
     }
 
     /**
+     * パズル作成画面を生成して表示する
+     */
+    public void showCreate() {
+        PuzzleEditorModel model = new PuzzleEditorModel();
+        PuzzleEditorView view = new PuzzleEditorView(stage);
+
+        puzzleEditorController = new PuzzleEditorController(model, view, this);
+        puzzleEditorController.initialize();
+    }
+
+    /**
      * パズル編集画面を生成して表示する
      */
     public void showEditor() {
         Puzzle target = this.pendingPuzzle;
-        PuzzleEditorModel model = new PuzzleEditorModel(target);  //TODO 新規作成の場合は引数なし
+        PuzzleEditorModel model = new PuzzleEditorModel(target);
         PuzzleEditorView view = new PuzzleEditorView(stage);
 
-        puzzleEditorController = new PuzzleEditorController(model, view);
+        puzzleEditorController = new PuzzleEditorController(model, view, this);
         puzzleEditorController.initialize();
     }
 
@@ -175,6 +196,7 @@ public class AppController {
         solverController.initialize();
     }
 
+
     /**
      * ログイン画面を生成してセミモーダルで表示する
      */
@@ -195,5 +217,9 @@ public class AppController {
  
         SignupController controller = new SignupController(model, view, this);
         controller.initialize();
+    }
+
+    public void exitGame(){
+        this.stage.close();
     }
 }

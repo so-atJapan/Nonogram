@@ -1,7 +1,5 @@
 package Nonogram.controller;
 
-import java.util.List;
-
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
 import Nonogram.view.PuzzleListView;

@@ -13,6 +13,7 @@ public class PuzzleEditorController {
 
     private PuzzleEditorModel model;
     private PuzzleEditorView view;
+    private AppController appController;
 
     private int startX;
     private int startY;
@@ -29,9 +30,10 @@ public class PuzzleEditorController {
      * @param model 
      * @param view  
      */
-    public PuzzleEditorController(PuzzleEditorModel model, PuzzleEditorView view) {
+    public PuzzleEditorController(PuzzleEditorModel model, PuzzleEditorView view, AppController appController) {
         this.model = model;
         this.view  = view;
+        this.appController = appController;
 
     }
 
@@ -132,6 +134,7 @@ public class PuzzleEditorController {
      */
     public void onCheck() {
         model.updateDB();
+        appController.navigateTo("home");
     }
 
     // 全イベントをまとめて設定するメソッド
