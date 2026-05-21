@@ -35,50 +35,6 @@ public class Clue {
         return temp2;
     }
 
-    public static Clue fromGrid(Grid grid) {
-    ArrayList<ArrayList<Integer>> aRowClues = new ArrayList<>();
-    ArrayList<ArrayList<Integer>> aColClues = new ArrayList<>();
-
-    // 行クルー（x行ごとに連続するFILLEDの数を数える）
-    for (int x = 0; x < grid.getSizeX(); x++) {
-        ArrayList<Integer> clue = new ArrayList<>();
-        int count = 0;
-        for (int y = 0; y < grid.getSizeY(); y++) {
-            if (grid.getCellAt(x, y).isFilled()) {
-                count++;
-            } else if (count > 0) {
-                clue.add(count);
-                count = 0;
-            }
-        }
-        if (count > 0) clue.add(count);
-        if (clue.isEmpty()) clue.add(0); // 全空の行は[0]
-        aRowClues.add(clue);
-    }
-
-    // 列クルー（y列ごとに連続するFILLEDの数を数える）
-    for (int y = 0; y < grid.getSizeY(); y++) {
-        ArrayList<Integer> clue = new ArrayList<>();
-        int count = 0;
-        for (int x = 0; x < grid.getSizeX(); x++) {
-            if (grid.getCellAt(x, y).isFilled()) {
-                count++;
-            } else if (count > 0) {
-                clue.add(count);
-                count = 0;
-            }
-        }
-        if (count > 0) clue.add(count);
-        if (clue.isEmpty()) clue.add(0);
-        aColClues.add(clue);
-    }
-
-    Clue result = new Clue(aRowClues, aColClues);
-    result.rowClues = aRowClues;
-    result.colClues = aColClues;
-    return result;
-    }
-
     public String rowToString(){
 
         StringBuilder sb = new StringBuilder();
