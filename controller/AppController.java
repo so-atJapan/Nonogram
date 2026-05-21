@@ -6,10 +6,12 @@ import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleEditorModel;
 import Nonogram.model.PuzzleList;
 import Nonogram.model.ResultModel;
+import Nonogram.model.SolverModel;
 import Nonogram.view.GameView;
 import Nonogram.view.PuzzleEditorView;
 import Nonogram.view.PuzzleListView;
 import Nonogram.view.ResultView;
+import Nonogram.view.SolverView;
 import javafx.stage.Stage;
 
 /**
@@ -61,6 +63,9 @@ public class AppController {
                 break;
             case "result":
                 showResult();
+                break;
+            case "solver":
+                showSolver();
                 break;
             default:
                 showPuzzleList();
@@ -120,7 +125,7 @@ public class AppController {
      */
     public void showEditor() {
         Puzzle target = this.pendingPuzzle;
-        PuzzleEditorModel model = new PuzzleEditorModel(target);
+        PuzzleEditorModel model = new PuzzleEditorModel(target);  //TODO 新規作成の場合は引数なし
         PuzzleEditorView view = new PuzzleEditorView(stage);
 
         puzzleEditorController = new PuzzleEditorController(model, view);
@@ -136,5 +141,16 @@ public class AppController {
 
         resultController = new ResultController(model, view, this);
         resultController.initialize();
+    }
+
+    /**
+     * ソルバー画面を生成して表示する
+     */
+    public void showSolver() {
+        SolverModel solverModel = new SolverModel(pendingPuzzle);
+        SolverView solverView = new SolverView(stage);
+
+        SolverController solverController  = new SolverController(solverModel, solverView, null);
+        solverController.initialize();
     }
 }

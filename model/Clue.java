@@ -36,8 +36,8 @@ public class Clue {
     }
 
     public static Clue fromGrid(Grid grid) {
-    ArrayList<ArrayList<Integer>> rowClues = new ArrayList<>();
-    ArrayList<ArrayList<Integer>> colClues = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> aRowClues = new ArrayList<>();
+    ArrayList<ArrayList<Integer>> aColClues = new ArrayList<>();
 
     // 行クルー（x行ごとに連続するFILLEDの数を数える）
     for (int x = 0; x < grid.getSizeX(); x++) {
@@ -53,7 +53,7 @@ public class Clue {
         }
         if (count > 0) clue.add(count);
         if (clue.isEmpty()) clue.add(0); // 全空の行は[0]
-        rowClues.add(clue);
+        aRowClues.add(clue);
     }
 
     // 列クルー（y列ごとに連続するFILLEDの数を数える）
@@ -70,12 +70,12 @@ public class Clue {
         }
         if (count > 0) clue.add(count);
         if (clue.isEmpty()) clue.add(0);
-        colClues.add(clue);
+        aColClues.add(clue);
     }
 
-    Clue result = new Clue(rowClues, colClues);
-    result.rowClues = rowClues;
-    result.colClues = colClues;
+    Clue result = new Clue(aRowClues, aColClues);
+    result.rowClues = aRowClues;
+    result.colClues = aColClues;
     return result;
     }
 

@@ -24,6 +24,34 @@ public class DAO {
         "JOIN difficulty d" +
         "    ON p.difficulty_id = d.difficulty_id;";
 
+    private final String INSERT_PUZZLE = 
+        "INSERT INTO puzzles ( " +
+        "    title, " +
+        "    grid_size_x, " +
+        "    grid_size_y, " +
+        "    difficulty_id, " +
+        "    is_public, " +
+        "    created_by, " +
+        "    solution, " +
+        "    clue_row, " +
+        "    clue_col " +
+        "    ) " +
+        "VALUES ( " +
+        "    ?, " +
+        "    ?, " +
+        "    ?, " +
+        "    ( " +
+        "        SELECT difficulty_id " +
+        "        FROM difficulty " +
+        "        WHERE difficulty_name = ? " +
+        "    ), " +
+        "    ?, " +
+        "    ?, " +
+        "    ?, " +
+        "    ?, " +
+        "    ? " +
+        "    ); ";
+
     private final String UPDATE_PUZZLE =
         "UPDATE puzzles " +
         "SET " +
@@ -76,6 +104,31 @@ public class DAO {
             System.out.println("呼出失敗");
         }
         return puzzleList;
+    }
+
+    public void setPuzzle(Puzzle puzzle){
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(INSERT_PUZZLE);
+        ){
+
+            ps.setString(1, puzzle.getTitle());
+            ps.setInt(2, puzzle.getGridSizeX());
+            ps.setInt(3, puzzle.getGridSizeY());
+            ps.setString(4, puzzle.getDifficulty().toString());
+            ps.setBoolean(5, puzzle.getIsPublic());
+            ps.setString(6, puzzle.getCreatedBy());
+            ps.setString(7, puzzle.getSolution().toString());
+            ps.setString(8, puzzle.getClue().rowToString());
+            ps.setString(9, puzzle.getClue().colToString());
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            System.out.println("更新失敗");
+        }
     }
 
     public void updatePuzzle(Puzzle puzzle){

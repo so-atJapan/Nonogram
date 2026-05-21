@@ -2,21 +2,22 @@ package Nonogram.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 //内田
 public class Puzzle {
 
    //属性
-   private int puzzleId;
-   private String title;
-   private int gridSizeX;
-   private int gridSizeY;
-   private Difficulty difficulty;
-   private boolean isPublic;
+   private int puzzleId = -1;
+   private String title = "No Title";
+   private int gridSizeX = 10;
+   private int gridSizeY = 10;
+   private Difficulty difficulty = Difficulty.NORMAL;
+   private boolean isPublic = true;  //TODO faulseに変更
    private LocalDateTime createdAt;
-   private String createdBy; //Playerクラス追加予定
-   private Grid solution;
-   private Clue clue;
+   private String createdBy = "No Name"; //TODO Playerクラス追加予定
+   private Grid solution = new Grid(10, 10);
+   private Clue clue = new Clue("0", "0");
 
 
    //ゲッター
@@ -42,6 +43,47 @@ public class Puzzle {
    public void setCreatedBy(String createdBy) {this.createdBy = createdBy;}
    public void setSolution(Grid solution) {this.solution = solution;}
    public void setClue(Clue clue) {this.clue = clue;}
+
+   public void setClue(Grid grid){
+      ArrayList<ArrayList<Integer>> aRowClues = new ArrayList<>();
+      ArrayList<ArrayList<Integer>> aColClues = new ArrayList<>();
+
+      // 行クルー（x行ごとに連続するFILLEDの数を数える）
+      for (int x = 0; x < grid.getSizeX(); x++) {
+         ArrayList<Integer> clue = new ArrayList<>();
+         int count = 0;
+         for (int y = 0; y < grid.getSizeY(); y++) {
+               if (grid.getCellAt(x, y).isFilled()) {
+                  count++;
+               } else if (count > 0) {
+                  clue.add(count);
+                  count = 0;
+               }
+         }
+         if (count > 0) clue.add(count);
+         if (clue.isEmpty()) clue.add(0); // 全空の行は[0]
+         aRowClues.add(clue);
+      }
+
+      // 列クルー（y列ごとに連続するFILLEDの数を数える）
+      for (int y = 0; y < grid.getSizeY(); y++) {
+         ArrayList<Integer> clue = new ArrayList<>();
+         int count = 0;
+         for (int x = 0; x < grid.getSizeX(); x++) {
+               if (grid.getCellAt(x, y).isFilled()) {
+                  count++;
+               } else if (count > 0) {
+                  clue.add(count);
+                  count = 0;
+               }
+         }
+         if (count > 0) clue.add(count);
+         if (clue.isEmpty()) clue.add(0);
+         aColClues.add(clue);
+      }
+
+      this.clue = new Clue(aRowClues, aColClues);
+   }
    
    
    public void setDifficulty(String difficulty) {

@@ -27,6 +27,7 @@ public class PuzzleListView{
 
     private Button[] selectButtons;
     private MenuItem[] editMenuItems;
+    private MenuItem[] solverMenuItems;
 
     public PuzzleListView(Stage stage){
         this.stage = stage;
@@ -45,6 +46,7 @@ public class PuzzleListView{
         selectButtons = new Button[length];
         ContextMenu[] contextMenus = new ContextMenu[length];
         editMenuItems = new MenuItem[length];
+        solverMenuItems = new MenuItem[length];
         MenuItem[] deleteMenuItems = new MenuItem[length];
         
         Menu menu1 = new Menu("メニュー");
@@ -79,9 +81,11 @@ public class PuzzleListView{
             selectButtons[index].setFont(new Font(20));
             editMenuItems[index] = new MenuItem("編集");
             editMenuItems[index].setStyle("-fx-font-size: 17px;");
+            solverMenuItems[index] = new MenuItem("ソルバー");
+            solverMenuItems[index].setStyle("-fx-font-size: 17px;");
             deleteMenuItems[index] = new MenuItem("削除");
             deleteMenuItems[index].setStyle("-fx-font-size: 17px;");
-            contextMenus[index] = new ContextMenu(editMenuItems[index], deleteMenuItems[index]);
+            contextMenus[index] = new ContextMenu(editMenuItems[index], solverMenuItems[index], deleteMenuItems[index]);
             selectButtons[index].setOnContextMenuRequested(e -> {
                 contextMenus[index].show(selectButtons[index], e.getScreenX(), e.getScreenY());
             });           
@@ -116,6 +120,7 @@ public class PuzzleListView{
     public Button[] getSelectButtons() {return selectButtons;}
     
     public MenuItem[] getEditMenuItems() {return editMenuItems;}
- 
+    
+    public MenuItem[] getSolverMenuItems() {return solverMenuItems;}
  
 }

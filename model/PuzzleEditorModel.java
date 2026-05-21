@@ -31,6 +31,11 @@ public class PuzzleEditorModel {
         this.gridLog = new GridLog(grid);
     }
 
+    //コンストラクタ
+    public PuzzleEditorModel(){
+        this(new Puzzle());
+    }
+
     // Puzzle取得
     public Puzzle getPuzzle() {
         return puzzle;
@@ -118,8 +123,18 @@ public class PuzzleEditorModel {
     }
 
     public void updateDB(){
-        puzzle.setClue(Clue.fromGrid(this.grid));
+        puzzle.setClue(this.grid);
         puzzle.setSolution(this.grid);
-        dao.updatePuzzle(this.puzzle);
+
+        
+        if(puzzle.getPuzzleId() == -1){
+
+            dao.setPuzzle(this.puzzle);
+
+        }else{
+    
+            dao.updatePuzzle(this.puzzle);
+
+        }
     }
 }

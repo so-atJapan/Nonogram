@@ -40,6 +40,11 @@ public class PuzzleListController {
             int index = i;
             view.getEditMenuItems()[index].setOnAction(e -> onEditPuzzle(puzzlelist.getPuzzleList().get(index)));
         }
+
+        for (int i = 0; i < view.getSolverMenuItems().length; i++) {
+            int index = i;
+            view.getSolverMenuItems()[index].setOnAction(e -> onSolverPuzzle(puzzlelist.getPuzzleList().get(index)));
+        }
         
         // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
     }
@@ -64,6 +69,16 @@ public class PuzzleListController {
     public void onEditPuzzle(Puzzle puzzle) {
         appController.setPendingPuzzle(puzzle);
         appController.navigateTo("editor");
+    }
+
+    /**
+     * ソルバー
+     * 
+     * @param puzzle
+     */
+    public void onSolverPuzzle(Puzzle puzzle) {
+        appController.setPendingPuzzle(puzzle);
+        appController.navigateTo("solver");
     }
 
     // /**
