@@ -3,143 +3,179 @@ package Nonogram.view;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- * サインアップ画面のViewクラス（セミモーダル）。
- * UIの生成・表示のみを担い、ロジックは持たない。
+ * サインアップ画面をセミモーダルで表示するViewクラス
  */
 public class SignupView {
 
     private Stage primaryStage;
-    private Stage modalStage;
+    private Stage dialogStage;
+    private Scene scene;
 
-    private TextField     nameField;
-    private TextField     emailField;
-    private PasswordField passField;
-    private PasswordField passConfirmField;
-    private Button        signupButton;
-    private Hyperlink     loginLink;
+    private TextField nameField;
+    private TextField emailField;
+    private PasswordField passwordField;
+    private PasswordField confirmPasswordField;
+    private Button signupButton;
+    private Button cancelButton;
+    private Hyperlink loginLink;
+    private Label messageLabel;
 
     /**
      * コンストラクタ
      *
-     * @param primaryStage 親ウィンドウ（セミモーダルのオーナー）
+     * @param primaryStage 親画面のStage
      */
     public SignupView(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
     /**
-     * UI部品を生成し、セミモーダルのStageを準備する。
-     * render() を呼ぶ前に必ず実行する。
+     * サインアップ画面の部品を生成する
      */
     public void initialize() {
-        modalStage = new Stage();
-        modalStage.initOwner(primaryStage);
-        modalStage.initModality(Modality.WINDOW_MODAL); // 親のみ操作不可 = セミモーダル
-        modalStage.setTitle("サインアップ");
-        modalStage.setResizable(false);
+        dialogStage = new Stage();
+        dialogStage.initOwner(primaryStage);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
 
-        // ---- 部品生成 ----
         Label titleLabel = new Label("サインアップ");
-        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 22));
+        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
 
-        Label nameLabel = new Label("ユーザー名");
         nameField = new TextField();
-        nameField.setPromptText("ニックネームを入力");
-        nameField.setPrefWidth(260);
+        nameField.setPromptText("ユーザー名");
 
-        Label emailLabel = new Label("メールアドレス");
         emailField = new TextField();
         emailField.setPromptText("example@email.com");
-        emailField.setPrefWidth(260);
 
-        Label passLabel = new Label("パスワード");
-        passField = new PasswordField();
-        passField.setPromptText("パスワードを入力");
-        passField.setPrefWidth(260);
+        passwordField = new PasswordField();
+        passwordField.setPromptText("パスワード");
 
-        Label passConfirmLabel = new Label("パスワード（確認）");
-        passConfirmField = new PasswordField();
-        passConfirmField.setPromptText("もう一度入力");
-        passConfirmField.setPrefWidth(260);
+        confirmPasswordField = new PasswordField();
+        confirmPasswordField.setPromptText("パスワード確認");
 
-        signupButton = new Button("アカウントを作成");
-        signupButton.setPrefWidth(260);
-        signupButton.setDefaultButton(true);
+        signupButton = new Button("作成");
+        cancelButton = new Button("キャンセル");
+        signupButton.setPrefWidth(120);
+        cancelButton.setPrefWidth(120);
 
-        Label guideLabel = new Label("すでにアカウントをお持ちの方");
-        guideLabel.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
-        loginLink = new Hyperlink("ログイン");
+        HBox buttonBox = new HBox(8, signupButton, cancelButton);
+        buttonBox.setAlignment(Pos.CENTER);
 
-        HBox linkBox = new HBox(4, guideLabel, loginLink);
-        linkBox.setAlignment(Pos.CENTER);
+        messageLabel = new Label("");
+        messageLabel.setTextFill(Color.FIREBRICK);
+        messageLabel.setWrapText(true);
 
-        // ---- レイアウト ----
-        VBox root = new VBox(10,
-            titleLabel,
-            nameLabel,        nameField,
-            emailLabel,       emailField,
-            passLabel,        passField,
-            passConfirmLabel, passConfirmField,
-            signupButton,
-            new Separator(),
-            linkBox
-        );
-        root.setPadding(new Insets(28, 32, 28, 32));
-        root.setAlignment(Pos.CENTER_LEFT);
+        Label guideLabel = new Label("アカウントをお持ちの方");
+        guideLabel.setStyle("-fx-text-fill: gray;");
+        loginLink = new Hyperlink("ログインへ");
 
-        modalStage.setScene(new Scene(root, 340, 488));
-        modalStage.setOnShown(e -> centerOnParent());
+        VBox root = new VBox(10, titleLabel, nameField, emailField, passwordField, confirmPasswordField, buttonBox,
+                messageLabel, guideLabel, loginLink);
+        root.setPadding(new Insets(24));
+        root.setAlignment(Pos.CENTER);
+
+        scene = new Scene(root, 360, 400);
     }
 
     /**
-     * セミモーダルを表示する（showAndWait）。
-     * 閉じるまで呼び出し元はブロックされる。
+     * サインアップ画面をセミモーダルで表示する
      */
     public void render() {
-        modalStage.showAndWait();
+        dialogStage.setTitle("Signup");
+        dialogStage.setScene(scene);
+        dialogStage.setResizable(false);
+        dialogStage.showAndWait();
     }
 
-    /** モーダルを閉じる */
+    /**
+     * サインアップ画面を閉じる
+     */
     public void close() {
-        if (modalStage != null) modalStage.close();
+        dialogStage.close();
     }
 
-    /** エラーダイアログを表示する */
-    public void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.initOwner(modalStage);
-        alert.setTitle("エラー");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    /**
+     * 入力されたユーザー名を取得する
+     *
+     * @return ユーザー名
+     */
+    public String getUserName() {
+        return nameField.getText();
     }
 
-    // ---- View固有のバリデーション ----
-    /** パスワードと確認用が一致するか */
-    public boolean isPasswordMatch() {
-        return passField.getText().equals(passConfirmField.getText());
+    /**
+     * 入力されたメールアドレスを取得する
+     *
+     * @return メールアドレス
+     */
+    public String getEmail() {
+        return emailField.getText();
     }
 
-    // ---- Getters ----
-    public String    getUserName()     { return nameField.getText().trim(); }
-    public String    getEmail()        { return emailField.getText().trim(); }
-    public String    getPassword()     { return passField.getText(); }
-    public Button    getSignupButton() { return signupButton; }
-    public Hyperlink getLoginLink()    { return loginLink; }
-    public Stage     getModalStage()   { return modalStage; }
+    /**
+     * 入力されたパスワードを取得する
+     *
+     * @return パスワード
+     */
+    public String getPassword() {
+        return passwordField.getText();
+    }
 
-    // ---- private ----
-    private void centerOnParent() {
-        modalStage.setX(primaryStage.getX() + (primaryStage.getWidth()  - modalStage.getWidth())  / 2);
-        modalStage.setY(primaryStage.getY() + (primaryStage.getHeight() - modalStage.getHeight()) / 2);
+    /**
+     * 入力された確認用パスワードを取得する
+     *
+     * @return 確認用パスワード
+     */
+    public String getConfirmPassword() {
+        return confirmPasswordField.getText();
+    }
+
+    /**
+     * サインアップボタンを取得する
+     *
+     * @return サインアップボタン
+     */
+    public Button getSignupButton() {
+        return signupButton;
+    }
+
+    /**
+     * キャンセルボタンを取得する
+     *
+     * @return キャンセルボタン
+     */
+    public Button getCancelButton() {
+        return cancelButton;
+    }
+
+    /**
+     * ログイン画面へのリンクを取得する
+     *
+     * @return ログインリンク
+     */
+    public Hyperlink getLoginLink() {
+        return loginLink;
+    }
+
+    /**
+     * サインアップ結果メッセージを表示する
+     *
+     * @param message 表示するメッセージ
+     */
+    public void showMessage(String message) {
+        messageLabel.setText(message);
     }
 }
