@@ -71,21 +71,19 @@ public class DAO {
         "    clue_col = ? " +
         "WHERE puzzle_id = ?";
 
-    private final String SELECT_PASSWORD_HASH =
-        "SELECT password_hash FROM players WHERE e_mail = ?";
 
-    private final String INSERT_PLAYER = 
-        "INSERT INTO players ( " +
-        "    user_name, " +
-        "    password_hash, " +
-        "    e_mail " +
-        "    ) " +
-        "VALUES ( " +
-        "    ?, " +
-        "    ?, " +
-        "    ? " +
-        "    ); ";
-    
+    private final String SELECT_LOGIN_PLAYER =
+    "SELECT player_id, user_name, e_mail " +
+    "FROM players " +
+    "WHERE e_mail = ? AND password_hash = ?";
+
+    private final String SELECT_PLAYER_BY_EMAIL =
+    "SELECT player_id, user_name, e_mail " +
+    "FROM players " +
+    "WHERE e_mail = ?";
+
+    private final String INSERT_PLAYER =
+    "INSERT INTO players (user_name, password_hash, e_mail) VALUES (?, ?, ?)";
 
     public  ArrayList<Puzzle> getPuzzleAll(){
         ArrayList<Puzzle> puzzleList = new ArrayList<Puzzle>();
@@ -170,18 +168,30 @@ public class DAO {
             e.printStackTrace();
         }
     }
-
-    public String getPasswordHash(String email) {
+    
+    /**
+     * メールアドレスとパスワードハッシュからログインプレイヤー情報を取得する
+     *
+     * @param email 入力されたメールアドレス
+     * @param passwordHash ハッシュ化済みパスワード
+     * @return 見つかったログインプレイヤー。存在しない場合はnull
+     */
+    public LoginPlayer getLoginPlayer(String email, String passwordHash) {
 
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
-            PreparedStatement ps = connection.prepareStatement(SELECT_PASSWORD_HASH);
+            PreparedStatement ps = connection.prepareStatement(SELECT_LOGIN_PLAYER);
         ) {
             ps.setString(1, email);
+            ps.setString(2, passwordHash);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("password_hash");
+                    return new LoginPlayer(
+                        rs.getString("user_name"),
+                        rs.getInt("player_id"),
+                        rs.getString("e_mail")
+                    );
                 }
             }
 
@@ -190,6 +200,74 @@ public class DAO {
         }
 
         return null;
+    }
+
+    /**
+     * メールアドレスからログインプレイヤー情報を取得する
+     *
+     * @param email 検索するメールアドレス
+     * @return 見つかったログインプレイヤー。存在しない場合はnull
+     */
+    public LoginPlayer getPlayerByEmail(String email) {
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(SELECT_PLAYER_BY_EMAIL);
+        ) {
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new LoginPlayer(
+                        rs.getString("user_name"),
+                        rs.getInt("player_id"),
+                        rs.getString("e_mail")
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 指定されたメールアドレスのプレイヤーが存在するか判定する
+     *
+     * @param email 確認するメールアドレス
+     * @return 存在する場合はtrue
+     */
+    public boolean existsPlayerByEmail(String email) {
+        return getPlayerByEmail(email) != null;
+    }
+
+    /**
+     * 新しいプレイヤーをDBへ登録する
+     *
+     * @param userName 登録するユーザー名
+     * @param email 登録するメールアドレス
+     * @param passwordHash ハッシュ化済みパスワード
+     * @return 登録に成功した場合はtrue
+     */
+    public boolean insertPlayer(String userName, String email, String passwordHash) {
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(INSERT_PLAYER);
+        ) {
+            ps.setString(1, userName);
+            ps.setString(2, passwordHash);
+            ps.setString(3, email);
+
+            return ps.executeUpdate() == 1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
 }
