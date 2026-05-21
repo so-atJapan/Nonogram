@@ -2,15 +2,19 @@ package Nonogram.controller;
 
 import Nonogram.model.GameModel;
 import Nonogram.model.Grid;
+import Nonogram.model.LoginModel;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleEditorModel;
 import Nonogram.model.PuzzleList;
 import Nonogram.model.ResultModel;
+import Nonogram.model.SignupModel;
 import Nonogram.model.SolverModel;
 import Nonogram.view.GameView;
+import Nonogram.view.LoginView;
 import Nonogram.view.PuzzleEditorView;
 import Nonogram.view.PuzzleListView;
 import Nonogram.view.ResultView;
+import Nonogram.view.SignupView;
 import Nonogram.view.SolverView;
 import javafx.stage.Stage;
 
@@ -27,7 +31,9 @@ public class AppController {
     private PuzzleEditorController puzzleEditorController;
     private ResultController resultController;
     private Grid completedGrid;
-    private int elapsedSeconds;
+    private int tickSeconds;
+    private LoginController loginController;
+    private SignupController signupController;
 
     /**
      * コンストラクタ
@@ -67,10 +73,25 @@ public class AppController {
             case "solver":
                 showSolver();
                 break;
+            case "login":
+                showSolver();
+                break;
+            case "signup":
+                showSolver();
+                break;
             default:
                 showPuzzleList();
                 break;
         }
+    }
+
+    /**
+     * アプリ全体で使用しているStageを取得する
+     *
+     * @return 画面表示に使用するStage
+     */
+    public Stage getStage() {
+        return stage;
     }
 
     /**
@@ -92,7 +113,7 @@ public class AppController {
     public void setResultData(Puzzle puzzle, Grid completedGrid, int elapsedSeconds) {
         this.pendingPuzzle = puzzle;
         this.completedGrid = completedGrid;
-        this.elapsedSeconds = elapsedSeconds;
+        this.tickSeconds = elapsedSeconds;
     }
 
     /**
@@ -136,7 +157,7 @@ public class AppController {
      * リザルト画面を生成して表示する
      */
     public void showResult() {
-        ResultModel model = new ResultModel(pendingPuzzle, completedGrid, elapsedSeconds);
+        ResultModel model = new ResultModel(pendingPuzzle, completedGrid, tickSeconds);
         ResultView view = new ResultView(stage);
 
         resultController = new ResultController(model, view, this);
@@ -152,5 +173,27 @@ public class AppController {
 
         SolverController solverController  = new SolverController(solverModel, solverView, null);
         solverController.initialize();
+    }
+
+    /**
+     * ログイン画面を生成してセミモーダルで表示する
+     */
+    public void showLogin() {
+        LoginModel loginModel = new LoginModel();
+        LoginView loginView = new LoginView(stage);
+
+        loginController = new LoginController(loginModel, loginView, this);
+        loginController.initialize();
+    }
+
+    /**
+     * サインアップ画面を生成してセミモーダルで表示する
+     */
+    public void showSignup() {
+        SignupModel model = new SignupModel();
+        SignupView  view  = new SignupView(stage);
+ 
+        SignupController controller = new SignupController(model, view, this);
+        controller.initialize();
     }
 }
