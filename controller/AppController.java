@@ -2,7 +2,9 @@ package Nonogram.controller;
 
 import Nonogram.model.GameModel;
 import Nonogram.model.Grid;
+import Nonogram.model.GuestPlayer;
 import Nonogram.model.LoginModel;
+import Nonogram.model.Player;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleEditorModel;
 import Nonogram.model.PuzzleList;
@@ -35,6 +37,7 @@ public class AppController {
     private int tickSeconds;
     private LoginController loginController;
     private SignupController signupController;
+    private Player currentPlayer = new GuestPlayer();
 
     /**
      * コンストラクタ
@@ -63,10 +66,10 @@ public class AppController {
                 showHome();
                 break;
             case "login":
-                showSolver();
+                showLogin();
                 break;
             case "signup":
-                showSolver();
+                showSignup();
                 break;
             case "list":
                 showPuzzleList();
@@ -90,6 +93,24 @@ public class AppController {
                 showPuzzleList();
                 break;
         }
+    }
+
+    /**
+     * 現在のプレイヤーを取得する
+     *
+     * @return 現在のプレイヤー
+     */
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    /**
+     * 現在のプレイヤーを設定する
+     *
+     * @param currentPlayer 設定するプレイヤー
+     */
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 
     /**

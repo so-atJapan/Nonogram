@@ -47,9 +47,11 @@ public class HomeController {
     }
     
     private void onLogin() {
+        appController.navigateTo("login");
     }
     
     private void onSignup() {
+        appController.navigateTo("signup");
     }
 
 
