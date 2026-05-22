@@ -14,4 +14,6 @@ public abstract class Player{
     public abstract int getPlayerId();
 
     public abstract String getEMail();
+
+    public abstract String getHashedPassword();
 }

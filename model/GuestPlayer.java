@@ -15,4 +15,9 @@ public class GuestPlayer extends Player {
     public String getEMail() {
         return null;
     }
+
+    @Override
+    public String getHashedPassword() {
+        return null;
+    }
 }

@@ -6,7 +6,6 @@ package Nonogram.model;
 public class SignupModel {
 
     private static DAO dao = new DAO();
-    private PasswordHasher passwordHasher = new PasswordHasher();
     private LoginPlayer createdPlayer;
 
     /**
@@ -18,13 +17,14 @@ public class SignupModel {
      * @param confirmPassword 確認用パスワード
      * @return アカウント作成に成功した場合はtrue
      */
-    public boolean signup(String userName, String email, String password, String confirmPassword) {
-        boolean created = dao.insertPlayer(userName, email, passwordHasher.hash(password));
+    public boolean signup(String userName, String email, String plainPassword, String confirmPassword) {
+        String hashedPassword = PasswordVerify.hash(plainPassword);
+        boolean created = dao.insertPlayer(userName, email, hashedPassword);
         if (!created) {
             return false;
         }
 
-        createdPlayer = dao.getPlayerByEmail(email);
+        createdPlayer = dao.getLoginPlayer(email);
         return createdPlayer != null;
     }
 

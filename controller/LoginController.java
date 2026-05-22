@@ -32,16 +32,10 @@ public class LoginController {
         view.initialize();
 
         view.getLoginButton().setOnAction(e -> onLogin());
-        view.getSignupLink().setOnAction(e -> view.requestSignup());
+        view.getSignupLink().setOnAction(e -> onSignup());
         view.getCancelButton().setOnAction(e -> view.close());
 
         view.render();
-
-        if (view.isLoginConfirmed()) {
-            appController.navigateTo("list");
-        } else if (view.isSignupRequested()) {
-            appController.navigateTo("signup");
-        }
     }
 
     /**
@@ -49,18 +43,31 @@ public class LoginController {
      * 入力情報が正しければログイン済みプレイヤーを保持し、問題リスト画面へ遷移する
      */
     private void onLogin() {
-        if (isBlank(view.getEmail()) || isBlank(view.getPassword())) {
+        String challengeEmail = view.getEmail();
+        String challengePassword = view.getPassword();
+
+        if (isBlank(challengeEmail) || isBlank(challengePassword)) {
             view.showMessage("メールアドレスとパスワードを入力してください。");
             return;
         }
 
-        boolean success = model.login(view.getEmail(), view.getPassword());
+
+        boolean success = model.login(challengeEmail, challengePassword);
         if (success) {
             appController.setCurrentPlayer(model.getLoginPlayer());
-            view.confirmLogin();
+            view.close();
+            // appController.navigateTo("list");
         } else {
             view.showMessage("メールアドレスまたはパスワードが正しくありません。");
         }
+    }
+
+    /**
+     * サインアップ画面へのリンクが押されたときの処理
+     */
+    private void onSignup() {
+        view.close();
+        appController.navigateTo("signup");
     }
 
     /**
