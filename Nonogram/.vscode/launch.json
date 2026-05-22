@@ -1,0 +1,100 @@
+{
+    // IntelliSense を使用して利用可能な属性を学べます。
+    // 既存の属性の説明をホバーして表示します。
+    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "BP_811d90f0",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-25.0.1\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "SolverMain",
+            "request": "launch",
+            "mainClass": "Nonogram.SolverMain",
+            "projectName": "BP_811d90f0",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-25.0.1\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "LoginView",
+            "request": "launch",
+            "mainClass": "Nonogram.view.LoginView",
+            "projectName": "BP_811d90f0",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-25.0.1\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "kadai.Main",
+            "projectName": "BP_811d90f0",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-25.0.1\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "BP_811d90f0",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-25.0.1\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Nonogram.Main",
+            "projectName": "BP_811d90f0",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-25.0.1\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Time",
+            "request": "launch",
+            "mainClass": "Time",
+            "projectName": "BP_24460d34"
+        },
+        {
+            "type": "java",
+            "name": "Timer",
+            "request": "launch",
+            "mainClass": "Timer",
+            "projectName": "BP_24460d34"
+        },
+        {
+            "type": "java",
+            "name": "Timear",
+            "request": "launch",
+            "mainClass": "Timear",
+            "projectName": "BP_24460d34"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "BP_24460d34",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-21.0.11\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Nonogram.Main",
+            "projectName": "BP_24460d34",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-21.0.11\\lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "vmArgs": "--module-path \"C:\\javafx-sdk-21.0.11\\lib\" --add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+}
