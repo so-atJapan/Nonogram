@@ -32,10 +32,16 @@ public class LoginController {
         view.initialize();
 
         view.getLoginButton().setOnAction(e -> onLogin());
-        view.getSignupLink().setOnAction(e -> onSignup());
+        view.getSignupLink().setOnAction(e -> view.requestSignup());
         view.getCancelButton().setOnAction(e -> view.close());
 
         view.render();
+
+        if (view.isLoginConfirmed()) {
+            appController.navigateTo("list");
+        } else if (view.isSignupRequested()) {
+            appController.navigateTo("signup");
+        }
     }
 
     /**
@@ -51,19 +57,10 @@ public class LoginController {
         boolean success = model.login(view.getEmail(), view.getPassword());
         if (success) {
             appController.setCurrentPlayer(model.getLoginPlayer());
-            view.close();
-            appController.navigateTo("list");
+            view.confirmLogin();
         } else {
             view.showMessage("メールアドレスまたはパスワードが正しくありません。");
         }
-    }
-
-    /**
-     * サインアップ画面へのリンクが押されたときの処理
-     */
-    private void onSignup() {
-        view.close();
-        appController.navigateTo("signup");
     }
 
     /**

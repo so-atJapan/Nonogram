@@ -32,10 +32,16 @@ public class SignupController {
         view.initialize();
 
         view.getSignupButton().setOnAction(e -> onSignup());
-        view.getLoginLink().setOnAction(e -> onLogin());
+        view.getLoginLink().setOnAction(e -> view.requestLogin());
         view.getCancelButton().setOnAction(e -> view.close());
 
         view.render();
+
+        if (view.isSignupConfirmed()) {
+            appController.navigateTo("list");
+        } else if (view.isLoginRequested()) {
+            appController.navigateTo("login");
+        }
     }
 
     /**
@@ -78,19 +84,10 @@ public class SignupController {
 
         if (success) {
             appController.setCurrentPlayer(model.getCreatedPlayer());
-            view.close();
-            appController.navigateTo("list");
+            view.confirmSignup();
         } else {
             view.showMessage("アカウントを作成できませんでした。");
         }
-    }
-
-    /**
-     * ログイン画面へのリンクが押されたときの処理
-     */
-    private void onLogin() {
-        view.close();
-        appController.navigateTo("login");
     }
 
     /**
