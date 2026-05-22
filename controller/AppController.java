@@ -236,8 +236,8 @@ public class AppController {
         SignupModel model = new SignupModel();
         SignupView  view  = new SignupView(stage);
  
-        SignupController controller = new SignupController(model, view, this);
-        controller.initialize();
+        signupController = new SignupController(model, view, this);
+        signupController.initialize();
     }
 
     public void exitGame(){
