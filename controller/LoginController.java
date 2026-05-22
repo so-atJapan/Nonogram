@@ -11,6 +11,7 @@ public class LoginController {
     private LoginModel model;
     private LoginView view;
     private AppController appController;
+    private String nextDestination;
 
     /**
      * コンストラクタ
@@ -36,6 +37,10 @@ public class LoginController {
         view.getCancelButton().setOnAction(e -> view.close());
 
         view.render();
+
+        if (nextDestination != null) {
+            appController.navigateTo(nextDestination);
+        }
     }
 
     /**
@@ -55,8 +60,8 @@ public class LoginController {
         boolean success = model.login(challengeEmail, challengePassword);
         if (success) {
             appController.setCurrentPlayer(model.getLoginPlayer());
-            view.close();
-            // appController.navigateTo("list");
+            // nextDestination = "list";
+            view.confirmLogin();
         } else {
             view.showMessage("メールアドレスまたはパスワードが正しくありません。");
         }
@@ -66,8 +71,8 @@ public class LoginController {
      * サインアップ画面へのリンクが押されたときの処理
      */
     private void onSignup() {
-        view.close();
-        appController.navigateTo("signup");
+        nextDestination = "signup";
+        view.confirmLogin();
     }
 
     /**

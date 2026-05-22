@@ -11,6 +11,7 @@ public class SignupController {
     private SignupModel model;
     private SignupView view;
     private AppController appController;
+    private String nextDestination;
 
     /**
      * コンストラクタ
@@ -36,6 +37,10 @@ public class SignupController {
         view.getCancelButton().setOnAction(e -> view.close());
 
         view.render();
+
+        if (nextDestination != null) {
+            appController.navigateTo(nextDestination);
+        }
     }
 
     /**
@@ -78,8 +83,8 @@ public class SignupController {
 
         if (success) {
             appController.setCurrentPlayer(model.getCreatedPlayer());
-            view.close();
-            appController.navigateTo("list");
+            nextDestination = "list";
+            view.confirmSignup();
         } else {
             view.showMessage("アカウントを作成できませんでした。");
         }
@@ -89,8 +94,8 @@ public class SignupController {
      * ログイン画面へのリンクが押されたときの処理
      */
     private void onLogin() {
-        view.close();
-        appController.navigateTo("login");
+        nextDestination = "login";
+        view.confirmSignup();
     }
 
     /**
