@@ -33,6 +33,8 @@ public class SignupView {
     private Button cancelButton;
     private Hyperlink loginLink;
     private Label messageLabel;
+    private boolean signupConfirmed;
+    private boolean loginRequested;
 
     /**
      * コンストラクタ
@@ -47,6 +49,9 @@ public class SignupView {
      * サインアップ画面の部品を生成する
      */
     public void initialize() {
+        signupConfirmed = false;
+        loginRequested = false;
+
         dialogStage = new Stage();
         dialogStage.initOwner(primaryStage);
         dialogStage.initModality(Modality.WINDOW_MODAL);
@@ -105,6 +110,40 @@ public class SignupView {
      */
     public void close() {
         dialogStage.close();
+    }
+
+    /**
+     * サインアップ確定時にサインアップ画面を閉じる
+     */
+    public void confirmSignup() {
+        signupConfirmed = true;
+        dialogStage.close();
+    }
+
+    /**
+     * ログイン画面への遷移要求を保持してサインアップ画面を閉じる
+     */
+    public void requestLogin() {
+        loginRequested = true;
+        dialogStage.close();
+    }
+
+    /**
+     * サインアップが確定されたかどうかを取得する
+     *
+     * @return サインアップが確定された場合はtrue
+     */
+    public boolean isSignupConfirmed() {
+        return signupConfirmed;
+    }
+
+    /**
+     * ログイン画面への遷移が要求されたかどうかを取得する
+     *
+     * @return ログイン画面への遷移が要求された場合はtrue
+     */
+    public boolean isLoginRequested() {
+        return loginRequested;
     }
 
     /**
