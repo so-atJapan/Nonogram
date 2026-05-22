@@ -6,7 +6,6 @@ package Nonogram.model;
 public class LoginModel {
 
     private static DAO dao = new DAO();
-    private PasswordHasher passwordHasher = new PasswordHasher();
     private LoginPlayer loginPlayer;
 
     /**
@@ -16,9 +15,17 @@ public class LoginModel {
      * @param password 入力されたパスワード
      * @return ログインに成功した場合はtrue
      */
-    public boolean login(String email, String password) {
-        String passwordHash = passwordHasher.hash(password);
-        loginPlayer = dao.getLoginPlayer(email, passwordHash);
+    public boolean login(String email, String plainPassword) {
+        // String passwordHash = passwordHasher.hash(password);
+        LoginPlayer challengePlayer = dao.getLoginPlayer(email);
+        
+        if(challengePlayer == null) return false;
+
+
+        if(PasswordVerify.verify(plainPassword, challengePlayer.getHashedPassword())){
+            this.loginPlayer = challengePlayer;
+        }
+        
 
         return loginPlayer != null;
     }

@@ -72,13 +72,8 @@ public class DAO {
         "WHERE puzzle_id = ?";
 
 
-    private final String SELECT_LOGIN_PLAYER =
-    "SELECT player_id, user_name, e_mail " +
-    "FROM players " +
-    "WHERE e_mail = ? AND password_hash = ?";
-
     private final String SELECT_PLAYER_BY_EMAIL =
-    "SELECT player_id, user_name, e_mail " +
+    "SELECT player_id, user_name, e_mail, password_hash " +
     "FROM players " +
     "WHERE e_mail = ?";
 
@@ -170,45 +165,12 @@ public class DAO {
     }
     
     /**
-     * メールアドレスとパスワードハッシュからログインプレイヤー情報を取得する
-     *
-     * @param email 入力されたメールアドレス
-     * @param passwordHash ハッシュ化済みパスワード
-     * @return 見つかったログインプレイヤー。存在しない場合はnull
-     */
-    public LoginPlayer getLoginPlayer(String email, String passwordHash) {
-
-        try (
-            Connection connection = DriverManager.getConnection(DB_PATH);
-            PreparedStatement ps = connection.prepareStatement(SELECT_LOGIN_PLAYER);
-        ) {
-            ps.setString(1, email);
-            ps.setString(2, passwordHash);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new LoginPlayer(
-                        rs.getString("user_name"),
-                        rs.getInt("player_id"),
-                        rs.getString("e_mail")
-                    );
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
      * メールアドレスからログインプレイヤー情報を取得する
      *
-     * @param email 検索するメールアドレス
+     * @param email 入力されたメールアドレス
      * @return 見つかったログインプレイヤー。存在しない場合はnull
      */
-    public LoginPlayer getPlayerByEmail(String email) {
+    public LoginPlayer getLoginPlayer(String email) {
 
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
@@ -221,7 +183,8 @@ public class DAO {
                     return new LoginPlayer(
                         rs.getString("user_name"),
                         rs.getInt("player_id"),
-                        rs.getString("e_mail")
+                        rs.getString("e_mail"),
+                        rs.getString("password_hash")
                     );
                 }
             }
@@ -240,7 +203,7 @@ public class DAO {
      * @return 存在する場合はtrue
      */
     public boolean existsPlayerByEmail(String email) {
-        return getPlayerByEmail(email) != null;
+        return getLoginPlayer(email) != null;
     }
 
     /**
