@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -163,7 +164,29 @@ public class SolverView {
         HBox midRow = new HBox(cluePanelSide, gridPanel);
         midRow.setSpacing(0);
 
-        VBox root = new VBox(topRow, midRow, bottomRow);
+        // パズルエリア（スクロール対象：メニューバーと確認ボタンは除く）
+        VBox puzzleArea = new VBox(topRow, midRow);
+        puzzleArea.setSpacing(0);
+
+        ScrollPane scrollPane = new ScrollPane(puzzleArea);
+        scrollPane.setFitToWidth(false);   // コンテンツを縮小しない
+        scrollPane.setFitToHeight(false);  // コンテンツを縮小しない
+        scrollPane.setPannable(false);
+
+        // スクロール領域の最大サイズ（この値を超えたらスクロールバーが出る）
+        final int MAX_VIEW_WIDTH  = 1000;
+        final int MAX_VIEW_HEIGHT = 800;
+
+        // 実際のパズルサイズを計算
+        int maxRowHintColsForSize = rowClues.stream().mapToInt(ArrayList::size).max().orElse(1);
+        int maxColHintRowsForSize = colClues.stream().mapToInt(ArrayList::size).max().orElse(1);
+        int puzzleWidth  = (maxRowHintColsForSize + cols) * cellSize ;
+        int puzzleHeight = (maxColHintRowsForSize + rows) * cellSize ;
+
+        scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
+        scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
+
+        VBox root = new VBox(/*menuItemBar.getMenuBar(), */scrollPane, bottomRow);  //TODO: メニューバー追加時
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 

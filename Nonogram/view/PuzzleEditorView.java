@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
@@ -105,7 +106,27 @@ public class PuzzleEditorView {
         midRow = new HBox(gridPanel);
         midRow.setSpacing(0);
 
-        VBox root = new VBox(midRow, bottomButtons);
+        // パズルエリア（スクロール対象：メニューバーと確認ボタンは除く）
+        VBox puzzleArea = new VBox(midRow);
+        puzzleArea.setSpacing(0);
+
+        ScrollPane scrollPane = new ScrollPane(puzzleArea);
+        scrollPane.setFitToWidth(false);   // コンテンツを縮小しない
+        scrollPane.setFitToHeight(false);  // コンテンツを縮小しない
+        scrollPane.setPannable(false);
+
+        // スクロール領域の最大サイズ（この値を超えたらスクロールバーが出る）
+        final int MAX_VIEW_WIDTH  = 1000;
+        final int MAX_VIEW_HEIGHT = 800;
+
+        // 実際のパズルサイズを計算
+        int puzzleWidth  = cols * cellSize ;
+        int puzzleHeight = rows * cellSize ;
+
+        scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
+        scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
+
+        VBox root = new VBox(/*menuItemBar.getMenuBar(), */scrollPane, bottomButtons);  //TODO: メニュー追加時
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 
