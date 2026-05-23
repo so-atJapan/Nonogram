@@ -28,7 +28,7 @@ public class PuzzleListView{
     private Button[] selectButtons;
     private MenuItem[] editMenuItems;
     private MenuItem[] solverMenuItems;
-    MenuItem homeMenuItem;
+    private MenuItemBar menuItemBar;
 
     public PuzzleListView(Stage stage){
         this.stage = stage;
@@ -50,12 +50,8 @@ public class PuzzleListView{
         solverMenuItems = new MenuItem[length];
         MenuItem[] deleteMenuItems = new MenuItem[length];
         
-        Menu menu1 = new Menu("メニュー");
-        homeMenuItem = new MenuItem("ホーム");
-        MenuItem synchroMenuItem = new MenuItem("同期");
-        MenuItem helpMenuItem = new MenuItem("ヘルプ");
-        MenuItem finMenuItem = new MenuItem("終了");
-        menu1.getItems().addAll(homeMenuItem,synchroMenuItem,helpMenuItem,finMenuItem);
+        menuItemBar = new MenuItemBar();
+
         // homeMenuItem.setOnAction((ActionEvent e) -> {
         //     this.mainScene(stage);
         // });
@@ -70,8 +66,6 @@ public class PuzzleListView{
         //         Platform.exit();
         //     }
         // });
-        MenuBar menuBar = new MenuBar(menu1);
-        menuBar.setStyle("-fx-font-size: 15px;" + "-fx-background-color: #cccccc");
         
         
         for (int i = 0; i < length; i++) {
@@ -104,7 +98,7 @@ public class PuzzleListView{
         HBox hBox = new HBox(scrollPane);
         hBox.setPrefWidth(155);
 
-        VBox selectVBox = new VBox(menuBar,selectLabel,hBox);
+        VBox selectVBox = new VBox(menuItemBar.getMenuBar(),selectLabel,hBox);
         scene = new Scene(selectVBox, 300, 500);
     }
 
@@ -124,5 +118,5 @@ public class PuzzleListView{
     
     public MenuItem[] getSolverMenuItems() {return solverMenuItems;}
  
-    public MenuItem getHomeMenuItem() {return homeMenuItem;}
+    public MenuItemBar getMenuItemBar() {return menuItemBar;}
 }
