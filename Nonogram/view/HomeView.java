@@ -29,7 +29,11 @@ public class HomeView{
         this.stage = stage;
     }
     
-    public void initialize(){
+    public void initialize() {
+        this.initialize(null);
+    }
+
+    public void initialize(String currentUserName){
 
         // ── タイトル ────────────────────────────────────────
         Label titleLabel = new Label("Nonogram");
@@ -113,7 +117,21 @@ public class HomeView{
             )
         );
 
-        HBox topBar = new HBox(4, loginButton, signupButton);
+        HBox topBar;
+        if (currentUserName != null && !currentUserName.trim().isEmpty()) {
+            Label userNameLabel = new Label(currentUserName);
+            userNameLabel.setStyle(
+                "-fx-text-fill: #333333;" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-padding: 6 14 6 14;"
+            );
+            topBar = new HBox(4, userNameLabel);
+            loginButton  = null;
+            signupButton = null;
+        } else {
+            topBar = new HBox(4, loginButton, signupButton);
+        }
         topBar.setAlignment(Pos.CENTER_RIGHT);
         topBar.setPadding(new Insets(10, 14, 0, 14));
 
