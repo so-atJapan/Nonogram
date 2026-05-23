@@ -105,6 +105,23 @@ public class AppController {
     }
 
     /**
+     * 現在ログインしているかの確認
+     * 
+     * @return ログイン済みかどうか
+     */
+    public boolean isLoggedIn() {
+        if (currentPlayer == null) {
+            return false;
+        }
+
+        if (currentPlayer.getPlayerId() == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * 現在のプレイヤーを設定する
      *
      * @param currentPlayer 設定するプレイヤー
@@ -222,6 +239,11 @@ public class AppController {
      * ログイン画面を生成してセミモーダルで表示する
      */
     public void showLogin() {
+        if (this.isLoggedIn()) {
+            showHome();
+            return;
+        }
+
         LoginModel loginModel = new LoginModel();
         LoginView loginView = new LoginView(stage);
 
@@ -233,6 +255,11 @@ public class AppController {
      * サインアップ画面を生成してセミモーダルで表示する
      */
     public void showSignup() {
+        if (this.isLoggedIn()) {
+            showHome();
+            return;
+        }
+        
         SignupModel model = new SignupModel();
         SignupView  view  = new SignupView(stage);
  

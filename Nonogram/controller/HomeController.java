@@ -22,13 +22,21 @@ public class HomeController {
 
     public void initialize() {
 
-        view.initialize();
+        if (appController.isLoggedIn()) {
+            view.initialize(appController.getCurrentPlayer().getUserName());
+        } else {
+            view.initialize();
+        }
 
         view.getPlayButton().setOnAction(e -> onPlay());
         view.getCreateButton().setOnAction(e -> onCreate());
         view.getExitButton().setOnAction(e -> onExit());
-        view.getLoginButton().setOnAction(e -> onLogin());
-        view.getSignupButton().setOnAction(e -> onSignup());
+        if (view.getLoginButton() != null) {
+            view.getLoginButton().setOnAction(e -> onLogin());
+        }
+        if (view.getSignupButton() != null) {
+            view.getSignupButton().setOnAction(e -> onSignup());
+        }
 
         view.render();
 
