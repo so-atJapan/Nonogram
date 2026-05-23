@@ -58,9 +58,7 @@ public class GameController {
 
         bindAllCellEvents();
 
-
-        // リセットボタン
-        // view.getResetButton().addActionListener(e -> onReset());
+        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
 
         // undoボタン
         view.getPrevButton().setOnAction(e -> onUndo());
@@ -141,6 +139,11 @@ public class GameController {
         } else {
             view.showResult(false);
         }
+    }
+
+    private void onBackHome() {
+        timeline.stop();
+        appController.navigateTo("home");
     }
 
     public void onUndo(){
