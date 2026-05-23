@@ -26,6 +26,7 @@ public class GameView {
     private Button nextButton;
     private Button checkButton;
     private Label timerLabel;
+    private MenuItemBar menuItemBar;
  
     private int rows;
     private int cols;
@@ -43,6 +44,8 @@ public class GameView {
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
+
+        menuItemBar = new MenuItemBar();
     
         ArrayList<ArrayList<Integer>> rowHints = puzzle.getClue().getRowClues();
         ArrayList<ArrayList<Integer>> colHints = puzzle.getClue().getColClues();
@@ -172,7 +175,7 @@ public class GameView {
         HBox midRow = new HBox(hintPanelSide, gridPanel);
         midRow.setSpacing(0);
     
-        VBox root = new VBox(topRow, midRow, bottomRow);
+        VBox root = new VBox(menuItemBar.getMenuBar(), topRow, midRow, bottomRow);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
     
@@ -282,5 +285,8 @@ public class GameView {
     public Button getNextButton() {
         return nextButton;
     }
+
+    public MenuItemBar getMenuItemBar() {
+        return menuItemBar;
+    }
 }
- 
