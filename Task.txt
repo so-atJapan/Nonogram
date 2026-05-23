@@ -1,4 +1,3 @@
-・BuilderごとZIP、LIBに移動　　要検証
 ・javadoc HTML
 ・TODO消し
 ・難易度
