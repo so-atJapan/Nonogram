@@ -30,7 +30,7 @@ public class PuzzleListController {
     public void initialize() {
         view.render();
 
-        view.getHomeMenuItem().setOnAction(e -> onBackHome());
+        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
         for (int i = 0; i < view.getSelectButtons().length; i++) {
             int index = i;
             view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
