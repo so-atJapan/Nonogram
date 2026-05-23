@@ -83,7 +83,7 @@ public class SignupController {
 
         if (success) {
             appController.setCurrentPlayer(model.getCreatedPlayer());
-            nextDestination = "list";
+            nextDestination = "home";
             view.confirmSignup();
         } else {
             view.showMessage("アカウントを作成できませんでした。");

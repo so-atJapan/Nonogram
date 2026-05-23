@@ -60,7 +60,7 @@ public class LoginController {
         boolean success = model.login(challengeEmail, challengePassword);
         if (success) {
             appController.setCurrentPlayer(model.getLoginPlayer());
-            // nextDestination = "list";
+            nextDestination = "home";
             view.confirmLogin();
         } else {
             view.showMessage("メールアドレスまたはパスワードが正しくありません。");
