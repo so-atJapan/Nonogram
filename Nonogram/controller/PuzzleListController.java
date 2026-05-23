@@ -29,6 +29,8 @@ public class PuzzleListController {
 
     public void initialize() {
         view.render();
+
+        view.getHomeMenuItem().setOnAction(e -> onBackHome());
         for (int i = 0; i < view.getSelectButtons().length; i++) {
             int index = i;
             view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
@@ -94,6 +96,10 @@ public class PuzzleListController {
     //     view.updateFilter(d);
     //     view.displayPuzzles(filtered);
     // }
+
+    private void onBackHome() {
+        appController.navigateTo("home");
+    }
 
 
 }
