@@ -28,6 +28,7 @@ public class PuzzleListView{
     private Button[] selectButtons;
     private MenuItem[] editMenuItems;
     private MenuItem[] solverMenuItems;
+    MenuItem homeMenuItem;
 
     public PuzzleListView(Stage stage){
         this.stage = stage;
@@ -50,7 +51,7 @@ public class PuzzleListView{
         MenuItem[] deleteMenuItems = new MenuItem[length];
         
         Menu menu1 = new Menu("メニュー");
-        MenuItem homeMenuItem = new MenuItem("ホーム");
+        homeMenuItem = new MenuItem("ホーム");
         MenuItem synchroMenuItem = new MenuItem("同期");
         MenuItem helpMenuItem = new MenuItem("ヘルプ");
         MenuItem finMenuItem = new MenuItem("終了");
@@ -123,4 +124,5 @@ public class PuzzleListView{
     
     public MenuItem[] getSolverMenuItems() {return solverMenuItems;}
  
+    public MenuItem getHomeMenuItem() {return homeMenuItem;}
 }
