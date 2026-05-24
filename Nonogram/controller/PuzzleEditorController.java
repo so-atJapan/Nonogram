@@ -47,6 +47,8 @@ public class PuzzleEditorController {
 
 
         bindAllCellEvents();
+
+        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> this.onBackHome());
         
         
         // リセットボタン
@@ -107,6 +109,10 @@ public class PuzzleEditorController {
         bindAllCellEvents();
 
         view.render();
+    }
+
+    public void onBackHome() {
+        appController.navigateTo("home");
     }
 
     public void onUndo(){
