@@ -7,6 +7,7 @@
 ・クリアレコード（DB）
 ・リザルト画面のグリッドサイズ調整
 ・puzzleListのソート
+・リセット
 ・javadoc HTML
 ・エラー処理、バリデーションチェック
 ・creete時のpublic or private
