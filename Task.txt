@@ -1,9 +1,10 @@
-・javadoc HTML
 ・TODO消し
 ・難易度
+・クリアしたもののマーク
+・クリアレコード（DB）
 ・puzzleListのソート
+・javadoc HTML
 ・ログインのログ
 ・エラー処理、バリデーションチェック
-・クリアレコード（DB）
 ・UI,Viewのレイアウト改善
 ・設定
