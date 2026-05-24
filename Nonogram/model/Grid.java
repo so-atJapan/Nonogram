@@ -99,6 +99,27 @@ public class Grid {
         return copyGrid;
     }
 
+    public double filledPercent(){
+
+        double allCellAmount       = this.sizeX * this.sizeY;
+        double filledCellAmount = 0;
+
+        for (int x = 0; x < cells.length; x++) {
+            for (int y = 0; y < cells[x].length; y++) {
+
+                if(this.cells[x][y].getState() != CellState.EMPTY){
+                    filledCellAmount ++;
+                }
+
+            }
+        }
+
+        double filledPercent = filledCellAmount / allCellAmount;
+
+        return filledPercent;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
