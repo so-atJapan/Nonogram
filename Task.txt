@@ -6,5 +6,6 @@
 ・javadoc HTML
 ・ログインのログ
 ・エラー処理、バリデーションチェック
+・creete時のpublic or private
 ・UI,Viewのレイアウト改善
 ・設定
