@@ -7,7 +7,6 @@ import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
 import Nonogram.model.Solver;
 import Nonogram.model.SolverModel;
-import Nonogram.model.Timer;
 import Nonogram.view.GameView;
 import Nonogram.view.SolverView;
 import javafx.animation.KeyFrame;
@@ -26,7 +25,6 @@ public class SolverController {
     private SolverModel model;
     private SolverView view;
     private AppController appController;
-    private Timer timer = new Timer();
     private Timeline timeline;
     private int startX;
     private int startY;
@@ -153,9 +151,6 @@ public class SolverController {
         view.getCheckButton().setOnAction(e -> onJudge());
 
 
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> view.updateTimer(timer.tick())));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
         
     }
 
@@ -225,10 +220,7 @@ public class SolverController {
 
         this.applyClue();
 
-        Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
-        solver.solveStepByStep();
-        model.setGrid(solver.getGrid());
-        view.updateCellAll(solver.getGrid());
+        this.solveAndMeasure();
     }
 
     private void onBackHome() {
@@ -254,6 +246,23 @@ public class SolverController {
 
         Clue clue = new Clue(rowClue, colClue);
         model.getPuzzle().setClue(clue);
+    }
+
+    private void solveAndMeasure(){
+
+        long start = System.nanoTime();
+
+        Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
+        solver.solveAtOnce();
+
+        long end = System.nanoTime();
+        long elapsedNano = end - start;
+        double elapsedMilli = elapsedNano / 1_000_000.0;
+
+        view.updateTimer(elapsedMilli);
+
+        model.setGrid(solver.getGrid());
+        view.updateCellAll(solver.getGrid());
     }
 
 }

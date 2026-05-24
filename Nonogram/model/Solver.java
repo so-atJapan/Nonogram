@@ -19,16 +19,11 @@ public class Solver {
     }
     
     public void solveAtOnce(){
-        long start = System.nanoTime();
         for (int i = 0; i < 100; i++) {
             System.out.println(this.grid.filledPercent());
             if(this.grid.filledPercent() == 1.0)break;
             solveStepByStep();
         }
-        long end = System.nanoTime();
-        long elapsedNano = end - start;
-        double elapsedMilli = elapsedNano / 1_000_000.0;
-        System.out.println("経過時間: " + elapsedMilli + " ms"); 
     }
     public void solveStepByStep(){
         step1();

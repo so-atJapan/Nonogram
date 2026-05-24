@@ -69,7 +69,7 @@ public class SolverView {
         int clueAreaHeight = maxColClueRows * cellSize; // 上ヒントエリアの高さ
 
         // ===== 左上コーナー（タイマー）=====
-        timerLabel = new Label("00:00");
+        timerLabel = new Label("0 s");
         timerLabel.setPrefSize(clueAreaWidth, clueAreaHeight);
         timerLabel.setAlignment(Pos.CENTER);
         timerLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
@@ -190,7 +190,7 @@ public class SolverView {
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
-        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomRow);  //TODO: メニューバー追加時
+        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomRow);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 
@@ -297,11 +297,22 @@ public class SolverView {
         }
     }
 
-    // タイマー更新（Controller から秒数で受け取り mm:ss 形式で表示）
-    public void updateTimer(int totalSeconds) {
-        int minutes = totalSeconds / 60;
-        int seconds = totalSeconds % 60;
-        timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
+    // タイマー更新（Controller からミリ秒数で受け取り 表示）
+    public void updateTimer(double totalMilliseconds) {
+
+
+        // 秒を計算
+        int seconds = (int) ((totalMilliseconds / 1000) % 60);
+
+        // ミリ秒を計算
+        int milliseconds = (int) (totalMilliseconds % 1000);
+
+        // mm:ss:SSS 形式で表示
+        timerLabel.setText(
+            String.format("%01d.%03d s",
+                seconds,
+                milliseconds)
+        );
     }
 
     // 結果表示
