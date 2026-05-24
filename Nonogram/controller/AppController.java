@@ -230,7 +230,7 @@ public class AppController {
         SolverModel solverModel = new SolverModel(pendingPuzzle);
         SolverView solverView = new SolverView(stage);
 
-        SolverController solverController  = new SolverController(solverModel, solverView, null);
+        SolverController solverController  = new SolverController(solverModel, solverView, this);
         solverController.initialize();
     }
 

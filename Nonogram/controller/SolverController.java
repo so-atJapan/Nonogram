@@ -25,7 +25,7 @@ public class SolverController {
 
     private SolverModel model;
     private SolverView view;
-    private SolverController appController;
+    private AppController appController;
     private Timer timer = new Timer();
     private Timeline timeline;
     private int startX;
@@ -44,7 +44,7 @@ public class SolverController {
      * @param view  
      * @param appController 画面遷移を管理するコントローラ
      */
-    public SolverController(SolverModel model, SolverView view, SolverController appController) {
+    public SolverController(SolverModel model, SolverView view, AppController appController) {
         this.model = model;
         this.view  = view;
         this.appController = appController;
@@ -141,6 +141,8 @@ public class SolverController {
         // リセットボタン
         // view.getResetButton().addActionListener(e -> onReset());
 
+        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
+
         // undoボタン
         view.getPrevButton().setOnAction(e -> onUndo());
 
@@ -227,6 +229,11 @@ public class SolverController {
         solver.solveStepByStep();
         model.setGrid(solver.getGrid());
         view.updateCellAll(solver.getGrid());
+    }
+
+    private void onBackHome() {
+        timeline.stop();
+        appController.navigateTo("home");
     }
 
     public void onUndo(){
