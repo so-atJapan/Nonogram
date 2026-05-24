@@ -1,4 +1,7 @@
 ・TODO消し
+     private boolean isPublic = true;  //TODO faulseに変更
+     private String createdBy = "No Name"; //TODO Playerクラス追加予定
+      // private PlayRecord record; // TODO: PlayRecordクラス実装後、記録保存用に追加予定
 ・難易度
 ・クリアしたもののマーク
 ・クリアレコード（DB）
