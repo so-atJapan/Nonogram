@@ -39,6 +39,8 @@ public class PuzzleEditorView {
 
     private HBox midRow;
 
+    private MenuItemBar menuItemBar;
+
     private int rows;
     private int cols;
  
@@ -55,6 +57,8 @@ public class PuzzleEditorView {
 
         this.semiModal = new SemiModal(this.stage);
         this.semiModal.initialize(puzzle);
+
+        menuItemBar = new MenuItemBar();
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
@@ -126,7 +130,7 @@ public class PuzzleEditorView {
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
-        VBox root = new VBox(/*menuItemBar.getMenuBar(), */scrollPane, bottomButtons);  //TODO: メニュー追加時
+        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomButtons);  //TODO: メニュー追加時
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 
@@ -277,6 +281,10 @@ public class PuzzleEditorView {
 
     public int getGridSizeY(){
         return this.semiModal.getGridSizeY();
+    }
+
+    public MenuItemBar getMenuItemBar() {
+        return menuItemBar;
     }
 }
  
