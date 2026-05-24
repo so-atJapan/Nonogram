@@ -25,7 +25,6 @@ public class SolverController {
     private SolverModel model;
     private SolverView view;
     private AppController appController;
-    private Timeline timeline;
     private int startX;
     private int startY;
 
@@ -224,7 +223,6 @@ public class SolverController {
     }
 
     private void onBackHome() {
-        timeline.stop();
         appController.navigateTo("home");
     }
 
