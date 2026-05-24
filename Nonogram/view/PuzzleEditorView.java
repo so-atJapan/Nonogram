@@ -18,11 +18,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
  
-import java.util.ArrayList;
  
 public class PuzzleEditorView {
 
@@ -130,7 +127,7 @@ public class PuzzleEditorView {
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
-        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomButtons);  //TODO: メニュー追加時
+        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomButtons);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 

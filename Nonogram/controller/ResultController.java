@@ -12,6 +12,7 @@ public class ResultController {
     private ResultModel model;
     private ResultView view;
     private AppController appController;
+    // private PlayRecord record; // TODO: PlayRecordクラス実装後にResultModelの代わりに利用予定
 
     /**
      * コンストラクタ
@@ -34,6 +35,7 @@ public class ResultController {
         view.render();
         showResult();
         view.showHomeButton().setOnAction(e -> onPuzzleList());
+        // view.showRetryButton().setOnAction(e -> onRetry()); // TODO: リトライ機能追加時に有効化
     }
 
     /**
@@ -49,4 +51,8 @@ public class ResultController {
     public void onPuzzleList() {
         appController.navigateTo("list");
     }
+
+    // public void onRetry() {
+    //     appController.navigateTo("game");
+    // }
 }

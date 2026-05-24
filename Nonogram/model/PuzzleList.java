@@ -15,5 +15,9 @@ public class PuzzleList {
         this.puzzleList = dao.getPuzzleAll();
     }
 
+    public void sort(){
+        
+    }
+
     public ArrayList<Puzzle> getPuzzleList() {return puzzleList;}
 }

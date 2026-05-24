@@ -3,16 +3,11 @@ package Nonogram.controller;
 
 import Nonogram.model.CellState;
 import Nonogram.model.Clue;
-import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
 import Nonogram.model.Solver;
 import Nonogram.model.SolverModel;
-import Nonogram.view.GameView;
 import Nonogram.view.SolverView;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.scene.input.MouseButton;
-import javafx.util.Duration;
 
 import java.util.HashSet;
 import java.util.Set;

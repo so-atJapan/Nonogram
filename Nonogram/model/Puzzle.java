@@ -1,7 +1,6 @@
 package Nonogram.model;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 //内田
