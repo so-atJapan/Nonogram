@@ -34,6 +34,8 @@ public class SolverView {
     // ヒント入力フィールド: [列インデックス][スロットインデックス（上→下、maxColClueRows個固定）]
     private TextField[][] colClueFields;
 
+    private MenuItemBar menuItemBar;
+
     private int rows;
     private int cols;
     private int maxRowClueCols;
@@ -52,6 +54,8 @@ public class SolverView {
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
+
+        menuItemBar = new MenuItemBar();
 
         ArrayList<ArrayList<Integer>> rowClues = puzzle.getClue().getRowClues();
         ArrayList<ArrayList<Integer>> colClues = puzzle.getClue().getColClues();
@@ -186,7 +190,7 @@ public class SolverView {
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
-        VBox root = new VBox(/*menuItemBar.getMenuBar(), */scrollPane, bottomRow);  //TODO: メニューバー追加時
+        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomRow);  //TODO: メニューバー追加時
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 
@@ -308,6 +312,8 @@ public class SolverView {
         alert.setContentText(result ? "クリア！おめでとう！" : "不正解... もう一度！");
         alert.showAndWait();
     }
+
+    public MenuItemBar getMenuItemBar() {return menuItemBar;}
 
     public Stage getStage() { return stage; }
     public Button[][] getButtons() { return buttons; }
