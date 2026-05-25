@@ -193,7 +193,7 @@ public class AppController {
      * パズル作成画面を生成して表示する
      */
     public void showCreate() {
-        PuzzleEditorModel model = new PuzzleEditorModel();
+        PuzzleEditorModel model = new PuzzleEditorModel(currentPlayer);
         PuzzleEditorView view = new PuzzleEditorView(stage);
 
         puzzleEditorController = new PuzzleEditorController(model, view, this);

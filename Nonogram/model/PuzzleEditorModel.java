@@ -32,8 +32,9 @@ public class PuzzleEditorModel {
     }
 
     //コンストラクタ
-    public PuzzleEditorModel(){
+    public PuzzleEditorModel(Player editPlayer){
         this(new Puzzle());
+        this.puzzle.setCreatedBy(editPlayer.getUserName());
     }
 
     // Puzzle取得
