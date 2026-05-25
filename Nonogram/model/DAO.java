@@ -80,6 +80,12 @@ public class DAO {
     private final String INSERT_PLAYER =
     "INSERT INTO players (user_name, password_hash, e_mail) VALUES (?, ?, ?)";
 
+    private final String INSERT_PUZZLE_RECORD =
+    "INSERT INTO puzzle_records (player_id, puzzle_id) VALUES (?, ?)";
+
+    private final String SELECT_PUZZLE_RECORD =
+    "SELECT (puzzle_id) from puzzle_records WHERE player_id = ?";
+
     public  ArrayList<Puzzle> getPuzzleAll(){
         ArrayList<Puzzle> puzzleList = new ArrayList<Puzzle>();
 
@@ -231,6 +237,63 @@ public class DAO {
         }
 
         return false;
+    }
+
+    /**
+     * 新しいパズルレコードをDBへ登録する
+     *
+     * @param player 登録するユーザー
+     * @param puzzle 登録するパズル
+     * @return 登録に成功した場合はtrue
+     */
+    public boolean insertPuzzleRecord(Player player, Puzzle puzzle) {
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(INSERT_PUZZLE_RECORD);
+        ) {
+            ps.setInt(1, player.getPlayerId());
+            ps.setInt(2, puzzle.getPuzzleId());
+
+            return ps.executeUpdate() == 1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * 指定されたプレイヤーからクリアパズルIDの配列を返す
+     *
+     * @param player 取得するユーザー
+     * @return パズルIDのint型配列
+     */
+    public ArrayList<Integer> getPuzzleRecords(Player player) {
+        
+        ArrayList<Integer> puzzleIds = new ArrayList<Integer>();
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(SELECT_PUZZLE_RECORD);
+        ) {
+
+            ps.setInt(1, player.getPlayerId());
+
+            try(ResultSet rs = ps.executeQuery();){
+                while(rs.next()){
+
+                    puzzleIds.add(rs.getInt(1));
+                    
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return puzzleIds;
     }
 
 }
