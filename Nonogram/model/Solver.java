@@ -44,133 +44,186 @@ public class Solver {
         }
     }
 
+    private static final int S_UNKNOWN = 0;
+    private static final int S_FILLED  = 1;
+    private static final int S_MARKED  = 2;
+
     private void step1Line(ArrayList<Integer> question, Cell[] line) {
         int len = line.length;
+        int k   = question.size();
 
-        // 各セルが「有効パターン中で何回 FILLED だったか」「何回 EMPTY だったか」を数える
-        int[] filledCount = new int[len];
-        int[] emptyCount  = new int[len];
-        int[] validCount  = new int[]{0};  // 有効パターン総数
-
-        Cell[] work = new Cell[len];
-
-        // 生成しながらカウントアップ（枝刈り付き再帰）
-        countPatternsWithCommit(work, question, line, 0, 0,
-                                filledCount, emptyCount, validCount);
-
-        // 全有効パターンで FILLED だったセル → FILLED 確定
-        // 全有効パターンで EMPTY  だったセル → MARKED 確定
+        // Cell[] → int[] 変換
+        int[] ls = new int[len];
         for (int i = 0; i < len; i++) {
-            if (filledCount[i] == validCount[0]) {
-                line[i].setState(CellState.FILLED);
-            } else if (emptyCount[i] == validCount[0]) {
-                line[i].setState(CellState.MARKED);
-            }
+            CellState cs = line[i].getState();
+            if      (cs == CellState.FILLED) ls[i] = S_FILLED;
+            else if (cs == CellState.MARKED) ls[i] = S_MARKED;
         }
-    }
 
-    /**
-     * パターンを生成しながら、現在の line と矛盾するものを枝刈りし、
-     * 矛盾しないパターンについてのみ filledCount / emptyCount をカウントする。
-     *
-     * @param work       作業用ライン（再帰間で使い回す）
-     * @param q          ヒント数列
-     * @param line       現在の確定情報（FILLED / MARKED / EMPTY）
-     * @param index      処理中のヒントインデックス
-     * @param pos        配置開始位置
-     * @param filledCount 各セルが FILLED だった有効パターン数
-     * @param emptyCount  各セルが EMPTY  だった有効パターン数
-     * @param validCount  有効パターン総数（int[1] で参照渡し）
-     */
-    private void countPatternsWithCommit(Cell[] work, ArrayList<Integer> q,
-                                         Cell[] line, int index, int pos,
-                                         int[] filledCount, int[] emptyCount,
-                                         int[] validCount) {
-        int len = work.length;
+        // ヒントを int[] に
+        int[] q = new int[k];
+        for (int i = 0; i < k; i++) q[i] = question.get(i);
 
-        if (index == q.size()) {
-            // 残りをすべて EMPTY で埋める
-            for (int i = pos; i < len; i++) {
-                work[i] = new Cell(CellState.EMPTY);
-            }
+        // -------------------------------------------------------
+        // 前向き DP
+        // fwd[i][j] = 「ブロック j-1 まで配置し終えて位置 i にいる」パターン数
+        //
+        //   j == 0          : まだブロックを1つも置いていない
+        //   j == 1..k       : ブロック j-1 を置き終えた直後
+        //
+        // 遷移:
+        //   EMPTY セルを消費 (スペース or ブロック後スペース):
+        //     fwd[i+1][j] += fwd[i][j]   (ls[i] != S_FILLED)
+        //   ブロック j を pos=i から置く:
+        //     fwd[i + q[j] + 1][j+1] += fwd[i][j]  or  fwd[i + q[j]][k] if j==k-1
+        //     ただし [i, i+q[j]) に MARKED がなく、
+        //            最後のブロック以外は i+q[j] が FILLED でないこと
+        // -------------------------------------------------------
+        long[][] fwd = new long[len + 1][k + 1];
+        fwd[0][0] = 1L;
 
-            // 現在の確定情報と矛盾チェック
-            for (int i = pos; i < len; i++) {
-                if (!isCompatible(line[i], work[i])) return;
-            }
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j <= k; j++) {
+                if (fwd[i][j] == 0) continue;
+                long ways = fwd[i][j];
 
-            // 有効パターン → カウント更新
-            validCount[0]++;
-            for (int i = 0; i < len; i++) {
-                if (work[i].getState() == CellState.FILLED) {
-                    filledCount[i]++;
+                if (j == k) {
+                    // すべてのブロックを置き終えた → 残りは EMPTY のみ
+                    if (ls[i] != S_FILLED) {
+                        fwd[i + 1][k] += ways;
+                    }
+                    continue;
+                }
+
+                // ① 現在位置を EMPTY として読み飛ばす（ls[i] が FILLED でなければ）
+                if (ls[i] != S_FILLED) {
+                    fwd[i + 1][j] += ways;
+                }
+
+                // ② ブロック j を位置 i から置く
+                int blen = q[j];
+                if (i + blen > len) continue;
+
+                // ブロック範囲に MARKED がないか確認
+                boolean canPlace = true;
+                for (int bi = i; bi < i + blen; bi++) {
+                    if (ls[bi] == S_MARKED) { canPlace = false; break; }
+                }
+                if (!canPlace) continue;
+
+                int after = i + blen;
+                if (j == k - 1) {
+                    // 最後のブロック：後続スペース不要
+                    fwd[after][k] += ways;
                 } else {
-                    emptyCount[i]++;
+                    // 最後以外：直後は FILLED であってはならない
+                    if (after < len && ls[after] != S_FILLED) {
+                        fwd[after + 1][j + 1] += ways;
+                    }
                 }
             }
-            return;
         }
 
-        int blockSize = q.get(index);
+        long total = fwd[len][k];
+        if (total == 0) return; // 矛盾（解なし）
 
-        // このブロック以降に必要な最小長
-        int minRemaining = 0;
-        for (int i = index; i < q.size(); i++) {
-            minRemaining += q.get(i);
-        }
-        minRemaining += (q.size() - index - 1);
+        // -------------------------------------------------------
+        // 後向き DP
+        // bwd[i][j] = 「位置 i・状態 j からゴールまでの」パターン数
+        // -------------------------------------------------------
+        long[][] bwd = new long[len + 1][k + 1];
+        bwd[len][k] = 1L;
 
-        for (int start = pos; start <= len - minRemaining; start++) {
+        for (int i = len - 1; i >= 0; i--) {
+            for (int j = 0; j <= k; j++) {
 
-            // ① [pos, start) を EMPTY で埋め、確定情報と矛盾チェック
-            boolean ok = true;
-            for (int i = pos; i < start; i++) {
-                work[i] = new Cell(CellState.EMPTY);
-                if (!isCompatible(line[i], work[i])) {
-                    ok = false;
-                    break;
+                if (j == k) {
+                    if (ls[i] != S_FILLED) {
+                        bwd[i][k] += bwd[i + 1][k];
+                    }
+                    continue;
+                }
+
+                // ① EMPTY として読み飛ばす
+                if (ls[i] != S_FILLED) {
+                    bwd[i][j] += bwd[i + 1][j];
+                }
+
+                // ② ブロック j を位置 i から置く
+                int blen = q[j];
+                if (i + blen > len) continue;
+
+                boolean canPlace = true;
+                for (int bi = i; bi < i + blen; bi++) {
+                    if (ls[bi] == S_MARKED) { canPlace = false; break; }
+                }
+                if (!canPlace) continue;
+
+                int after = i + blen;
+                if (j == k - 1) {
+                    bwd[i][j] += bwd[after][k];
+                } else {
+                    if (after < len && ls[after] != S_FILLED) {
+                        bwd[i][j] += bwd[after + 1][j + 1];
+                    }
                 }
             }
-            if (!ok) continue;
-
-            // ② [start, start+blockSize) を FILLED で埋め、確定情報と矛盾チェック
-            if (start + blockSize > len) continue;
-            for (int i = start; i < start + blockSize; i++) {
-                work[i] = new Cell(CellState.FILLED);
-                if (!isCompatible(line[i], work[i])) {
-                    ok = false;
-                    break;
-                }
-            }
-            if (!ok) continue;
-
-            int nextPos = start + blockSize;
-
-            // ③ ブロック後のセパレータ（最後のブロック以外）
-            if (index < q.size() - 1) {
-                if (nextPos >= len) continue;
-                work[nextPos] = new Cell(CellState.EMPTY);
-                if (!isCompatible(line[nextPos], work[nextPos])) continue;
-                nextPos++;
-            }
-
-            // ④ 次のブロックへ再帰
-            countPatternsWithCommit(work, q, line, index + 1, nextPos,
-                                    filledCount, emptyCount, validCount);
         }
-    }
 
-    /**
-     * work セルが line の確定状態と矛盾しないかチェック。
-     * - line が FILLED  → work も FILLED でなければならない
-     * - line が MARKED  → work は EMPTY  でなければならない
-     * - line が EMPTY（未確定）→ 何でも OK
-     */
-    private boolean isCompatible(Cell lineCell, Cell workCell) {
-        CellState ls = lineCell.getState();
-        CellState ws = workCell.getState();
-        if (ls == CellState.FILLED && ws != CellState.FILLED) return false;
-        if (ls == CellState.MARKED && ws != CellState.EMPTY)  return false;
-        return true;
+        // -------------------------------------------------------
+        // 各セルの FILLED 寄与数を計算
+        //
+        // セル i が FILLED になるのは「ブロック j が位置 s から始まり
+        // s <= i < s+q[j]」を満たすすべての (j, s) の組み合わせ。
+        //
+        // FILLED 寄与数 = Σ_{j,s} fwd[s][j] * bwd[s+q[j]+sep][j+1]
+        //   ただし s <= i < s+q[j]
+        //
+        // 差分配列で O(n*k) に抑える:
+        //   ブロック (j,s) が確定したとき diff[s] += 寄与, diff[s+q[j]] -= 寄与
+        // -------------------------------------------------------
+        long[] filledWays = new long[len];
+        long[] diff = new long[len + 1];
+
+        for (int j = 0; j < k; j++) {
+            int blen = q[j];
+            for (int s = 0; s + blen <= len; s++) {
+                if (fwd[s][j] == 0) continue;
+
+                // ブロック j を s に置けるか
+                boolean canPlace = true;
+                for (int bi = s; bi < s + blen; bi++) {
+                    if (ls[bi] == S_MARKED) { canPlace = false; break; }
+                }
+                if (!canPlace) continue;
+
+                int after = s + blen;
+                long bwdVal;
+                if (j == k - 1) {
+                    bwdVal = bwd[after][k];
+                } else {
+                    if (after >= len || ls[after] == S_FILLED) continue;
+                    bwdVal = bwd[after + 1][j + 1];
+                }
+
+                long contrib = fwd[s][j] * bwdVal;
+                if (contrib == 0) continue;
+                diff[s]        += contrib;
+                diff[s + blen] -= contrib;
+            }
+        }
+
+        // 差分配列を累積して filledWays に変換
+        long running = 0;
+        for (int i = 0; i < len; i++) {
+            running += diff[i];
+            filledWays[i] = running;
+        }
+
+        // 確定セルを書き戻し
+        for (int i = 0; i < len; i++) {
+            if      (filledWays[i] == total)          line[i].setState(CellState.FILLED);
+            else if (filledWays[i] == 0)              line[i].setState(CellState.MARKED);
+        }
     }
 }
