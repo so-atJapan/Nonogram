@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 /**
@@ -42,7 +43,7 @@ public class ResultView {
      */
     public void initialize(ResultModel model) {
         Label titleLabel = new Label("クリア");
-        titleLabel.setFont(new Font(28));
+        titleLabel.setFont(Font.font(null, FontWeight.BOLD, 48));
 
         Label puzzleTitleLabel = new Label(model.getPuzzle().getTitle());
         puzzleTitleLabel.setFont(new Font(18));
@@ -135,8 +136,4 @@ public class ResultView {
     public Button showHomeButton() {
         return backButton;
     }
-
-    // public Button showRetryButton() {
-    //     return retryButton;
-    // }
 }
