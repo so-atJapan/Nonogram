@@ -1,106 +1,185 @@
 package Nonogram.view;
- 
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
+import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
- 
-public class PuzzleListView{
- 
+
+/**
+ * パズルリスト画面のView
+ * メニューバー + ヘッダ（タイトル＋並び順） + スクロールリスト
+ */
+public class PuzzleListView {
+
     private Stage stage;
     private Scene scene;
 
     private ArrayList<Puzzle> puzzleList;
 
+    // クリア済みのパズルIDのリスト
+    private ArrayList<Integer> clearedIds;
+
     private Button[] selectButtons;
     private MenuItem[] editMenuItems;
     private MenuItem[] solverMenuItems;
     private MenuItemBar menuItemBar;
+    private ComboBox<String> sortComboBox;
 
-    public PuzzleListView(Stage stage){
+    private VBox listVBox;
+
+    public PuzzleListView(Stage stage) {
         this.stage = stage;
     }
-    
-    public void initialize(PuzzleList puzzleList){
 
+    /**
+     * @param puzzleList  表示するパズルリスト
+     * @param clearedIds  クリア済みパズルIDのリスト（未ログインなら空リスト）
+     */
+    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds) {
         this.puzzleList = puzzleList.getPuzzleList();
-        
-        Label selectLabel = new Label("問題選択");
-        selectLabel.setFont(new Font(20));
+        this.clearedIds = clearedIds;
 
-
-        int length = this.puzzleList.size();
-
-        selectButtons = new Button[length];
-        ContextMenu[] contextMenus = new ContextMenu[length];
-        editMenuItems = new MenuItem[length];
-        solverMenuItems = new MenuItem[length];
-        MenuItem[] deleteMenuItems = new MenuItem[length];
-        
         menuItemBar = new MenuItemBar();
 
-        // homeMenuItem.setOnAction((ActionEvent e) -> {
-        //     this.mainScene(stage);
-        // });
-        // synchroMenuItem.setOnAction((ActionEvent e) -> {
-        //     this.mainScene(stage);
-        // });
-        // helpMenuItem.setOnAction((ActionEvent e) -> {
-        //     //ヘルプ画面表示
-        // });
-        // finMenuItem.setOnAction((ActionEvent e) -> {
-        //     if(this.ShowAlert_Confim("終了確認", "アプリを終了しますか")){
-        //         Platform.exit();
-        //     }
-        // });
-        
-        
-        for (int i = 0; i < length; i++) {
-            int index = i;
-            String tatle = this.puzzleList.get(index).getTitle();
-            selectButtons[index] = new Button(tatle);
-            selectButtons[index].setPrefSize(140, 40);
-            selectButtons[index].setFont(new Font(20));
-            editMenuItems[index] = new MenuItem("編集");
-            editMenuItems[index].setStyle("-fx-font-size: 17px;");
-            solverMenuItems[index] = new MenuItem("ソルバー");
-            solverMenuItems[index].setStyle("-fx-font-size: 17px;");
-            deleteMenuItems[index] = new MenuItem("削除");
-            deleteMenuItems[index].setStyle("-fx-font-size: 17px;");
-            contextMenus[index] = new ContextMenu(editMenuItems[index], solverMenuItems[index], deleteMenuItems[index]);
-            selectButtons[index].setOnContextMenuRequested(e -> {
-                contextMenus[index].show(selectButtons[index], e.getScreenX(), e.getScreenY());
-            });           
-        }
- 
-        
-        
-        VBox temp1VBox = new VBox();
-        temp1VBox.getChildren().addAll(selectButtons);
-        
-        ScrollPane scrollPane = new ScrollPane (temp1VBox);
-        scrollPane.setPrefSize(155, 350);
+        // ---- ヘッダ行（タイトル＋並び順） ----
+        Label titleLabel = new Label("問題選択");
+        titleLabel.setFont(new Font(20));
+
+        sortComboBox = new ComboBox<>(FXCollections.observableArrayList(
+            "デフォルト",
+            "名前順",
+            "難易度：低い順",
+            "難易度：高い順",
+            "サイズ：小さい順",
+            "サイズ：大きい順",
+            "作成日時：新しい順",
+            "作成日時：古い順"
+        ));
+        sortComboBox.setValue("デフォルト");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox headerBox = new HBox(10, titleLabel, spacer, sortComboBox);
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        headerBox.setPadding(new Insets(6, 8, 4, 8));
+
+        // ---- パズルカードリスト ----
+        listVBox = new VBox(6);
+        listVBox.setPadding(new Insets(4, 8, 8, 8));
+
+        buildCards(this.puzzleList);
+
+        ScrollPane scrollPane = new ScrollPane(listVBox);
+        scrollPane.setFitToWidth(true);
         scrollPane.setPannable(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        HBox hBox = new HBox(scrollPane);
-        hBox.setPrefWidth(155);
 
-        VBox selectVBox = new VBox(menuItemBar.getMenuBar(),selectLabel,hBox);
-        scene = new Scene(selectVBox, 300, 500);
+        BorderPane root = new BorderPane();
+        root.setTop(new VBox(menuItemBar.getMenuBar(), headerBox));
+        root.setCenter(scrollPane);
+
+        scene = new Scene(root, 460, 520);
     }
 
-    // パズル描画
+    /**
+     * カードをすべて再構築する（並び替え時にも呼ばれる）
+     */
+    private void buildCards(ArrayList<Puzzle> list) {
+        int length = list.size();
+        selectButtons = new Button[length];
+        editMenuItems = new MenuItem[length];
+        solverMenuItems = new MenuItem[length];
+
+        listVBox.getChildren().clear();
+
+        for (int i = 0; i < length; i++) {
+            Puzzle p = list.get(i);
+            boolean cleared = clearedIds.contains(p.getPuzzleId());
+
+            // 問題名
+            Label nameLabel = new Label(p.getTitle());
+            nameLabel.setFont(new Font(15));
+            nameLabel.setMinWidth(120);
+            nameLabel.setWrapText(true);
+
+            // 難易度 ＋ サイズ
+            Label diffLabel = new Label(p.getDifficulty().name());
+            diffLabel.setStyle("-fx-font-size: 12px;");
+
+            Label sizeLabel = new Label(p.getGridSizeX() + "×" + p.getGridSizeY());
+            sizeLabel.setStyle("-fx-font-size: 12px;");
+
+            VBox infoBox = new VBox(3, diffLabel, sizeLabel);
+            infoBox.setAlignment(Pos.CENTER_LEFT);
+            infoBox.setMinWidth(70);
+
+            // 星マーク（クリア済み）
+            Label starLabel = new Label(cleared ? "★" : "");
+            starLabel.setFont(new Font(18));
+            starLabel.setMinWidth(24);
+            starLabel.setAlignment(Pos.CENTER);
+
+            // 選択ボタン
+            selectButtons[i] = new Button("▶ プレイ");
+            selectButtons[i].setFont(new Font(12));
+
+            Region hSpacer = new Region();
+            HBox.setHgrow(hSpacer, Priority.ALWAYS);
+
+            HBox cardBox = new HBox(10, nameLabel, infoBox, hSpacer, starLabel, selectButtons[i]);
+            cardBox.setAlignment(Pos.CENTER_LEFT);
+            cardBox.setPadding(new Insets(8, 10, 8, 10));
+
+            // コンテキストメニュー（右クリック）
+            editMenuItems[i] = new MenuItem("編集");
+            editMenuItems[i].setStyle("-fx-font-size: 14px;");
+            solverMenuItems[i] = new MenuItem("ソルバー");
+            solverMenuItems[i].setStyle("-fx-font-size: 14px;");
+            MenuItem deleteMenuItem = new MenuItem("削除");
+            deleteMenuItem.setStyle("-fx-font-size: 14px;");
+
+            ContextMenu contextMenu = new ContextMenu(editMenuItems[i], solverMenuItems[i], deleteMenuItem);
+            cardBox.setOnContextMenuRequested(e ->
+                contextMenu.show(cardBox, e.getScreenX(), e.getScreenY()));
+
+            listVBox.getChildren().add(cardBox);
+
+            if (i < length - 1) {
+                Region separator = new Region();
+                separator.setPrefHeight(1);
+                separator.setStyle("-fx-background-color: #AAAAAA;");
+                listVBox.getChildren().add(separator);
+            }
+        }
+    }
+
+    /**
+     * 並び替え後にリストとボタン配列を更新する（Controllerから呼ばれる）
+     */
+    public void updateList(ArrayList<Puzzle> sortedList, ArrayList<Integer> clearedIds) {
+        this.puzzleList = sortedList;
+        this.clearedIds = clearedIds;
+        buildCards(sortedList);
+    }
+
     public void render() {
         stage.setTitle("Nonogram");
         stage.setScene(scene);
@@ -110,11 +189,9 @@ public class PuzzleListView{
         stage.show();
     }
 
-    public Button[] getSelectButtons() {return selectButtons;}
-    
-    public MenuItem[] getEditMenuItems() {return editMenuItems;}
-    
-    public MenuItem[] getSolverMenuItems() {return solverMenuItems;}
- 
-    public MenuItemBar getMenuItemBar() {return menuItemBar;}
+    public Button[] getSelectButtons()       { return selectButtons; }
+    public MenuItem[] getEditMenuItems()     { return editMenuItems; }
+    public MenuItem[] getSolverMenuItems()   { return solverMenuItems; }
+    public MenuItemBar getMenuItemBar()      { return menuItemBar; }
+    public ComboBox<String> getSortComboBox(){ return sortComboBox; }
 }
