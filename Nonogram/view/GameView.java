@@ -156,7 +156,7 @@ public class GameView {
         nextButton.setPrefHeight(36);
         nextButton.setPrefWidth(48);
 
-        checkButton = new Button("確認");
+        checkButton = new Button("正解確認");
         checkButton.setMaxWidth(Double.MAX_VALUE);  // 残りの幅を全部占有
         checkButton.setPrefHeight(36);
 
