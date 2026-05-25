@@ -10,9 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -37,8 +35,9 @@ public class PuzzleListView {
     private ArrayList<Integer> clearedIds;
 
     private Button[] selectButtons;
-    private MenuItem[] editMenuItems;
-    private MenuItem[] solverMenuItems;
+    private Button[] detailButtons;
+    private Button[] editButtons;
+    private boolean isAdmin = false;
     private MenuItemBar menuItemBar;
     private ComboBox<String> sortComboBox;
 
@@ -52,9 +51,10 @@ public class PuzzleListView {
      * @param puzzleList  表示するパズルリスト
      * @param clearedIds  クリア済みパズルIDのリスト（未ログインなら空リスト）
      */
-    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds) {
+    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds, boolean isAdmin) {
         this.puzzleList = puzzleList.getPuzzleList();
         this.clearedIds = clearedIds;
+        this.isAdmin = isAdmin;
 
         menuItemBar = new MenuItemBar();
 
@@ -96,7 +96,7 @@ public class PuzzleListView {
         root.setTop(new VBox(menuItemBar.getMenuBar(), headerBox));
         root.setCenter(scrollPane);
 
-        scene = new Scene(root, 460, 520);
+        scene = new Scene(root, 580, 520);
     }
 
     /**
@@ -105,8 +105,8 @@ public class PuzzleListView {
     private void buildCards(ArrayList<Puzzle> list) {
         int length = list.size();
         selectButtons = new Button[length];
-        editMenuItems = new MenuItem[length];
-        solverMenuItems = new MenuItem[length];
+        detailButtons = new Button[length];
+        editButtons   = new Button[length];
 
         listVBox.getChildren().clear();
 
@@ -137,28 +137,32 @@ public class PuzzleListView {
             starLabel.setMinWidth(24);
             starLabel.setAlignment(Pos.CENTER);
 
-            // 選択ボタン
+            // プレイボタン
             selectButtons[i] = new Button("▶ プレイ");
             selectButtons[i].setFont(new Font(12));
+
+            // 詳細ボタン
+            detailButtons[i] = new Button("詳細");
+            detailButtons[i].setFont(new Font(12));
+            detailButtons[i].setStyle(
+                "-fx-background-color: #e8e8e8; -fx-border-color: #aaaaaa; -fx-border-radius: 3px;"
+            );
+
+            // 編集ボタン（adminのみ表示）
+            editButtons[i] = new Button("✎ 編集");
+            editButtons[i].setFont(new Font(12));
+            editButtons[i].setStyle(
+                "-fx-background-color: #fff3cd; -fx-border-color: #aaaaaa; -fx-border-radius: 3px;"
+            );
+            editButtons[i].setVisible(isAdmin);
+            editButtons[i].setManaged(isAdmin);
 
             Region hSpacer = new Region();
             HBox.setHgrow(hSpacer, Priority.ALWAYS);
 
-            HBox cardBox = new HBox(10, nameLabel, infoBox, hSpacer, starLabel, selectButtons[i]);
+            HBox cardBox = new HBox(8, nameLabel, infoBox, hSpacer, starLabel, detailButtons[i], editButtons[i], selectButtons[i]);
             cardBox.setAlignment(Pos.CENTER_LEFT);
             cardBox.setPadding(new Insets(8, 10, 8, 10));
-
-            // コンテキストメニュー（右クリック）
-            editMenuItems[i] = new MenuItem("編集");
-            editMenuItems[i].setStyle("-fx-font-size: 14px;");
-            solverMenuItems[i] = new MenuItem("ソルバー");
-            solverMenuItems[i].setStyle("-fx-font-size: 14px;");
-            MenuItem deleteMenuItem = new MenuItem("削除");
-            deleteMenuItem.setStyle("-fx-font-size: 14px;");
-
-            ContextMenu contextMenu = new ContextMenu(editMenuItems[i], solverMenuItems[i], deleteMenuItem);
-            cardBox.setOnContextMenuRequested(e ->
-                contextMenu.show(cardBox, e.getScreenX(), e.getScreenY()));
 
             listVBox.getChildren().add(cardBox);
 
@@ -189,9 +193,11 @@ public class PuzzleListView {
         stage.show();
     }
 
-    public Button[] getSelectButtons()       { return selectButtons; }
-    public MenuItem[] getEditMenuItems()     { return editMenuItems; }
-    public MenuItem[] getSolverMenuItems()   { return solverMenuItems; }
-    public MenuItemBar getMenuItemBar()      { return menuItemBar; }
-    public ComboBox<String> getSortComboBox(){ return sortComboBox; }
+    public Stage getStage()                   { return stage; }
+    public Button[] getSelectButtons()        { return selectButtons; }
+    public Button[] getDetailButtons()        { return detailButtons; }
+    public Button[] getEditButtons()          { return editButtons; }
+    public MenuItemBar getMenuItemBar()       { return menuItemBar; }
+    public ComboBox<String> getSortComboBox() { return sortComboBox; }
+    public ArrayList<Integer> getClearedIds() { return clearedIds; }
 }
