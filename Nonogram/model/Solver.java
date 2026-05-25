@@ -191,3 +191,6 @@ public class Solver {
     }
 
 }
+
+//各ラインでFILLED、MARKEDで満たされたline配列を作り自身以外のCELLSTATEが来たら消すEMPTY(候補外)にFilledFaildCounter,MarkedFaildCounterがlineの要素数と同じになったらBreak
+//→パターンを洗い出して矛盾を照らすのではなく、　パターンを洗い出しながら、矛盾を消していく
