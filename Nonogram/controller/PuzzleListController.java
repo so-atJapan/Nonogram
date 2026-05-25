@@ -1,5 +1,8 @@
 package Nonogram.controller;
 
+import java.util.ArrayList;
+
+import Nonogram.model.DAO;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
 import Nonogram.view.PuzzleListView;
@@ -14,6 +17,9 @@ public class PuzzleListController {
     private PuzzleList puzzlelist;
     private AppController appController;
 
+    // ログインプレイヤーのクリア済みパズルIDリスト
+    private ArrayList<Integer> clearedIds = new ArrayList<>();
+
     /**
      * コンストラクタ
      * 
@@ -27,26 +33,89 @@ public class PuzzleListController {
         this.appController = appController;        
     }
 
+    /**
+     * 問題リストを初期化、イベント登録
+     * ログイン済みの場合、クリア済みパズルIDをDBから取得
+     */
     public void initialize() {
+
+        if (appController.isLoggedIn()) {
+            DAO dao = new DAO();
+            clearedIds = dao.getPuzzleRecords(appController.getCurrentPlayer());
+        } else {
+            clearedIds = new ArrayList<>();
+        }
+ 
+        view.initialize(puzzlelist, clearedIds);
         view.render();
 
         view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
-        for (int i = 0; i < view.getSelectButtons().length; i++) {
-            int index = i;
-            view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(puzzlelist.getPuzzleList().get(index)));
-        }
 
-        for (int i = 0; i < view.getEditMenuItems().length; i++) {
-            int index = i;
-            view.getEditMenuItems()[index].setOnAction(e -> onEditPuzzle(puzzlelist.getPuzzleList().get(index)));
-        }
+        view.getSortComboBox().setOnAction(e -> {
+            String selected = view.getSortComboBox().getValue();
+            ArrayList<Puzzle> sorted = getSortedList(selected);
+            view.updateList(sorted, clearedIds);
+            rebindButtons(sorted);
+        });
 
-        for (int i = 0; i < view.getSolverMenuItems().length; i++) {
-            int index = i;
-            view.getSolverMenuItems()[index].setOnAction(e -> onSolverPuzzle(puzzlelist.getPuzzleList().get(index)));
-        }
+        rebindButtons(puzzlelist.getPuzzleList());
         
         // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
+    }
+
+    /**
+     * 選択・編集・ソルバーボタンを現在のリストに再バインドする
+     */
+    private void rebindButtons(ArrayList<Puzzle> list) {
+        for (int i = 0; i < view.getSelectButtons().length; i++) {
+            int index = i;
+            if (index < list.size()) {
+                Puzzle p = list.get(index);
+                view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(p));
+                view.getEditMenuItems()[index].setOnAction(e -> onEditPuzzle(p));
+                view.getSolverMenuItems()[index].setOnAction(e -> onSolverPuzzle(p));
+            }
+        }
+    }
+
+    /**
+     * 並び順に応じてソートされたリストを返す
+     */
+    private ArrayList<Puzzle> getSortedList(String order) {
+        ArrayList<Puzzle> list = new ArrayList<>(puzzlelist.getPuzzleList());
+        if (order == null) return list;
+        switch (order) {
+            case "名前順":
+                list.sort((a, b) -> a.getTitle().compareTo(b.getTitle()));
+                break;
+            case "難易度：低い順":
+                list.sort((a, b) -> a.getDifficulty().ordinal() - b.getDifficulty().ordinal());
+                break;
+            case "難易度：高い順":
+                list.sort((a, b) -> b.getDifficulty().ordinal() - a.getDifficulty().ordinal());
+                break;
+            case "サイズ：小さい順":
+                list.sort((a, b) -> (a.getGridSizeX() * a.getGridSizeY()) - (b.getGridSizeX() * b.getGridSizeY()));
+                break;
+            case "サイズ：大きい順":
+                list.sort((a, b) -> (b.getGridSizeX() * b.getGridSizeY()) - (a.getGridSizeX() * a.getGridSizeY()));
+                break;
+            case "作成日時：新しい順":
+                list.sort((a, b) -> {
+                    if (a.getCreatedAt() == null || b.getCreatedAt() == null) return 0;
+                    return b.getCreatedAt().compareTo(a.getCreatedAt());
+                });
+                break;
+            case "作成日時：古い順":
+                list.sort((a, b) -> {
+                    if (a.getCreatedAt() == null || b.getCreatedAt() == null) return 0;
+                    return a.getCreatedAt().compareTo(b.getCreatedAt());
+                });
+                break;
+            default:
+                break;
+        }
+        return list;
     }
 
     /**
@@ -80,22 +149,6 @@ public class PuzzleListController {
         appController.setPendingPuzzle(puzzle);
         appController.navigateTo("solver");
     }
-
-    // /**
-    //  * 難易度
-    //  * 
-    //  * @param d
-    //  */
-    // public void onFilterChanged(Difficulty d) {
-    //     if (d == null) {
-    //         // フィルターなし → 全件再表示
-    //         loadPuzzles();
-    //         return;
-    //     }
-    //     List<Puzzle> filtered = puzzleList.filter(d);
-    //     view.updateFilter(d);
-    //     view.displayPuzzles(filtered);
-    // }
 
     private void onBackHome() {
         appController.navigateTo("home");
