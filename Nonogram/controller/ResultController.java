@@ -1,5 +1,6 @@
 package Nonogram.controller;
 
+import Nonogram.model.DAO;
 import Nonogram.model.ResultModel;
 import Nonogram.view.ResultView;
 
@@ -12,6 +13,7 @@ public class ResultController {
     private ResultModel model;
     private ResultView view;
     private AppController appController;
+    
     // private PlayRecord record; // TODO: PlayRecordクラス実装後にResultModelの代わりに利用予定
 
     /**
@@ -34,8 +36,19 @@ public class ResultController {
         view.initialize(model);
         view.render();
         showResult();
+        savePuzzleRecord();
         view.showHomeButton().setOnAction(e -> onPuzzleList());
         // view.showRetryButton().setOnAction(e -> onRetry()); // TODO: リトライ機能追加時に有効化
+    }
+
+    /**
+     * ログイン済みの場合、クリアしたパズルの記録をDBへ保存する
+     */
+    private void savePuzzleRecord() {
+        if (appController.isLoggedIn()) {
+            DAO dao = new DAO();
+            dao.insertPuzzleRecord(appController.getCurrentPlayer(), model.getPuzzle());
+        }
     }
 
     /**

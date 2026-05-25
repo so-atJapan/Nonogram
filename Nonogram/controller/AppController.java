@@ -172,7 +172,6 @@ public class AppController {
         puzzleList.initialize();
 
         PuzzleListView listView = new PuzzleListView(stage);
-        listView.initialize(puzzleList);
 
         puzzleListController = new PuzzleListController(listView, puzzleList, this);
         puzzleListController.initialize();
@@ -193,7 +192,7 @@ public class AppController {
      * パズル作成画面を生成して表示する
      */
     public void showCreate() {
-        PuzzleEditorModel model = new PuzzleEditorModel(currentPlayer);
+        PuzzleEditorModel model = new PuzzleEditorModel();
         PuzzleEditorView view = new PuzzleEditorView(stage);
 
         puzzleEditorController = new PuzzleEditorController(model, view, this);
