@@ -4,6 +4,7 @@
       // private PlayRecord record; // TODO: PlayRecordクラス実装後、記録保存用に追加予定
 ・PuzzleクラスのCreatedByをPlayerクラスにする
 ・DBのPuzzlesテーブルのcreatedByをplayer_idにする
+・編集権限は製作者とアドミン
 ・難易度
 ・クリアしたもののマーク
 ・リザルト画面のグリッドサイズ調整
