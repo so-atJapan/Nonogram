@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import Nonogram.model.DAO;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
+import Nonogram.view.PuzzleDetailDialog;
 import Nonogram.view.PuzzleListView;
 
 /**
  * @author 太田
- * エラー対応未実装(5/6時点)
  */
 public class PuzzleListController {
-    
+
     private PuzzleListView view;
     private PuzzleList puzzlelist;
     private AppController appController;
@@ -22,15 +22,11 @@ public class PuzzleListController {
 
     /**
      * コンストラクタ
-     * 
-     * @param view
-     * @param puzzlelist
-     * @param appController
      */
     public PuzzleListController(PuzzleListView view, PuzzleList puzzlelist, AppController appController) {
         this.view = view;
         this.puzzlelist = puzzlelist;
-        this.appController = appController;        
+        this.appController = appController;
     }
 
     /**
@@ -45,8 +41,8 @@ public class PuzzleListController {
         } else {
             clearedIds = new ArrayList<>();
         }
- 
-        view.initialize(puzzlelist, clearedIds);
+
+        view.initialize(puzzlelist, clearedIds, appController.isAdmin());
         view.render();
 
         view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
@@ -59,12 +55,10 @@ public class PuzzleListController {
         });
 
         rebindButtons(puzzlelist.getPuzzleList());
-        
-        // view.getDifficultyFilter().setOnAction(e -> onFilterChanged(view.getDifficultyFilter().getValue()));
     }
 
     /**
-     * 選択・編集・ソルバーボタンを現在のリストに再バインドする
+     * プレイ・詳細ボタンを現在のリストに再バインドする
      */
     private void rebindButtons(ArrayList<Puzzle> list) {
         for (int i = 0; i < view.getSelectButtons().length; i++) {
@@ -72,8 +66,8 @@ public class PuzzleListController {
             if (index < list.size()) {
                 Puzzle p = list.get(index);
                 view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(p));
-                view.getEditMenuItems()[index].setOnAction(e -> onEditPuzzle(p));
-                view.getSolverMenuItems()[index].setOnAction(e -> onSolverPuzzle(p));
+                view.getDetailButtons()[index].setOnAction(e -> onShowDetail(p));
+                view.getEditButtons()[index].setOnAction(e -> onEditPuzzle(p));
             }
         }
     }
@@ -119,10 +113,7 @@ public class PuzzleListController {
     }
 
     /**
-     * パズル選択
-     * 
-     * @param puzzle 選択されたパズル
-     * @return
+     * パズル選択（プレイ開始）
      */
     public Puzzle onSelectPuzzle(Puzzle puzzle) {
         appController.setPendingPuzzle(puzzle);
@@ -131,9 +122,25 @@ public class PuzzleListController {
     }
 
     /**
+     * 詳細ダイアログを表示する
+     * ダイアログ内の「編集」「ソルバー」ボタンにもイベントを設定する
+     */
+    public void onShowDetail(Puzzle puzzle) {
+        boolean cleared = clearedIds.contains(puzzle.getPuzzleId());
+
+        PuzzleDetailDialog dialog = new PuzzleDetailDialog(view.getStage());
+        dialog.initialize(puzzle, cleared);
+
+        dialog.getSolverButton().setOnAction(e -> {
+            dialog.close();
+            onSolverPuzzle(puzzle);
+        });
+
+        dialog.show();
+    }
+
+    /**
      * パズル編集
-     * 
-     * @param puzzle
      */
     public void onEditPuzzle(Puzzle puzzle) {
         appController.setPendingPuzzle(puzzle);
@@ -141,9 +148,7 @@ public class PuzzleListController {
     }
 
     /**
-     * ソルバー
-     * 
-     * @param puzzle
+     * ソルバー起動
      */
     public void onSolverPuzzle(Puzzle puzzle) {
         appController.setPendingPuzzle(puzzle);
@@ -153,6 +158,4 @@ public class PuzzleListController {
     private void onBackHome() {
         appController.navigateTo("home");
     }
-
-
 }

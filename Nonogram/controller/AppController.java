@@ -104,6 +104,23 @@ public class AppController {
         return currentPlayer;
     }
 
+    /** adminアカウントのDB上のplayer_id（DBで自動採番された固定値） */
+    private static final int ADMIN_PLAYER_ID = 1;
+    /** adminアカウントのメールアドレス */
+    private static final String ADMIN_EMAIL = "admin@email.com";
+
+    /**
+     * 現在のプレイヤーが管理者かどうかを返す
+     * player_id（DB採番の固定値）とe_mailの複合条件で判定する
+     *
+     * @return adminアカウントでログインしていれば true
+     */
+    public boolean isAdmin() {
+        if (!isLoggedIn()) return false;
+        return currentPlayer.getPlayerId() == ADMIN_PLAYER_ID
+            && ADMIN_EMAIL.equals(currentPlayer.getEMail());
+    }
+
     /**
      * 現在ログインしているかの確認
      * 
