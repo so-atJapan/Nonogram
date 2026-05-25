@@ -175,7 +175,7 @@ public class Solver {
         for (int i = 0; i < patterns.length; i++) {
             if (patterns[i] == null) continue;
             for (int j = 0; j < line.length; j++) {
-                if (patterns[i][j].getState() != CellState.EMPTY) {   // 修正：EMPTY で比較
+                if (patterns[i][j].getState() != CellState.EMPTY) {     
                     allMarked[j].setState(CellState.EMPTY);
                 }
                 if (patterns[i][j].getState() != CellState.FILLED) {
@@ -194,3 +194,5 @@ public class Solver {
 
 //各ラインでFILLED、MARKEDで満たされたline配列を作り自身以外のCELLSTATEが来たら消すEMPTY(候補外)にFilledFaildCounter,MarkedFaildCounterがlineの要素数と同じになったらBreak
 //→パターンを洗い出して矛盾を照らすのではなく、　パターンを洗い出しながら、矛盾を消していく
+
+//すでにあるFILLED、MARKEDは残しEMPTYだけを上記の満たされたを適応する
