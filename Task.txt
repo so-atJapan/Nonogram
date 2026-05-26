@@ -1,6 +1,5 @@
 
 ・private boolean isPublic = true;  //TODO faulseに変更
-・編集権限は製作者とアドミン
 ・難易度
 ・メニューバーの機能exitにアラート
 ・メニューからソルバー
