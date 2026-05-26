@@ -2,6 +2,7 @@ package Nonogram.view;
 
 import java.time.format.DateTimeFormatter;
 
+import Nonogram.model.Player;
 import Nonogram.model.Puzzle;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -52,10 +53,20 @@ public class PuzzleDetailDialog {
         titleValue.setWrapText(true);
 
         // クリア状態
-        Label clearedBadge = new Label(cleared ? "★ クリア済み" : "未クリア");
-        clearedBadge.setStyle(cleared
-                ? "-fx-text-fill: #c8a000; -fx-font-size: 13px;"
-                : "-fx-text-fill: #888888; -fx-font-size: 13px;");
+        // クリア状態に応じてラベルのテキストを決める
+        String clearedBadgeText;
+        if (cleared) {
+            clearedBadgeText = "★ クリア済み";
+        } else {
+            clearedBadgeText = "未クリア";
+        }
+        Label clearedBadge = new Label(clearedBadgeText);
+        // クリア状態に応じてラベルの文字色を変える
+        if (cleared) {
+            clearedBadge.setStyle("-fx-text-fill: #c8a000; -fx-font-size: 13px;");
+        } else {
+            clearedBadge.setStyle("-fx-text-fill: #888888; -fx-font-size: 13px;");
+        }
 
         HBox titleRow = new HBox(10, titleValue, clearedBadge);
         titleRow.setAlignment(Pos.CENTER_LEFT);
@@ -72,14 +83,33 @@ public class PuzzleDetailDialog {
         addRow(grid, row++, "サイズ", puzzle.getGridSizeX() + " × " + puzzle.getGridSizeY());
         addRow(grid, row++, "難易度", puzzle.getDifficulty().name());
 
-        String publicStr = puzzle.getIsPublic() ? "公開" : "非公開";
+        // 公開設定フラグを表示用の文字列に変換する
+        String publicStr;
+        if (puzzle.getIsPublic()) {
+            publicStr = "公開";
+        } else {
+            publicStr = "非公開";
+        }
         addRow(grid, row++, "公開設定", publicStr);
 
-        addRow(grid, row++, "作成者", puzzle.getCreatedBy().getUserName());
+        // getCreatedBy() が null の場合（DB にプレイヤーが存在しないケース）に備えて
+        // null チェックを行ってから getUserName() を呼び出す
+        Player createdBy = puzzle.getCreatedBy();
+        String createdByName;
+        if (createdBy != null) {
+            createdByName = createdBy.getUserName();
+        } else {
+            createdByName = "不明";
+        }
+        addRow(grid, row++, "作成者", createdByName);
 
-        String createdAtStr = (puzzle.getCreatedAt() != null)
-                ? puzzle.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
-                : "不明";
+        // 作成日時が null の場合（未設定のパズルなど）は「不明」と表示する
+        String createdAtStr;
+        if (puzzle.getCreatedAt() != null) {
+            createdAtStr = puzzle.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+        } else {
+            createdAtStr = "不明";
+        }
         addRow(grid, row++, "作成日時", createdAtStr);
 
         // 操作ボタン

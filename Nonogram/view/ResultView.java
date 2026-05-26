@@ -92,9 +92,9 @@ public class ResultView {
                 cell.setMaxSize(CELLSIZE, CELLSIZE);
 
                 if (grid.getCellAt(row, col).getState() == CellState.FILLED) {
-                    cell.setStyle("-fx-background-color: #222222; -fx-border-color: #555555; -fx-border-width: 1;");
+                    cell.setStyle("-fx-background-color: #222222; -fx-border-color: #cccccc; -fx-border-width: 0.5;");
                 } else {
-                    cell.setStyle("-fx-background-color: white; -fx-border-color: #555555; -fx-border-width: 1;");
+                    cell.setStyle("-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-width: 0.5;");
                 }
 
                 gridPane.add(cell, col, row);
