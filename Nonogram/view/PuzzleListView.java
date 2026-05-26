@@ -38,6 +38,7 @@ public class PuzzleListView {
     private Button[] detailButtons;
     private Button[] editButtons;
     private boolean isAdmin = false;
+    private int currentPlayerId = -1;
     private MenuItemBar menuItemBar;
     private ComboBox<String> sortComboBox;
 
@@ -51,10 +52,11 @@ public class PuzzleListView {
      * @param puzzleList  表示するパズルリスト
      * @param clearedIds  クリア済みパズルIDのリスト（未ログインなら空リスト）
      */
-    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds, boolean isAdmin) {
+    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds, boolean isAdmin, int currentPlayerId) {
         this.puzzleList = puzzleList.getPuzzleList();
         this.clearedIds = clearedIds;
         this.isAdmin = isAdmin;
+        this.currentPlayerId = currentPlayerId;
 
         menuItemBar = new MenuItemBar();
 
@@ -148,14 +150,18 @@ public class PuzzleListView {
                 "-fx-background-color: #e8e8e8; -fx-border-color: #aaaaaa; -fx-border-radius: 3px;"
             );
 
-            // 編集ボタン（adminのみ表示）
+            // 編集ボタン（adminまたはパズルの製作者に表示）
             editButtons[i] = new Button("✎ 編集");
             editButtons[i].setFont(new Font(12));
             editButtons[i].setStyle(
                 "-fx-background-color: #fff3cd; -fx-border-color: #aaaaaa; -fx-border-radius: 3px;"
             );
-            editButtons[i].setVisible(isAdmin);
-            editButtons[i].setManaged(isAdmin);
+            boolean canEdit = isAdmin
+                    || (currentPlayerId != -1
+                        && p.getCreatedBy() != null
+                        && p.getCreatedBy().getPlayerId() == currentPlayerId);
+            editButtons[i].setVisible(canEdit);
+            editButtons[i].setManaged(canEdit);
 
             Region hSpacer = new Region();
             HBox.setHgrow(hSpacer, Priority.ALWAYS);
