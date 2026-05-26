@@ -62,7 +62,7 @@ public class SolverController {
                 int finalY = y;
 
                 var button = view.getButtons()[finalX][finalY];
-
+                
                 // クリック（単体操作用）
                 button.setOnMouseClicked(e -> {
 
@@ -70,7 +70,11 @@ public class SolverController {
                         onCellLeftClicked(finalX, finalY);
                     } else if (e.getButton() == MouseButton.SECONDARY) {
                         onCellRightClicked(finalX, finalY);
-                    } else if (e.getButton() == MouseButton.BACK) {
+                    }
+                });
+
+                button.setOnMousePressed(e -> {
+                    if (e.getButton() == MouseButton.BACK) {
                         onUndo();
                     } else if (e.getButton() == MouseButton.FORWARD) {
                         onRedo();

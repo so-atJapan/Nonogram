@@ -72,6 +72,11 @@ public class DAO {
         "WHERE puzzle_id = ?";
 
 
+    private final String SELECT_PLAYER_BY_PLAYER_ID =
+    "SELECT player_id, user_name, e_mail, password_hash " +
+    "FROM players " +
+    "WHERE player_id = ?";
+
     private final String SELECT_PLAYER_BY_EMAIL =
     "SELECT player_id, user_name, e_mail, password_hash " +
     "FROM players " +
@@ -104,7 +109,7 @@ public class DAO {
                     puzzle.setDifficulty(rs.getString(5));
                     puzzle.setIsPublic(rs.getBoolean(6));
                     puzzle.setCreatedAt(rs.getTimestamp(7).toLocalDateTime());
-                    puzzle.setCreatedBy(new LoginPlayer(INSERT_PLAYER, 0, SELECT_PLAYER_BY_EMAIL, DB_PATH));
+                    puzzle.setCreatedBy(getLoginPlayer(rs.getInt(8)));
                     puzzle.setSolution(rs.getString(9));
                     puzzle.setClue(new Clue(rs.getString(10), rs.getString(11)));
 
@@ -168,6 +173,38 @@ public class DAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * プレイヤーIDからログインプレイヤー情報を取得する
+     *
+     * @param playerId 入力されたプレイヤーID
+     * @return 見つかったログインプレイヤー。存在しない場合はnull
+     */
+    private LoginPlayer getLoginPlayer(int playerId) {
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(SELECT_PLAYER_BY_PLAYER_ID);
+        ) {
+            ps.setInt(1, playerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new LoginPlayer(
+                        rs.getString("user_name"),
+                        rs.getInt("player_id"),
+                        rs.getString("e_mail"),
+                        rs.getString("password_hash")
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
     
     /**

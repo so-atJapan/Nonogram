@@ -155,9 +155,14 @@ public class PuzzleEditorController {
 
                 // クリック（単体操作用）
                 button.setOnMouseClicked(e -> {
+
                     if (e.getButton() == MouseButton.PRIMARY) {
                         onCellLeftClicked(finalX, finalY);
-                    } else if (e.getButton() == MouseButton.BACK) {
+                    }
+                });
+
+                button.setOnMousePressed(e -> {
+                    if (e.getButton() == MouseButton.BACK) {
                         onUndo();
                     } else if (e.getButton() == MouseButton.FORWARD) {
                         onRedo();
