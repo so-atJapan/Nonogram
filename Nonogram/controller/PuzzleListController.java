@@ -42,7 +42,13 @@ public class PuzzleListController {
             clearedIds = new ArrayList<>();
         }
 
-        view.initialize(puzzlelist, clearedIds, appController.isAdmin());
+        int currentPlayerId;
+        if (appController.isLoggedIn()) {
+            currentPlayerId = appController.getCurrentPlayer().getPlayerId();
+        } else {
+            currentPlayerId = -1;
+        }
+        view.initialize(puzzlelist, clearedIds, appController.isAdmin(), currentPlayerId);
         view.render();
 
         view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
