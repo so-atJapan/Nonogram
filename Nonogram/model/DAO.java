@@ -161,7 +161,7 @@ public class DAO {
             ps.setString(4, puzzle.getDifficulty().toString());
             ps.setBoolean(5, puzzle.getIsPublic());
             ps.setTimestamp(6, Timestamp.valueOf(puzzle.getCreatedAt()));
-            ps.setString(7, puzzle.getCreatedBy().getUserName());
+            ps.setInt(7, puzzle.getCreatedBy().getPlayerId());
             ps.setString(8, puzzle.getSolution().toString());
             ps.setString(9, puzzle.getClue().rowToString());
             ps.setString(10, puzzle.getClue().colToString());
