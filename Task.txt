@@ -1,11 +1,8 @@
-・TODO消し
-     private boolean isPublic = true;  //TODO faulseに変更
-     private String createdBy = "No Name"; //TODO Playerクラス追加予定
-・PuzzleクラスのCreatedByをPlayerクラスにする
-・DBのPuzzlesテーブルのcreatedByをplayer_idにする
+
+・private boolean isPublic = true;  //TODO faulseに変更
 ・編集権限は製作者とアドミン
 ・難易度
-・サイドボタンでのバグ
+・メニューバーの機能exitにアラート
 ・メニューからソルバー
 ・リザルト画面のグリッドサイズ調整
 ・javadoc HTML
