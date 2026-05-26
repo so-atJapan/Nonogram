@@ -135,7 +135,7 @@ public class DAO {
             ps.setInt(3, puzzle.getGridSizeY());
             ps.setString(4, puzzle.getDifficulty().toString());
             ps.setBoolean(5, puzzle.getIsPublic());
-            ps.setString(6, puzzle.getCreatedBy().getUserName());
+            ps.setInt(6, puzzle.getCreatedBy().getPlayerId());
             ps.setString(7, puzzle.getSolution().toString());
             ps.setString(8, puzzle.getClue().rowToString());
             ps.setString(9, puzzle.getClue().colToString());
