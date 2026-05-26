@@ -4,7 +4,6 @@
 ・難易度
 ・メニューバーの機能exitにアラート
 ・メニューからソルバー
-・リザルト画面のグリッドサイズ調整
 ・javadoc HTML
 ・エラー処理、バリデーションチェック
 ・creete時のpublic or private
