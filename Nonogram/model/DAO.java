@@ -104,7 +104,7 @@ public class DAO {
                     puzzle.setDifficulty(rs.getString(5));
                     puzzle.setIsPublic(rs.getBoolean(6));
                     puzzle.setCreatedAt(rs.getTimestamp(7).toLocalDateTime());
-                    puzzle.setCreatedBy(rs.getString(8));
+                    puzzle.setCreatedBy(new LoginPlayer(INSERT_PLAYER, 0, SELECT_PLAYER_BY_EMAIL, DB_PATH));
                     puzzle.setSolution(rs.getString(9));
                     puzzle.setClue(new Clue(rs.getString(10), rs.getString(11)));
 
@@ -130,7 +130,7 @@ public class DAO {
             ps.setInt(3, puzzle.getGridSizeY());
             ps.setString(4, puzzle.getDifficulty().toString());
             ps.setBoolean(5, puzzle.getIsPublic());
-            ps.setString(6, puzzle.getCreatedBy());
+            ps.setString(6, puzzle.getCreatedBy().getUserName());
             ps.setString(7, puzzle.getSolution().toString());
             ps.setString(8, puzzle.getClue().rowToString());
             ps.setString(9, puzzle.getClue().colToString());
@@ -156,7 +156,7 @@ public class DAO {
             ps.setString(4, puzzle.getDifficulty().toString());
             ps.setBoolean(5, puzzle.getIsPublic());
             ps.setTimestamp(6, Timestamp.valueOf(puzzle.getCreatedAt()));
-            ps.setString(7, puzzle.getCreatedBy());
+            ps.setString(7, puzzle.getCreatedBy().getUserName());
             ps.setString(8, puzzle.getSolution().toString());
             ps.setString(9, puzzle.getClue().rowToString());
             ps.setString(10, puzzle.getClue().colToString());

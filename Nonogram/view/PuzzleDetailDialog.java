@@ -75,7 +75,7 @@ public class PuzzleDetailDialog {
         String publicStr = puzzle.getIsPublic() ? "公開" : "非公開";
         addRow(grid, row++, "公開設定", publicStr);
 
-        addRow(grid, row++, "作成者", puzzle.getCreatedBy());
+        addRow(grid, row++, "作成者", puzzle.getCreatedBy().getUserName());
 
         String createdAtStr = (puzzle.getCreatedAt() != null)
                 ? puzzle.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))

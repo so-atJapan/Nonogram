@@ -9,7 +9,7 @@ public class PuzzleEditorModel {
     private static DAO dao = new DAO();
 
     // コンストラクタ
-    public PuzzleEditorModel(Puzzle puzzle) {
+    public PuzzleEditorModel(Puzzle puzzle) { //編集時
         this.puzzle = puzzle;
 
         // 初期化
@@ -32,9 +32,9 @@ public class PuzzleEditorModel {
     }
 
     //コンストラクタ
-    public PuzzleEditorModel(Player editPlayer){
+    public PuzzleEditorModel(Player editPlayer){  //新規作成時
         this(new Puzzle());
-        this.puzzle.setCreatedBy(editPlayer.getUserName());
+        this.puzzle.setCreatedBy(editPlayer);
     }
 
     // Puzzle取得

@@ -14,7 +14,7 @@ public class Puzzle {
    private Difficulty difficulty = Difficulty.NORMAL;
    private boolean isPublic = true;  //TODO faulseに変更
    private LocalDateTime createdAt;
-   private String createdBy = "No Name"; //TODO Playerクラス追加予定
+   private Player createdBy = new GuestPlayer();
    private Grid solution = new Grid(10, 10);
    private Clue clue = new Clue("0", "0");
 
@@ -27,7 +27,7 @@ public class Puzzle {
    public Difficulty getDifficulty() {return difficulty;}
    public boolean getIsPublic(){return isPublic;}
    public LocalDateTime getCreatedAt() {return createdAt;}
-   public String getCreatedBy() {return createdBy;}
+   public Player getCreatedBy() {return createdBy;}
    public Grid getSolution() {return solution;}
    public Clue getClue() {return clue;}
 
@@ -39,7 +39,7 @@ public class Puzzle {
    public void setDifficulty(Difficulty difficulty) {this.difficulty = difficulty;}
    public void setIsPublic(boolean isPublic){this.isPublic = isPublic;}
    public void setCreatedAt(LocalDateTime createdAt) {this.createdAt = createdAt;}
-   public void setCreatedBy(String createdBy) {this.createdBy = createdBy;}
+   public void setCreatedBy(Player createdBy) {this.createdBy = createdBy;}
    public void setSolution(Grid solution) {this.solution = solution;}
    public void setClue(Clue clue) {this.clue = clue;}
 
