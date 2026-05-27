@@ -1,22 +1,15 @@
 package Nonogram.view;
  
-import Nonogram.model.Cell;
 import Nonogram.model.Grid;
 import Nonogram.model.Puzzle;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
  
@@ -34,6 +27,7 @@ public class PuzzleEditorView {
     private Button checkButton;
     private Label timerLabel;
 
+    private ScrollPane scrollPane;
     private HBox midRow;
 
     private MenuItemBar menuItemBar;
@@ -111,7 +105,7 @@ public class PuzzleEditorView {
         VBox puzzleArea = new VBox(midRow);
         puzzleArea.setSpacing(0);
 
-        ScrollPane scrollPane = new ScrollPane(puzzleArea);
+        scrollPane = new ScrollPane(puzzleArea);
         scrollPane.setFitToWidth(false);   // コンテンツを縮小しない
         scrollPane.setFitToHeight(false);  // コンテンツを縮小しない
         scrollPane.setPannable(false);
@@ -182,7 +176,9 @@ public class PuzzleEditorView {
 
         this.gridPanel = new GridPane();
         this.buttons = new Button[grid.getSizeX()][grid.getSizeY()];
-    
+        this.rows = grid.getSizeX();
+        this.cols = grid.getSizeY();
+
         for (int x = 0; x < grid.getSizeX(); x++) {
             for (int y = 0; y < grid.getSizeY(); y++) {
                 Button btn = new Button();
@@ -199,6 +195,19 @@ public class PuzzleEditorView {
 
         midRow.getChildren().setAll(gridPanel);
 
+        // ===== ScrollPane のビューポートを再調整 =====
+        final int MAX_VIEW_WIDTH  = 1000;
+        final int MAX_VIEW_HEIGHT = 800;
+
+        int puzzleWidth  = this.cols * cellSize;
+        int puzzleHeight = this.rows * cellSize;
+
+        scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
+        scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
+
+        // ウィンドウをコンテンツに合わせて再フィット
+        stage.sizeToScene();
+        stage.centerOnScreen();
     }
 
     public void updateCellAll(Grid grid) {
