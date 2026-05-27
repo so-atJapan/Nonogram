@@ -2,6 +2,7 @@ package Nonogram.view;
 
 import java.util.ArrayList;
 
+import Nonogram.controller.AppController;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
 import javafx.collections.FXCollections;
@@ -52,13 +53,13 @@ public class PuzzleListView {
      * @param puzzleList  表示するパズルリスト
      * @param clearedIds  クリア済みパズルIDのリスト（未ログインなら空リスト）
      */
-    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds, boolean isAdmin, int currentPlayerId) {
+    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds, boolean isAdmin, int currentPlayerId, AppController appController) {
         this.puzzleList = puzzleList.getPuzzleList();
         this.clearedIds = clearedIds;
         this.isAdmin = isAdmin;
         this.currentPlayerId = currentPlayerId;
 
-        menuItemBar = new MenuItemBar();
+        menuItemBar = new MenuItemBar(appController);
 
         // ---- ヘッダ行（タイトル＋並び順） ----
         Label titleLabel = new Label("問題選択");

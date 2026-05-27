@@ -1,6 +1,7 @@
 package Nonogram.view;
  
 import Nonogram.model.Grid;
+import Nonogram.controller.AppController;
 import Nonogram.model.Puzzle;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -44,12 +45,12 @@ public class PuzzleEditorView {
     }
 
     //初期化
-    public void initialize(Puzzle puzzle){
+    public void initialize(Puzzle puzzle, AppController appController){
 
         this.semiModal = new SemiModal(this.stage);
         this.semiModal.initialize(puzzle);
 
-        menuItemBar = new MenuItemBar();
+        menuItemBar = new MenuItemBar(appController);
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
@@ -293,4 +294,3 @@ public class PuzzleEditorView {
         return menuItemBar;
     }
 }
- 

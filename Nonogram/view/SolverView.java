@@ -1,6 +1,7 @@
 package Nonogram.view;
 
 import Nonogram.model.Grid;
+import Nonogram.controller.AppController;
 import Nonogram.model.Puzzle;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -50,12 +51,12 @@ public class SolverView {
     }
 
     // 初期化
-    public void initialize(Puzzle puzzle) {
+    public void initialize(Puzzle puzzle, AppController appController) {
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
 
-        menuItemBar = new MenuItemBar();
+        menuItemBar = new MenuItemBar(appController);
 
         ArrayList<ArrayList<Integer>> rowClues = puzzle.getClue().getRowClues();
         ArrayList<ArrayList<Integer>> colClues = puzzle.getClue().getColClues();
