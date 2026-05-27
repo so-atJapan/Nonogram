@@ -1,10 +1,10 @@
 package Nonogram.view;
 
-import java.util.ArrayList;
-
 import Nonogram.controller.AppController;
+
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
+
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,6 +20,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 /**
  * パズルリスト画面のView

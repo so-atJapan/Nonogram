@@ -120,6 +120,15 @@ public class LoginView {
     }
 
     /**
+     * ログイン結果メッセージを表示する
+     *
+     * @param message 表示するメッセージ
+     */
+    public void showMessage(String message) {
+        messageLabel.setText(message);
+    }
+
+    /**
      * ログインが確定されたかどうかを取得する
      *
      * @return ログインが確定された場合はtrue
@@ -142,52 +151,34 @@ public class LoginView {
      *
      * @return メールアドレス
      */
-    public String getEmail() {
-        return emailField.getText();
-    }
+    public String getEmail() { return emailField.getText(); }
 
     /**
      * 入力されたパスワードを取得する
      *
      * @return パスワード
      */
-    public String getPassword() {
-        return passwordField.getText();
-    }
+    public String getPassword() { return passwordField.getText(); }
 
     /**
      * ログインボタンを取得する
      *
      * @return ログインボタン
      */
-    public Button getLoginButton() {
-        return loginButton;
-    }
+    public Button getLoginButton() { return loginButton; }
 
     /**
      * キャンセルボタンを取得する
      *
      * @return キャンセルボタン
      */
-    public Button getCancelButton() {
-        return cancelButton;
-    }
+    public Button getCancelButton() { return cancelButton; }
 
     /**
      * サインアップ画面へのリンクを取得する
      *
      * @return サインアップリンク
      */
-    public Hyperlink getSignupLink() {
-        return signupLink;
-    }
+    public Hyperlink getSignupLink() { return signupLink; }
 
-    /**
-     * ログイン結果メッセージを表示する
-     *
-     * @param message 表示するメッセージ
-     */
-    public void showMessage(String message) {
-        messageLabel.setText(message);
-    }
 }

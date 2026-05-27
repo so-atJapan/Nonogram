@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 
 import Nonogram.model.Player;
 import Nonogram.model.Puzzle;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

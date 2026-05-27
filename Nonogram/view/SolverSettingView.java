@@ -1,6 +1,7 @@
 package Nonogram.view;
 
 import Nonogram.model.Puzzle;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -123,10 +124,6 @@ public class SolverSettingView {
         settingStage.close();
     }
 
-    public Button getOkButton() {
-        return okButton;
-    }
-
     public void setTitleTextField(String title){
         titleTextField.setText(title);
     }
@@ -139,15 +136,11 @@ public class SolverSettingView {
         colTextField.setText(String.valueOf(gridSizeY));
     }
 
-    public String getTitleTextField(){
-        return titleTextField.getText();
-    }
+    public Button getOkButton() { return okButton; }
 
-    public int getGridSizeX(){
-        return Integer.parseInt(rowTextField.getText());
-    }
+    public String getTitleTextField(){ return titleTextField.getText(); }
 
-    public int getGridSizeY(){
-        return Integer.parseInt(colTextField.getText());
-    }
+    public int getGridSizeX(){ return Integer.parseInt(rowTextField.getText()); }
+
+    public int getGridSizeY(){ return Integer.parseInt(colTextField.getText()); }
 }

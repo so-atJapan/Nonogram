@@ -147,69 +147,6 @@ public class SignupView {
     }
 
     /**
-     * 入力されたユーザー名を取得する
-     *
-     * @return ユーザー名
-     */
-    public String getUserName() {
-        return nameField.getText();
-    }
-
-    /**
-     * 入力されたメールアドレスを取得する
-     *
-     * @return メールアドレス
-     */
-    public String getEmail() {
-        return emailField.getText();
-    }
-
-    /**
-     * 入力されたパスワードを取得する
-     *
-     * @return パスワード
-     */
-    public String getPassword() {
-        return passwordField.getText();
-    }
-
-    /**
-     * 入力された確認用パスワードを取得する
-     *
-     * @return 確認用パスワード
-     */
-    public String getConfirmPassword() {
-        return confirmPasswordField.getText();
-    }
-
-    /**
-     * サインアップボタンを取得する
-     *
-     * @return サインアップボタン
-     */
-    public Button getSignupButton() {
-        return signupButton;
-    }
-
-    /**
-     * キャンセルボタンを取得する
-     *
-     * @return キャンセルボタン
-     */
-    public Button getCancelButton() {
-        return cancelButton;
-    }
-
-    /**
-     * ログイン画面へのリンクを取得する
-     *
-     * @return ログインリンク
-     */
-    public Hyperlink getLoginLink() {
-        return loginLink;
-    }
-
-    /**
      * サインアップ結果メッセージを表示する
      *
      * @param message 表示するメッセージ
@@ -217,4 +154,54 @@ public class SignupView {
     public void showMessage(String message) {
         messageLabel.setText(message);
     }
+
+    /**
+     * 入力されたユーザー名を取得する
+     *
+     * @return ユーザー名
+     */
+    public String getUserName() { return nameField.getText(); }
+
+    /**
+     * 入力されたメールアドレスを取得する
+     *
+     * @return メールアドレス
+     */
+    public String getEmail() { return emailField.getText(); }
+
+    /**
+     * 入力されたパスワードを取得する
+     *
+     * @return パスワード
+     */
+    public String getPassword() { return passwordField.getText(); }
+
+    /**
+     * 入力された確認用パスワードを取得する
+     *
+     * @return 確認用パスワード
+     */
+    public String getConfirmPassword() { return confirmPasswordField.getText(); }
+
+    /**
+     * サインアップボタンを取得する
+     *
+     * @return サインアップボタン
+     */
+    public Button getSignupButton() { return signupButton; }
+
+    /**
+     * キャンセルボタンを取得する
+     *
+     * @return キャンセルボタン
+     */
+    public Button getCancelButton() { return cancelButton; }
+
+    /**
+     * ログイン画面へのリンクを取得する
+     *
+     * @return ログインリンク
+     */
+    public Hyperlink getLoginLink() { return loginLink; }
+
 }

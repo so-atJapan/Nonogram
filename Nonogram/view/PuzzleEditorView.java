@@ -1,8 +1,10 @@
 package Nonogram.view;
  
-import Nonogram.model.Grid;
 import Nonogram.controller.AppController;
+
+import Nonogram.model.Grid;
 import Nonogram.model.Puzzle;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,8 +14,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
 import javafx.stage.Stage;
- 
  
 public class PuzzleEditorView {
 
@@ -258,39 +260,22 @@ public class PuzzleEditorView {
     }
  
  
-    public Stage getStage() {
-        return stage;
-    }
+    public Stage getStage() { return stage; }
  
-    public Button[][] getButtons() {
-        return buttons;
-    }
+    public Button[][] getButtons() { return buttons; }
  
-    public Button getSettingButton() {
-        return settingButton;
-    }
+    public Button getSettingButton() { return settingButton; }
 
-    public Button getOkButton() {
-        return this.semiModal.getOkButton();
-    }
+    public Button getOkButton() { return this.semiModal.getOkButton(); }
  
-    public Button getCheckButton() {
-        return checkButton;
-    }
+    public Button getCheckButton() { return checkButton; }
 
-    public String getTitleTextField(){
-        return this.semiModal.getTitleTextField();
-    }
+    public String getTitleTextField(){ return this.semiModal.getTitleTextField(); }
 
-    public int getGridSizeX(){
-        return this.semiModal.getGridSizeX();
-    }
+    public int getGridSizeX(){ return this.semiModal.getGridSizeX(); }
 
-    public int getGridSizeY(){
-        return this.semiModal.getGridSizeY();
-    }
+    public int getGridSizeY(){ return this.semiModal.getGridSizeY(); }
 
-    public MenuItemBar getMenuItemBar() {
-        return menuItemBar;
-    }
+    public MenuItemBar getMenuItemBar() { return menuItemBar; }
+
 }

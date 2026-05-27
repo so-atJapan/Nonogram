@@ -1,8 +1,12 @@
 package Nonogram.view;
  
-import Nonogram.model.Grid;
 import Nonogram.controller.AppController;
+
+import Nonogram.model.Grid;
 import Nonogram.model.Puzzle;
+
+import java.util.ArrayList;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,7 +19,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
  
-import java.util.ArrayList;
  
 public class GameView {
  
@@ -291,27 +294,15 @@ public class GameView {
         alert.showAndWait();
     }
  
-    public Stage getStage() {
-        return stage;
-    }
+    public Stage getStage() { return stage; }
+
+    public Button[][] getButtons() { return buttons; }
  
-    public Button[][] getButtons() {
-        return buttons;
-    }
- 
-    public Button getCheckButton() {
-        return checkButton;
-    }
+    public Button getCheckButton() { return checkButton; }
 
-    public Button getPrevButton() {
-        return prevButton;
-    }
+    public Button getPrevButton() { return prevButton; }
 
-    public Button getNextButton() {
-        return nextButton;
-    }
+    public Button getNextButton() { return nextButton; }
 
-    public MenuItemBar getMenuItemBar() {
-        return menuItemBar;
-    }
+    public MenuItemBar getMenuItemBar() { return menuItemBar; }
 }

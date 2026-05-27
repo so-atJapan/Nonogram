@@ -1,8 +1,10 @@
 package Nonogram.view;
 
-import Nonogram.model.Grid;
 import Nonogram.controller.AppController;
+
+import Nonogram.model.Grid;
 import Nonogram.model.Puzzle;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -340,6 +342,14 @@ public class SolverView {
     public Button getCheckButton() { return checkButton; }
     public Button getPrevButton() { return prevButton; }
     public Button getNextButton() { return nextButton; }
+    
+    public Button getOkButton() { return this.semiModal.getOkButton(); }
+
+    public String getTitleTextField(){ return this.semiModal.getTitleTextField(); }
+
+    public int getGridSizeX(){ return this.semiModal.getGridSizeX(); }
+
+    public int getGridSizeY(){ return this.semiModal.getGridSizeY(); }
 
     public String getRowClueFields() {
         StringBuilder sb = new StringBuilder();
@@ -377,19 +387,4 @@ public class SolverView {
         return sb.toString();
     }
 
-    public Button getOkButton() {
-        return this.semiModal.getOkButton();
-    }
-
-    public String getTitleTextField(){
-        return this.semiModal.getTitleTextField();
-    }
-
-    public int getGridSizeX(){
-        return this.semiModal.getGridSizeX();
-    }
-
-    public int getGridSizeY(){
-        return this.semiModal.getGridSizeY();
-    }
 }

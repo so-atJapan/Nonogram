@@ -2,6 +2,7 @@ package Nonogram.view;
 
 import Nonogram.controller.AppController;
 import Nonogram.controller.GameController;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;

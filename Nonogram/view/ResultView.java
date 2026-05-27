@@ -3,6 +3,7 @@ package Nonogram.view;
 import Nonogram.model.CellState;
 import Nonogram.model.Grid;
 import Nonogram.model.ResultModel;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
