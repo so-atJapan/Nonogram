@@ -25,7 +25,12 @@ public class ResultView {
     private Label clearTimeLabel;
     private Button backButton;
 
-    private final int CELLSIZE = 24;
+    /** グリッドに使える最大ピクセル数。画面全体からUI部品の余白分を引いた値 */
+    private static final int MAX_GRID_PX = 600;
+    /** セルサイズの最小値（これ以上小さくしない） */
+    private static final int MIN_CELL_SIZE = 4;
+    /** セルサイズの最大値（小さいパズルでも大きくなりすぎないようにする） */
+    private static final int MAX_CELL_SIZE = 30;
 
     /**
      * コンストラクタ
@@ -58,9 +63,9 @@ public class ResultView {
         backButton.setMaxWidth(Double.MAX_VALUE);
         backButton.setPrefHeight(36);
 
-        VBox root = new VBox(12, titleLabel, puzzleTitleLabel, clearTimeLabel, completedGridPane, backButton);
+        VBox root = new VBox(16, titleLabel, puzzleTitleLabel, clearTimeLabel, completedGridPane, backButton);
         root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(16));
+        root.setPadding(new Insets(24));
 
         scene = new Scene(root);
     }
@@ -75,21 +80,38 @@ public class ResultView {
     }
 
     /**
-     * 完成したノノグラムの盤面を生成する
-     * 
-     * @param grid 完成時の盤面
-     * @return 盤面表示用のGridPane
+     * グリッドのマス数に応じたセルサイズを計算する
+     * 縦横それぞれ MAX_GRID_PX に収まるよう逆算し、
+     * MIN_CELL_SIZE〜MAX_CELL_SIZE の範囲にクランプする
+     *
+     * @param grid サイズを参照するグリッド
+     * @return セルの1辺のピクセルサイズ
      */
+    private int calcCellSize(Grid grid) {
+        // 縦と横の大きいほうに合わせてセルサイズを決める
+        int maxSide = Math.max(grid.getSizeX(), grid.getSizeY());
+        int cellSize = MAX_GRID_PX / maxSide;
+        if (cellSize < MIN_CELL_SIZE) {
+            cellSize = MIN_CELL_SIZE;
+        } else if (cellSize > MAX_CELL_SIZE) {
+            cellSize = MAX_CELL_SIZE;
+        }
+        return cellSize;
+    }
+
     private GridPane createCompletedGrid(Grid grid) {
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
 
+        // グリッドのマス数からセルサイズを逆算する
+        int cellSize = calcCellSize(grid);
+
         for (int row = 0; row < grid.getSizeX(); row++) {
             for (int col = 0; col < grid.getSizeY(); col++) {
                 Label cell = new Label();
-                cell.setPrefSize(CELLSIZE, CELLSIZE);
-                cell.setMinSize(CELLSIZE, CELLSIZE);
-                cell.setMaxSize(CELLSIZE, CELLSIZE);
+                cell.setPrefSize(cellSize, cellSize);
+                cell.setMinSize(cellSize, cellSize);
+                cell.setMaxSize(cellSize, cellSize);
 
                 if (grid.getCellAt(row, col).getState() == CellState.FILLED) {
                     cell.setStyle("-fx-background-color: #222222; -fx-border-color: #cccccc; -fx-border-width: 0.5;");
