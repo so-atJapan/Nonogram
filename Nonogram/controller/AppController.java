@@ -1,5 +1,6 @@
 package Nonogram.controller;
 
+import Nonogram.model.Clue;
 import Nonogram.model.GameModel;
 import Nonogram.model.Grid;
 import Nonogram.model.GuestPlayer;
@@ -88,6 +89,9 @@ public class AppController {
                 break;
             case "solver":
                 showSolver();
+                break;
+            case "homeSolver":
+                showSolverFromHome();
                 break;
             default:
                 showPuzzleList();
@@ -247,6 +251,17 @@ public class AppController {
 
         resultController = new ResultController(model, view, this);
         resultController.initialize();
+    }
+
+    /**
+     * ソルバー画面を生成して表示する（ホームから直接起動、空の10x10盤）
+     */
+    public void showSolverFromHome() {
+        SolverModel solverModel = new SolverModel(new Puzzle());
+        SolverView solverView = new SolverView(stage);
+
+        SolverController solverController = new SolverController(solverModel, solverView, this);
+        solverController.initialize();
     }
 
     /**

@@ -30,6 +30,7 @@ public class HomeController {
 
         view.getPlayButton().setOnAction(e -> onPlay());
         view.getCreateButton().setOnAction(e -> onCreate());
+        view.getSolverButton().setOnAction(e -> onSolver());
         view.getExitButton().setOnAction(e -> onExit());
         if (view.getLoginButton() != null) {
             view.getLoginButton().setOnAction(e -> onLogin());
@@ -48,6 +49,10 @@ public class HomeController {
     
     private void onCreate() {
         appController.navigateTo("create");
+    }
+
+    private void onSolver() {
+        appController.navigateTo("homeSolver");
     }
     
     private void onExit() {
