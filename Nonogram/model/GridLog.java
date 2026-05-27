@@ -13,7 +13,7 @@ public class GridLog {
     }
     public GridLog(Grid grid){
         this();
-        this.push(grid);
+        this.push(grid.copy());
     }
 
     // 新しい操作を記録
@@ -39,7 +39,7 @@ public class GridLog {
 
     // 任意ステップ参照
     public Grid get(int step) {
-        return gridLogs.get(step);
+        return gridLogs.get(step).copy();
     }
 
     public Grid get() {
