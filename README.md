@@ -1,6 +1,13 @@
 # Nonogram 
 世界的に有名なピクロスパズルゲーム<br><br>
 
+## 目次
+
+- [遊び方](https://github.com/so-atJapan/Nonogram/edit/main/README.md#%E7%9B%AE%E6%AC%A1)
+- [機能一覧](https://github.com/so-atJapan/Nonogram/edit/main/README.md#%E6%A9%9F%E8%83%BD%E4%B8%80%E8%A6%A7)
+- [サインアップ](#サインアップ)
+- [ライセンス](#ライセンス)
+
 ## 遊び方
 １．赤枠や青枠で囲んだ**数字**をもとにマスを塗りつぶす。（例1 解答例）<br>
     
