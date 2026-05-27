@@ -1,7 +1,6 @@
 ・Puzzleの削除、（権限者のみ）
 ・private boolean isPublic = true;  //TODO faulseに変更
 ・難易度
-・メニューバーの機能exitにアラート
 ・メニューからソルバー
 ・javadoc HTML
 ・エラー処理、バリデーションチェック
