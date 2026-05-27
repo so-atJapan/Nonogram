@@ -1,12 +1,13 @@
 package Nonogram.controller;
 
-import java.util.ArrayList;
-
 import Nonogram.model.DAO;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleList;
+
 import Nonogram.view.PuzzleDetailDialog;
 import Nonogram.view.PuzzleListView;
+
+import java.util.ArrayList;
 
 /**
  * @author 太田

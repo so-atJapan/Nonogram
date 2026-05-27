@@ -1,6 +1,7 @@
 package Nonogram.controller;
 
 import Nonogram.model.LoginModel;
+
 import Nonogram.view.LoginView;
 
 /**

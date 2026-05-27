@@ -1,6 +1,5 @@
 package Nonogram.controller;
 
-import Nonogram.model.Clue;
 import Nonogram.model.GameModel;
 import Nonogram.model.Grid;
 import Nonogram.model.GuestPlayer;
@@ -12,6 +11,7 @@ import Nonogram.model.PuzzleList;
 import Nonogram.model.ResultModel;
 import Nonogram.model.SignupModel;
 import Nonogram.model.SolverModel;
+
 import Nonogram.view.GameView;
 import Nonogram.view.LoginView;
 import Nonogram.view.HomeView;
@@ -20,6 +20,7 @@ import Nonogram.view.PuzzleListView;
 import Nonogram.view.ResultView;
 import Nonogram.view.SignupView;
 import Nonogram.view.SolverView;
+
 import javafx.stage.Stage;
 
 /**
@@ -39,6 +40,10 @@ public class AppController {
     private LoginController loginController;
     private SignupController signupController;
     private Player currentPlayer = new GuestPlayer();
+    /** adminアカウントのDB上のplayer_id（DBで自動採番された固定値） */
+    private static final int ADMIN_PLAYER_ID = 1;
+    /** adminアカウントのメールアドレス */
+    private static final String ADMIN_EMAIL = "admin@email.com";
 
     /**
      * コンストラクタ
@@ -100,30 +105,6 @@ public class AppController {
     }
 
     /**
-     * 現在アクティブな GameController を取得する
-     * ゲーム画面以外では null を返す
-     *
-     * @return 現在の GameController。ゲーム画面でなければ null
-     */
-    public GameController getGameController() {
-        return gameController;
-    }
-
-    /**
-     * 現在のプレイヤーを取得する
-     *
-     * @return 現在のプレイヤー
-     */
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    /** adminアカウントのDB上のplayer_id（DBで自動採番された固定値） */
-    private static final int ADMIN_PLAYER_ID = 1;
-    /** adminアカウントのメールアドレス */
-    private static final String ADMIN_EMAIL = "admin@email.com";
-
-    /**
      * 現在のプレイヤーが管理者かどうかを返す
      * player_id（DB採番の固定値）とe_mailの複合条件で判定する
      *
@@ -150,37 +131,6 @@ public class AppController {
         }
 
         return true;
-    }
-
-    /**
-     * 現在のプレイヤーを設定する
-     *
-     * @param currentPlayer 設定するプレイヤー
-     */
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
-    /**
-     * 選択されたパズルを保持する
-     *
-     * @param puzzle 選択されたパズル
-     */
-    public void setPendingPuzzle(Puzzle puzzle) {
-        this.pendingPuzzle = puzzle;
-    }
-
-    /**
-     * リザルト画面で使用する結果データを保持する
-     *
-     * @param puzzle 完成したパズル
-     * @param completedGrid 完成時の盤面
-     * @param elapsedSeconds クリアまでにかかった秒数
-     */
-    public void setResultData(Puzzle puzzle, Grid completedGrid, int elapsedSeconds) {
-        this.pendingPuzzle = puzzle;
-        this.completedGrid = completedGrid;
-        this.tickSeconds = elapsedSeconds;
     }
 
     /**
@@ -311,4 +261,51 @@ public class AppController {
     public void exitGame(){
         this.stage.close();
     }
+
+    /**
+     * 現在のプレイヤーを設定する
+     *
+     * @param currentPlayer 設定するプレイヤー
+     */
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    /**
+     * 選択されたパズルを保持する
+     *
+     * @param puzzle 選択されたパズル
+     */
+    public void setPendingPuzzle(Puzzle puzzle) {
+        this.pendingPuzzle = puzzle;
+    }
+
+    /**
+     * リザルト画面で使用する結果データを保持する
+     *
+     * @param puzzle 完成したパズル
+     * @param completedGrid 完成時の盤面
+     * @param elapsedSeconds クリアまでにかかった秒数
+     */
+    public void setResultData(Puzzle puzzle, Grid completedGrid, int elapsedSeconds) {
+        this.pendingPuzzle = puzzle;
+        this.completedGrid = completedGrid;
+        this.tickSeconds = elapsedSeconds;
+    }
+
+    /**
+     * 現在アクティブな GameController を取得する
+     * ゲーム画面以外では null を返す
+     *
+     * @return 現在の GameController。ゲーム画面でなければ null
+     */
+    public GameController getGameController() { return gameController; }
+
+    /**
+     * 現在のプレイヤーを取得する
+     *
+     * @return 現在のプレイヤー
+     */
+    public Player getCurrentPlayer()          { return currentPlayer; }
+    
 }

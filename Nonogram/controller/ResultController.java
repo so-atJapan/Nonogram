@@ -2,6 +2,7 @@ package Nonogram.controller;
 
 import Nonogram.model.DAO;
 import Nonogram.model.ResultModel;
+
 import Nonogram.view.ResultView;
 
 /**

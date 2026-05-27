@@ -1,16 +1,17 @@
 package Nonogram.controller;
 
-
 import Nonogram.model.CellState;
 import Nonogram.model.Clue;
 import Nonogram.model.Puzzle;
 import Nonogram.model.Solver;
 import Nonogram.model.SolverModel;
+
 import Nonogram.view.SolverView;
-import javafx.scene.input.MouseButton;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import javafx.scene.input.MouseButton;
 
 /**
  * ゲーム画面の操作と判定を管理するコントローラクラス
@@ -137,10 +138,6 @@ public class SolverController {
             }
         }
 
-        // リセットボタン
-        // view.getResetButton().addActionListener(e -> onReset());
-
-
         // undoボタン
         view.getPrevButton().setOnAction(e -> onUndo());
 
@@ -198,14 +195,6 @@ public class SolverController {
         model.setState(x, y, dragAction);
         view.updateCell(x, y, model.getGrid());
     }
-
-    // /**
-    //  * リセットボタンが押されたときの処理。
-    //  */
-    // public void onReset() {
-    //     model.reset();
-    //     view.updateCell(0, 0, model.getCell());
-    // }
 
     /**
      * チェックボタンが押されたときの処理

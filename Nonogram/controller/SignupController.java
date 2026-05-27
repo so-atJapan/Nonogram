@@ -1,6 +1,7 @@
 package Nonogram.controller;
 
 import Nonogram.model.SignupModel;
+
 import Nonogram.view.SignupView;
 
 /**

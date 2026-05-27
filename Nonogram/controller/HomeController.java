@@ -2,7 +2,6 @@ package Nonogram.controller;
 
 import Nonogram.view.HomeView;
 
-
 public class HomeController {
     
     private HomeView view;

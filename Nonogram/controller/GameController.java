@@ -1,11 +1,11 @@
 package Nonogram.controller;
 
-
 import Nonogram.model.CellState;
 import Nonogram.model.GameModel;
 import Nonogram.model.Puzzle;
 import Nonogram.model.Timer;
 import Nonogram.view.GameView;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.input.MouseButton;
@@ -26,12 +26,10 @@ public class GameController {
     private Timeline timeline;
     private int startX;
     private int startY;
-
     // ドラッグ中に適用するアクション（FILLED or MARKED or EMPTY）
     private CellState dragAction = null;
     // ドラッグ中に処理済みのセルを記録
     private final Set<String> draggedCells = new HashSet<>();
-
 
     /**
      * コンストラクタ
@@ -119,18 +117,6 @@ public class GameController {
         view.updateCell(x, y, model.getGrid());
     }
 
-    // /**
-    //  * リセットボタンが押されたときの処理。
-    //  */
-    // public void onReset() {
-    //     model.reset();
-    //     view.updateCell(0, 0, model.getCell());
-    // }
-
-    /**
-     * チェックボタンが押されたときの処理
-     * 正解の場合はリザルト画面に必要なデータをAppControllerへ渡す
-     */
     public void onJudge() {
         boolean result = model.check();
         if (result) {
@@ -142,7 +128,6 @@ public class GameController {
         }
     }
 
-    
     /**
      * タイムラインを停止する
      * MenuItemBar からホーム遷移時に呼ばれる

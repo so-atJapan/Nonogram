@@ -1,13 +1,15 @@
 package Nonogram.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import Nonogram.model.CellState;
 import Nonogram.model.Puzzle;
 import Nonogram.model.PuzzleEditorModel;
+
 import Nonogram.view.PuzzleEditorView;
+
 import javafx.scene.input.MouseButton;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class PuzzleEditorController {
 
