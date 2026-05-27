@@ -49,7 +49,8 @@ meme<br>
 
 ### 🔳CREATEボタン
 独自で縦,横のマス数の設定が可能　<br>
-塗りつぶすマス数の数字の設定が可能
+塗りつぶすマス数の数字の設定が可能 <br>
+![example2](/imageReadme/exampleCreate1.png) <br>
 
 ### 🔳EXITボタン
 ページを閉じる。メニュー → 終了でも同様の操作が可能
