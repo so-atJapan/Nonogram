@@ -6,7 +6,6 @@ import Nonogram.model.Puzzle;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -19,6 +18,8 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class SolverView {
+
+    private SemiModal semiModal;
 
     private Stage stage;
     private Scene scene;
@@ -52,6 +53,9 @@ public class SolverView {
 
     // 初期化
     public void initialize(Puzzle puzzle, AppController appController) {
+
+        this.semiModal = new SemiModal(this.stage);
+        this.semiModal.initialize(puzzle);
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
@@ -240,6 +244,19 @@ public class SolverView {
         stage.show();
     }
 
+    //セミモーダル描画
+    public void semiModalRender(Puzzle puzzle){
+        this.semiModal.setTitleTextField(puzzle.getTitle());
+        this.semiModal.setRowTextField(puzzle.getGridSizeX());
+        this.semiModal.setColTextField(puzzle.getGridSizeY());
+        this.semiModal.render();
+    }
+    
+    // 設定確定
+    public void settingConfirm(){
+        this.semiModal.settingConfirm();
+    }
+
     // セル更新（row, col の順で統一）
     public void updateCell(int row, int col, Grid grid) {
         Button btn = buttons[row][col];
@@ -316,15 +333,6 @@ public class SolverView {
         );
     }
 
-    // 結果表示
-    public void showResult(boolean result) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("結果");
-        alert.setHeaderText(null);
-        alert.setContentText(result ? "クリア！おめでとう！" : "不正解... もう一度！");
-        alert.showAndWait();
-    }
-
     public MenuItemBar getMenuItemBar() {return menuItemBar;}
 
     public Stage getStage() { return stage; }
@@ -369,4 +377,19 @@ public class SolverView {
         return sb.toString();
     }
 
+    public Button getOkButton() {
+        return this.semiModal.getOkButton();
+    }
+
+    public String getTitleTextField(){
+        return this.semiModal.getTitleTextField();
+    }
+
+    public int getGridSizeX(){
+        return this.semiModal.getGridSizeX();
+    }
+
+    public int getGridSizeY(){
+        return this.semiModal.getGridSizeY();
+    }
 }
