@@ -9,10 +9,10 @@
 数字は**連続で塗りつぶせるマスの数**を表す。<br>
 
 
-２．正誤確認ボタンを押した後、結果画面が表示され、クリアとなる。（例2）（例3）<br>
+２．正誤確認ボタンを押した後、結果画面が表示される。（例2）（例3）<br>
 ![example1](/imageReadme/exampleResult.png) <br>
 (例2)<br><br>
-![example1](/imageReadme/example2.png) <br>
+![example2](/imageReadme/example2.png) <br>
 (例3)<br><br>
 
 
@@ -66,18 +66,9 @@ meme<br>
 ---------------------------------------
 
 
-
-#### 見出し4
-##### 見出し5
-
-
 *強調*
- 
-_これも強調_
- 
-**もっと強調**
- 
-__同じくもっと強調__
+_強調_
+__強調__
 
 [文字列](URL)
 [Google検索](https://www.google.com/?hl=ja)
