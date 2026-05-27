@@ -16,7 +16,7 @@ public class Puzzle {
    private LocalDateTime createdAt;
    private Player createdBy = new GuestPlayer();
    private Grid solution = new Grid(10, 10);
-   private Clue clue = new Clue("0", "0");
+   private Clue clue = new Clue("0 0 0 0 0 0 0 0 0 0", "0 0 0 0 0 0 0 0 0 0");
 
 
    //ゲッター
