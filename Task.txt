@@ -1,4 +1,5 @@
 ・private boolean isPublic = true;  //TODO faulseに変更
+・Resultのサイズ調整(コミットちゃんとできてなかった)
 ・難易度
 ・メニューバーの機能exitにアラート
 ・メニューからソルバー
