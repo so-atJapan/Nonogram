@@ -48,7 +48,7 @@ public class SolverController {
      */
     public void initialize() {
         // PuzzleのデータをViewに渡す
-        view.initialize(model.getPuzzle());
+        view.initialize(model.getPuzzle(), appController);
         view.render();
 
         // 左クリック
@@ -137,7 +137,6 @@ public class SolverController {
         // リセットボタン
         // view.getResetButton().addActionListener(e -> onReset());
 
-        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
 
         // undoボタン
         view.getPrevButton().setOnAction(e -> onUndo());
@@ -219,10 +218,6 @@ public class SolverController {
         this.applyClue();
 
         this.solveAndMeasure();
-    }
-
-    private void onBackHome() {
-        appController.navigateTo("home");
     }
 
     public void onUndo(){

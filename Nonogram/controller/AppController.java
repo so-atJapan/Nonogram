@@ -96,6 +96,16 @@ public class AppController {
     }
 
     /**
+     * 現在アクティブな GameController を取得する
+     * ゲーム画面以外では null を返す
+     *
+     * @return 現在の GameController。ゲーム画面でなければ null
+     */
+    public GameController getGameController() {
+        return gameController;
+    }
+
+    /**
      * 現在のプレイヤーを取得する
      *
      * @return 現在のプレイヤー

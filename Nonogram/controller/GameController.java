@@ -52,13 +52,12 @@ public class GameController {
      */
     public void initialize() {
         // PuzzleのデータをViewに渡す
-        view.initialize(model.getPuzzle());
+        view.initialize(model.getPuzzle(), appController);
         view.render();
 
 
         bindAllCellEvents();
 
-        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
 
         // undoボタン
         view.getPrevButton().setOnAction(e -> onUndo());
@@ -70,7 +69,10 @@ public class GameController {
         view.getCheckButton().setOnAction(e -> onJudge());
 
 
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> view.updateTimer(timer.tick())));
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            System.out.println("apple");
+            view.updateTimer(timer.tick());
+        }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
         
@@ -141,9 +143,13 @@ public class GameController {
         }
     }
 
-    private void onBackHome() {
+    
+    /**
+     * タイムラインを停止する
+     * MenuItemBar からホーム遷移時に呼ばれる
+     */
+    public void stopTimeline() {
         timeline.stop();
-        appController.navigateTo("home");
     }
 
     public void onUndo(){

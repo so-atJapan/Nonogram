@@ -48,10 +48,9 @@ public class PuzzleListController {
         } else {
             currentPlayerId = -1;
         }
-        view.initialize(puzzlelist, clearedIds, appController.isAdmin(), currentPlayerId);
+        view.initialize(puzzlelist, clearedIds, appController.isAdmin(), currentPlayerId, appController);
         view.render();
 
-        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> onBackHome());
 
         view.getSortComboBox().setOnAction(e -> {
             String selected = view.getSortComboBox().getValue();
@@ -159,9 +158,5 @@ public class PuzzleListController {
     public void onSolverPuzzle(Puzzle puzzle) {
         appController.setPendingPuzzle(puzzle);
         appController.navigateTo("solver");
-    }
-
-    private void onBackHome() {
-        appController.navigateTo("home");
     }
 }

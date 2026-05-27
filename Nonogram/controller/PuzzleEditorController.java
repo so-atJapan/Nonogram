@@ -43,12 +43,11 @@ public class PuzzleEditorController {
      */
     public void initialize() {
         // PuzzleのデータをViewに渡す
-        view.initialize(model.getPuzzle());
+        view.initialize(model.getPuzzle(), appController);
 
 
         bindAllCellEvents();
 
-        view.getMenuItemBar().getHomeMenuItem().setOnAction(e -> this.onBackHome());
         
         
         // リセットボタン
