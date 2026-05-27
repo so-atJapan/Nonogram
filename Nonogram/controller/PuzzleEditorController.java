@@ -62,6 +62,7 @@ public class PuzzleEditorController {
         // チェックボタン
         view.getCheckButton().setOnAction(e -> onCheck());
         
+        
         // 描画
         view.render();
         view.semiModalRender(model.getPuzzle());

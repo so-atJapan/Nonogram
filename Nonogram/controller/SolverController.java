@@ -49,7 +49,6 @@ public class SolverController {
     public void initialize() {
         // PuzzleのデータをViewに渡す
         view.initialize(model.getPuzzle(), appController);
-        view.render();
 
         // 左クリック
         // 画面ボタン
@@ -151,7 +150,10 @@ public class SolverController {
         // チェックボタン
         view.getCheckButton().setOnAction(e -> onJudge());
 
-
+        
+        // 描画
+        view.render();
+        view.semiModalRender(model.getPuzzle());
         
     }
 
