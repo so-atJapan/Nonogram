@@ -2,6 +2,7 @@
 ・難易度
 ・メニューバーの機能exitにアラート
 ・メニューからソルバー
+・Createのバグ
 ・javadoc HTML
 ・エラー処理、バリデーションチェック
 ・creete時のpublic or private
