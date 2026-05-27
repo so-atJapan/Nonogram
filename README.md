@@ -29,14 +29,19 @@ nonogramをプレイするにあたってアカウントの作成が可能
 
 ### PLAYボタン
 問題(難易度)一覧 <br>
+EASY,NORMAL,HARD<br>
 ME!!<br>
 mouse<br>
 raccoon<br>
 lion<br>
-tyrannosau<br>
+tyrannosaurus<br>
 king kong<br>
 cock<br>
-pegasus
+pegasus<br>
+joker<br>
+women<br>
+meme<br>
+
 
 
 ### CREATEボタン
