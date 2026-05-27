@@ -70,7 +70,6 @@ public class GameController {
 
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            System.out.println("apple");
             view.updateTimer(timer.tick());
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
