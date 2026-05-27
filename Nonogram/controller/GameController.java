@@ -181,8 +181,10 @@ public class GameController {
 
                     if (e.getButton() == MouseButton.PRIMARY) {
                         onCellLeftClicked(finalX, finalY);
+                        model.pushGridLog();
                     } else if (e.getButton() == MouseButton.SECONDARY) {
                         onCellRightClicked(finalX, finalY);
+                        model.pushGridLog();
                     }
                 });
 
@@ -238,11 +240,13 @@ public class GameController {
 
                 // ドラッグ終了時にリセット
                 button.setOnMouseReleased(e -> {
+
+                    if((e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY) && dragAction != null){
+                        model.pushGridLog();
+                    }
+
                     dragAction = null;
                     draggedCells.clear();
-
-                    if(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)
-                    model.pushGridLog();
                 });
             }
         }

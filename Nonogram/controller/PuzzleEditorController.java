@@ -157,6 +157,7 @@ public class PuzzleEditorController {
 
                     if (e.getButton() == MouseButton.PRIMARY) {
                         onCellLeftClicked(finalX, finalY);
+                        model.pushGridLog();
                     }
                 });
 
@@ -204,10 +205,13 @@ public class PuzzleEditorController {
 
                 // ドラッグ終了時にリセット
                 button.setOnMouseReleased(e -> {
+
+                    if((e.getButton() == MouseButton.PRIMARY) && dragAction != null){
+                        model.pushGridLog();
+                    }
+
                     dragAction = null;
                     draggedCells.clear();
-                    if (e.getButton() == MouseButton.PRIMARY)
-                        model.pushGridLog();
                 });
             }
         }
