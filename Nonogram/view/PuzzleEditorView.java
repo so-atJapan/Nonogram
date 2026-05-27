@@ -73,9 +73,9 @@ public class PuzzleEditorView {
             }
         }
     
-        // ===== 下部ボタン（設定 : 確認 = 1 : 3）=====
+        // ===== 下部ボタン（設定 : 登録 = 1 : 3）=====
         settingButton = new Button("設定");
-        checkButton = new Button("確認");
+        checkButton = new Button("登録");
 
         // 横方向に伸ばせるようにする
         settingButton.setMaxWidth(Double.MAX_VALUE);
