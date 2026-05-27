@@ -20,6 +20,7 @@ public class HomeView{
 
     Button playButton;
     Button createButton;
+    Button solverButton;
     Button exitButton;
 
     Button loginButton;
@@ -48,9 +49,10 @@ public class HomeView{
         // ── メニューボタン ──────────────────────────────────
         playButton   = new Button("PLAY");
         createButton = new Button("CREATE");
+        solverButton = new Button("SOLVER");
         exitButton   = new Button("EXIT");
 
-        for (Button b : new Button[]{playButton, createButton, exitButton}) {
+        for (Button b : new Button[]{playButton, createButton, solverButton, exitButton}) {
             b.setPrefWidth(200);
         }
 
@@ -146,6 +148,7 @@ public class HomeView{
                 separator,
                 playButton,
                 createButton,
+                solverButton,
                 exitButton
         );
 
@@ -169,6 +172,7 @@ public class HomeView{
 
     public Button getPlayButton() {return playButton;}
     public Button getCreateButton() {return createButton;}
+    public Button getSolverButton() {return solverButton;}
     public Button getExitButton() {return exitButton;}
     public Button getLoginButton() {return loginButton;}
     public Button getSignupButton() {return signupButton;}
