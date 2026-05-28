@@ -26,6 +26,9 @@
 ・EXIT<br>
 ・メニューバー
 
+### ホーム画面
+![example1](/imageReadme/exampleHome.png) <br>
+
 ### 🔳サインアップ
 nonogramをプレイするにあたってアカウントの作成が可能
 
