@@ -1,5 +1,4 @@
 ・Puzzleの削除、（権限者のみ）
-・private boolean isPublic = true;  //TODO faulseに変更
 ・難易度
 ・メニューからソルバー
 ・javadoc HTML
