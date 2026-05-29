@@ -1,4 +1,14 @@
-・Puzzleの削除、（権限者のみ）
+
+変数名
+static
+thisとクラス名
+
+
+
+
+
+
+・DAO　数字から列名に
 ・javadoc HTML
 ・エラー処理、バリデーションチェック
 ・UI,Viewのレイアウト改善
