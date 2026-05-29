@@ -120,7 +120,7 @@ public class SemiModal {
 
         // addListener: プロパティの値が変化したときに自動で処理を呼び出す仕組み
         // textProperty() はテキストフィールドの文字列を監視するプロパティ
-        // (observable, oldValue, newValue) の3引数が渡されるが今回は使わないので _ で読み飛ばす
+        // 3引数が渡されるが今回は使わない
         rowTextField.textProperty().addListener((unused1, unused2, unused3) -> onSizeChanged.run());
         colTextField.textProperty().addListener((unused1, unused2, unused3) -> onSizeChanged.run());
         
