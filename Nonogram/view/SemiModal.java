@@ -105,18 +105,24 @@ public class SemiModal {
         difficultyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
         updateDifficultyLabel(puzzle.getGridSizeX(), puzzle.getGridSizeY());
 
-        // row/col の変更に応じてリアルタイム更新
-        Runnable refreshDifficulty = () -> {
+        // テキストフィールドの値が変わるたびに呼ばれる処理
+        // 入力値を数値に変換して難易度ラベルを再描画する
+        // NumberFormatException: 数値以外が入力された場合は「-」を表示
+        Runnable onSizeChanged = () -> {
             try {
-                int r = Integer.parseInt(rowTextField.getText());
-                int c = Integer.parseInt(colTextField.getText());
-                updateDifficultyLabel(r, c);
+                int rows = Integer.parseInt(rowTextField.getText());
+                int cols = Integer.parseInt(colTextField.getText());
+                updateDifficultyLabel(rows, cols);
             } catch (NumberFormatException e) {
                 difficultyLabel.setText("難易度: -");
             }
         };
-        rowTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
-        colTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
+
+        // addListener: プロパティの値が変化したときに自動で処理を呼び出す仕組み
+        // textProperty() はテキストフィールドの文字列を監視するプロパティ
+        // (observable, oldValue, newValue) の3引数が渡されるが今回は使わないので _ で読み飛ばす
+        rowTextField.textProperty().addListener((unused1, unused2, unused3) -> onSizeChanged.run());
+        colTextField.textProperty().addListener((unused1, unused2, unused3) -> onSizeChanged.run());
         
         VBox dialogRoot = new VBox(15);
         dialogRoot.setPadding(new Insets(20));
@@ -138,32 +144,6 @@ public class SemiModal {
 
         // 閉じるまで待つ
         settingStage.showAndWait();
-    }
-
-    /**
-     * row・col の最大値から難易度を算出してラベルに反映する。
-     */
-    private void updateDifficultyLabel(int rows, int cols) {
-        int totalSize = rows + cols;
-        String name;
-        String color;
-        if (totalSize <= 20) {
-            name  = "EASY";
-            color = "#27ae60";
-        } else if (totalSize <= 40) {
-            name  = "NORMAL";
-            color = "#2980b9";
-        } else if (totalSize <= 100) {
-            name  = "HARD";
-            color = "#e67e22";
-        } else {
-            name  = "EXPERT";
-            color = "#c0392b";
-        }
-        difficultyLabel.setText("難易度: " + name);
-        difficultyLabel.setStyle(
-            "-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: " + color + ";"
-        );
     }
 
     public void settingConfirm(){
@@ -190,5 +170,29 @@ public class SemiModal {
 
     public int getGridSizeY(){ return Integer.parseInt(colTextField.getText()); }
 
-    
+    /**
+     * row・col の最大値から難易度を算出してラベルに反映する。
+     */
+    private void updateDifficultyLabel(int rows, int cols) {
+        int totalSize = rows + cols;
+        String name;
+        String color;
+        if (totalSize <= 20) {
+            name  = "EASY";
+            color = "#27ae60";
+        } else if (totalSize <= 40) {
+            name  = "NORMAL";
+            color = "#2980b9";
+        } else if (totalSize <= 100) {
+            name  = "HARD";
+            color = "#e67e22";
+        } else {
+            name  = "EXPERT";
+            color = "#c0392b";
+        }
+        difficultyLabel.setText("難易度: " + name);
+        difficultyLabel.setStyle(
+            "-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: " + color + ";"
+        );
+    }
 }
