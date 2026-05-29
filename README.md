@@ -55,7 +55,6 @@ col・・・列の指定<br>
 
 ### 🔳メニューバー
 ・ホーム<br>
-・同期<br>
 ・ヘルプ<br>
 ・終了<br>
 ![exampleMenu](/imageReadme/exampleMenu1.png) <br>
