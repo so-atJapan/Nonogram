@@ -71,6 +71,8 @@ public class DAO {
         "    clue_col = ? " +
         "WHERE puzzle_id = ?";
 
+    private final String DELETE_PUZZLE = 
+    "DELETE FROM players WHERE puzzle_id = ?";
 
     private final String SELECT_PLAYER_BY_PLAYER_ID =
     "SELECT player_id, user_name, e_mail, password_hash " +
@@ -166,6 +168,23 @@ public class DAO {
             ps.setString(9, puzzle.getClue().rowToString());
             ps.setString(10, puzzle.getClue().colToString());
             ps.setInt(11, puzzle.getPuzzleId());
+
+            ps.executeUpdate();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deletePuzzle(int id){
+
+        try (
+            Connection connection = DriverManager.getConnection(DB_PATH);
+            PreparedStatement ps = connection.prepareStatement(DELETE_PUZZLE);
+        ) {
+
+            ps.setInt(1, id);
 
             ps.executeUpdate();
 
