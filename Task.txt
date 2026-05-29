@@ -1,7 +1,4 @@
 ・Puzzleの削除、（権限者のみ）
-・難易度
-・メニューからソルバー
 ・javadoc HTML
 ・エラー処理、バリデーションチェック
-・creete時のpublic or private
 ・UI,Viewのレイアウト改善
