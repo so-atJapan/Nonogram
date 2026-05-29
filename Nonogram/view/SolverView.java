@@ -260,7 +260,6 @@ public class SolverView {
 
     //セミモーダル描画
     public void semiModalRender(Puzzle puzzle){
-        this.semiModal.setTitleTextField(puzzle.getTitle());
         this.semiModal.setRowTextField(puzzle.getGridSizeX());
         this.semiModal.setColTextField(puzzle.getGridSizeY());
         //TODO
@@ -468,7 +467,6 @@ public class SolverView {
  
     public Button getCheckButton() { return checkButton; }
 
-    public String getTitleTextField(){ return this.semiModal.getTitleTextField(); }
 
     public int getGridSizeX(){ return this.semiModal.getGridSizeX(); }
 
