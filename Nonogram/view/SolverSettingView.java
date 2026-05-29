@@ -23,7 +23,6 @@ public class SolverSettingView {
 
     private Scene dialogScene;
 
-    private TextField titleTextField;
     private TextField rowTextField;
     private TextField colTextField;
     private TextField clueSizeTextField;
@@ -44,9 +43,6 @@ public class SolverSettingView {
 
         // 親ウィンドウのみ操作不可
         settingStage.initModality(Modality.WINDOW_MODAL);
-
-        Label titleLabel = new Label("タイトル");
-        titleTextField = new TextField(puzzle.getTitle());
         
         Label rowLabel = new Label("row");
         rowTextField = new TextField(String.valueOf(puzzle.getGridSizeX()));
@@ -140,10 +136,6 @@ public class SolverSettingView {
         settingStage.close();
     }
 
-    public void setTitleTextField(String title){
-        titleTextField.setText(title);
-    }
-
     public void setRowTextField(int gridSizeX){
         rowTextField.setText(String.valueOf(gridSizeX));
     }
@@ -158,7 +150,6 @@ public class SolverSettingView {
 
     public Button getOkButton() { return okButton; }
 
-    public String getTitleTextField(){ return titleTextField.getText(); }
 
     public int getGridSizeX(){ return Integer.parseInt(rowTextField.getText()); }
 
