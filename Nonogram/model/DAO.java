@@ -72,26 +72,52 @@ public class DAO {
         "WHERE puzzle_id = ?";
 
     private final String DELETE_PUZZLE = 
-    "DELETE FROM players WHERE puzzle_id = ?";
+        "DELETE FROM puzzles " +
+        "WHERE puzzle_id = ? ";
 
     private final String SELECT_PLAYER_BY_PLAYER_ID =
-    "SELECT player_id, user_name, e_mail, password_hash " +
-    "FROM players " +
-    "WHERE player_id = ?";
+        "SELECT " +
+        "   player_id," +
+        "   user_name," +
+        "   e_mail," +
+        "   password_hash " +
+        "FROM players " +
+        "WHERE player_id = ?";
 
     private final String SELECT_PLAYER_BY_EMAIL =
-    "SELECT player_id, user_name, e_mail, password_hash " +
-    "FROM players " +
-    "WHERE e_mail = ?";
+        "SELECT " +
+        "   player_id, " +
+        "   user_name, e_mail, " +
+        "   password_hash " +
+        "FROM players " +
+        "WHERE e_mail = ?";
 
     private final String INSERT_PLAYER =
-    "INSERT INTO players (user_name, password_hash, e_mail) VALUES (?, ?, ?)";
+        "INSERT INTO players( " +
+        "   user_name, " +
+        "   password_hash, " +
+        "   e_mail " +
+        ") " +
+        "VALUES ( " +
+        "   ?, " +
+        "   ?, " +
+        "   ? " +
+        ")";
 
     private final String INSERT_PUZZLE_RECORD =
-    "INSERT INTO puzzle_records (player_id, puzzle_id) VALUES (?, ?)";
+        "INSERT INTO puzzle_records( " +
+        "   player_id, " +
+        "   puzzle_id " +
+        ") " +
+        "VALUES ( " +
+        "   ?, " +
+        "   ? " +
+        ")";
 
     private final String SELECT_PUZZLE_RECORD =
-    "SELECT (puzzle_id) from puzzle_records WHERE player_id = ?";
+        "SELECT puzzle_id " +
+        "FROM puzzle_records " +
+        "WHERE player_id = ?";
 
     public  ArrayList<Puzzle> getPuzzleAll(){
         ArrayList<Puzzle> puzzleList = new ArrayList<Puzzle>();
@@ -104,16 +130,16 @@ public class DAO {
                 while(rs.next()){
                     Puzzle puzzle = new Puzzle();
 
-                    puzzle.setPuzzleId(rs.getInt(1));
-                    puzzle.setTitle(rs.getString(2));
-                    puzzle.setGridSizeX(rs.getInt(3));
-                    puzzle.setGridSizeY(rs.getInt(4));
-                    puzzle.setDifficulty(rs.getString(5));
-                    puzzle.setIsPublic(rs.getBoolean(6));
-                    puzzle.setCreatedAt(rs.getTimestamp(7).toLocalDateTime());
-                    puzzle.setCreatedBy(getLoginPlayer(rs.getInt(8)));
-                    puzzle.setSolution(rs.getString(9));
-                    puzzle.setClue(new Clue(rs.getString(10), rs.getString(11)));
+                    puzzle.setPuzzleId(rs.getInt("puzzle_id"));
+                    puzzle.setTitle(rs.getString("title"));
+                    puzzle.setGridSizeX(rs.getInt("grid_size_x"));
+                    puzzle.setGridSizeY(rs.getInt("grid_size_y"));
+                    puzzle.setDifficulty(rs.getString("difficulty"));
+                    puzzle.setIsPublic(rs.getBoolean("is_public"));
+                    puzzle.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    puzzle.setCreatedBy(getLoginPlayer(rs.getInt("created_by")));
+                    puzzle.setSolution(rs.getString("solution"));
+                    puzzle.setClue(new Clue(rs.getString("clue_row"), rs.getString("clue_col")));
 
                     puzzleList.add(puzzle);
                 }
