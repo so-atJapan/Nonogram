@@ -57,7 +57,7 @@ col・・・列の指定<br>
 ・ホーム<br>
 ・ヘルプ<br>
 ・終了<br>
-![exampleMenu](/imageReadme/exampleMenu1.png) <br>
+![exampleMenu](/imageReadme/exampleMenu.png) <br>
 
 
 
