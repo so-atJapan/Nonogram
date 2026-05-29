@@ -126,6 +126,7 @@ public class PuzzleEditorModel {
     public void updateDB(){
         puzzle.setClue(this.grid);
         puzzle.setSolution(this.grid);
+        puzzle.setDifficultyBySize();
 
         
         if(puzzle.getPuzzleId() == -1){

@@ -85,6 +85,27 @@ public class Puzzle {
    }
    
    
+   /**
+    * グリッドサイズから難易度を自動判定して設定する。
+    * max(gridSizeX, gridSizeY) を基準に判定:
+    *   1〜5  → EASY
+    *   6〜10 → NORMAL
+    *  11〜15 → HARD
+    *  16以上 → EXPERT
+    */
+   public void setDifficultyBySize() {
+      int totalSize = this.gridSizeX + this.gridSizeY;
+      if (totalSize <= 20) {
+         this.difficulty = Difficulty.EASY;
+      } else if (totalSize <= 40) {
+         this.difficulty = Difficulty.NORMAL;
+      } else if (totalSize <= 100) {
+         this.difficulty = Difficulty.HARD;
+      } else {
+         this.difficulty = Difficulty.EXPERT;
+      }
+   }
+
    public void setDifficulty(String difficulty) {
       switch (difficulty) {
          case "EASY":
