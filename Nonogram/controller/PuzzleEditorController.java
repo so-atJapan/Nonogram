@@ -6,7 +6,12 @@ import Nonogram.model.PuzzleEditorModel;
 
 import Nonogram.view.PuzzleEditorView;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseButton;
+import javafx.application.Platform;
+
+import java.util.Optional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,6 +65,9 @@ public class PuzzleEditorController {
         
         //　OKボタン
         view.getOkButton().setOnAction(e -> onSettingConfirm());
+
+        // 削除ボタン（CREATE時はSemiModal側で非表示。念のためpuzzleId guard）
+        view.getDeleteButton().setOnAction(e -> onDelete());
         
         // チェックボタン
         view.getCheckButton().setOnAction(e -> onCheck());
@@ -113,10 +121,6 @@ public class PuzzleEditorController {
         view.render();
     }
 
-    public void onBackHome() {
-        appController.navigateTo("home");
-    }
-
     public void onUndo(){
         model.undoGridLog();
         model.setGrid(model.getCurrentLog().copy());
@@ -135,6 +139,30 @@ public class PuzzleEditorController {
     public void onReset() {
         model.reset();
         view.updateCell(0, 0, model.getGrid());
+    }
+
+    /**
+     * 削除ボタンが押されたときの処理。
+     * CREATE画面（puzzleId == -1）では何もしない。
+     * 確認アラートでOKが押された場合のみDBから削除してListへ戻る。
+     */
+    public void onDelete() {
+        if (model.getPuzzle().getPuzzleId() == -1) return;
+
+        view.settingConfirm();
+
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("削除確認");
+            alert.setHeaderText(null);
+            alert.setContentText("このパズルを削除してもよいですか？");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                model.deletePuzzle();
+                appController.navigateTo("home");
+            }
+        });
     }
 
     /**
