@@ -26,6 +26,7 @@ public class SolverSettingView {
     private TextField titleTextField;
     private TextField rowTextField;
     private TextField colTextField;
+    private TextField clueSizeTextField;
     private Button okButton;
 
     // コンストラクタ
@@ -97,14 +98,29 @@ public class SolverSettingView {
         sizeTilePane.setAlignment(Pos.BOTTOM_LEFT);          // 全体の配置
         sizeTilePane.setHgap(0);                             // 横の間隔
 
+        Label clueSizeLabel = new Label("ClueSize");
+        clueSizeTextField = new TextField();
+        clueSizeTextField.setMaxWidth(30);
+        TextFormatter<String> formatterClueSize = new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+
+            // 数字のみ、0～2文字まで許可
+            if (newText.matches("\\d{0,2}")) {
+                return change;
+            }
+
+            return null; // 条件外は入力拒否
+        });
+        clueSizeTextField.setTextFormatter(formatterClueSize);
+
         okButton = new Button("OK");
         
         VBox dialogRoot = new VBox(15);
         dialogRoot.setPadding(new Insets(20));
         dialogRoot.getChildren().addAll(
-                titleLabel,
-                titleTextField,
                 sizeTilePane,
+                clueSizeLabel,
+                clueSizeTextField,
                 okButton
         );
 
@@ -136,6 +152,10 @@ public class SolverSettingView {
         colTextField.setText(String.valueOf(gridSizeY));
     }
 
+    public void setClueSizeTextField(int clueSize){
+        clueSizeTextField.setText(String.valueOf(clueSize));
+    }
+
     public Button getOkButton() { return okButton; }
 
     public String getTitleTextField(){ return titleTextField.getText(); }
@@ -143,4 +163,9 @@ public class SolverSettingView {
     public int getGridSizeX(){ return Integer.parseInt(rowTextField.getText()); }
 
     public int getGridSizeY(){ return Integer.parseInt(colTextField.getText()); }
+
+    public int getClueSize(){
+        String text = clueSizeTextField.getText().trim();
+        return text.isEmpty() ? 0 : Integer.parseInt(text);
+    }
 }

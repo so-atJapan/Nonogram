@@ -51,9 +51,138 @@ public class SolverController {
         // PuzzleのデータをViewに渡す
         view.initialize(model.getPuzzle(), appController);
 
-        // 左クリック
-        // 画面ボタン
-        // ボタンを押したら受け取る
+        bindAllCellEvents();
+
+        // 設定ボタン
+        view.getSettingButton().setOnAction(e -> view.semiModalRender(model.getPuzzle()));
+        
+        //　OKボタン
+        view.getOkButton().setOnAction(e -> onSettingConfirm());
+        
+        // チェックボタン
+        view.getCheckButton().setOnAction(e -> onJudge());
+        
+        // 描画
+        view.render();
+        
+    }
+
+    /**
+     * セルが左クリックされたときの処理。
+     *
+     * @param x クリックされたセルのX座標
+     * @param y クリックされたセルのY座標
+     * @return  更新後のセルの状態を返す
+     */
+    public CellState onCellLeftClicked(int x, int y) {
+        
+        model.toggle(x, y, CellState.FILLED);
+        view.updateCell(x, y, model.getGrid());
+
+        return model.getGrid().getCellAt(x, y).getState();
+    }
+
+    /**
+     * セルが右クリックされた時の処理
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public CellState onCellRightClicked(int x, int y) {
+        
+        model.toggle(x, y, CellState.MARKED);
+        view.updateCell(x, y, model.getGrid());
+
+        return model.getGrid().getCellAt(x, y).getState();
+    }
+
+    /**
+     * ドラッグ中に確定済みアクションをセルへ適用する
+     *
+     * @param x 適用するセルのX座標
+     * @param y 適用するセルのY座標
+     */
+    private void applyDragAction(int x, int y) {
+        if (dragAction == null) return;
+        model.setState(x, y, dragAction);
+        view.updateCell(x, y, model.getGrid());
+    }
+
+    /**
+     * チェックボタンが押されたときの処理
+     * 正解の場合はリザルト画面に必要なデータをAppControllerへ渡す
+     */
+    public void onJudge() {
+        // boolean result = model.check();
+        // if (result) {
+        //     timeline.stop();
+        //     appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getTickSeconds());
+        //     appController.navigateTo("result");
+        // } else {
+        //     view.showResult(false);
+        // }
+
+        this.applyClue();
+
+        this.solveAndMeasure();
+    }
+
+    /**
+     * 設定の決定ボタンが押されたときの処理。
+     */
+    public void onSettingConfirm() {
+        model.updatePuzzleTitle(view.getTitleTextField());
+        model.updatePuzzleGridSizeX(view.getGridSizeX());
+        model.updatePuzzleGridSizeY(view.getGridSizeY());
+        model.gridReSize();
+        view.gridReSize(model.getGrid());
+        view.clueFieldReSize(model.getPuzzle(), view.getClueSize()); // clueSize を直接渡す
+        view.settingConfirm();
+
+        bindAllCellEvents();
+        view.render();
+    }
+
+    public void onUndo(){
+        model.undoGridLog();
+        model.setGrid(model.getCurrentLog().copy());
+        view.updateCellAll(model.getGrid());
+    }
+
+    public void onRedo(){
+        model.redoGridLog();
+        model.setGrid(model.getCurrentLog().copy());
+        view.updateCellAll(model.getGrid());
+    }
+
+    private void applyClue(){
+        String rowClue = view.getRowClueFields();
+        String colClue = view.getColClueFields();
+
+        Clue clue = new Clue(rowClue, colClue);
+        model.getPuzzle().setClue(clue);
+    }
+
+    private void solveAndMeasure(){
+
+        long start = System.nanoTime();
+
+        Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
+        solver.solveAtOnce();
+
+        long end = System.nanoTime();
+        long elapsedNano = end - start;
+        double elapsedMilli = elapsedNano / 1_000_000.0;
+
+        view.updateTimer(elapsedMilli);
+
+        model.setGrid(solver.getGrid());
+        view.updateCellAll(solver.getGrid());
+    }
+
+    // 全イベントをまとめて設定するメソッド
+    private void bindAllCellEvents() {
         Puzzle puzzle = model.getPuzzle();
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
@@ -137,119 +266,6 @@ public class SolverController {
                 });
             }
         }
-
-        // undoボタン
-        view.getPrevButton().setOnAction(e -> onUndo());
-
-        // redoボタン
-        view.getNextButton().setOnAction(e -> onRedo());
-
-        // チェックボタン
-        view.getCheckButton().setOnAction(e -> onJudge());
-
-        
-        // 描画
-        view.render();
-        view.semiModalRender(model.getPuzzle());
-        
-    }
-
-    /**
-     * セルが左クリックされたときの処理。
-     *
-     * @param x クリックされたセルのX座標
-     * @param y クリックされたセルのY座標
-     * @return  更新後のセルの状態を返す
-     */
-    public CellState onCellLeftClicked(int x, int y) {
-        
-        model.toggle(x, y, CellState.FILLED);
-        view.updateCell(x, y, model.getGrid());
-
-        return model.getGrid().getCellAt(x, y).getState();
-    }
-
-    /**
-     * セルが右クリックされた時の処理
-     * 
-     * @param x
-     * @param y
-     * @return
-     */
-    public CellState onCellRightClicked(int x, int y) {
-        
-        model.toggle(x, y, CellState.MARKED);
-        view.updateCell(x, y, model.getGrid());
-
-        return model.getGrid().getCellAt(x, y).getState();
-    }
-
-    /**
-     * ドラッグ中に確定済みアクションをセルへ適用する
-     *
-     * @param x 適用するセルのX座標
-     * @param y 適用するセルのY座標
-     */
-    private void applyDragAction(int x, int y) {
-        if (dragAction == null) return;
-        model.setState(x, y, dragAction);
-        view.updateCell(x, y, model.getGrid());
-    }
-
-    /**
-     * チェックボタンが押されたときの処理
-     * 正解の場合はリザルト画面に必要なデータをAppControllerへ渡す
-     */
-    public void onJudge() {
-        // boolean result = model.check();
-        // if (result) {
-        //     timeline.stop();
-        //     appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getTickSeconds());
-        //     appController.navigateTo("result");
-        // } else {
-        //     view.showResult(false);
-        // }
-
-        this.applyClue();
-
-        this.solveAndMeasure();
-    }
-
-    public void onUndo(){
-        model.undoGridLog();
-        model.setGrid(model.getCurrentLog().copy());
-        view.updateCellAll(model.getGrid());
-    }
-
-    public void onRedo(){
-        model.redoGridLog();
-        model.setGrid(model.getCurrentLog().copy());
-        view.updateCellAll(model.getGrid());
-    }
-
-    private void applyClue(){
-        String rowClue = view.getRowClueFields();
-        String colClue = view.getColClueFields();
-
-        Clue clue = new Clue(rowClue, colClue);
-        model.getPuzzle().setClue(clue);
-    }
-
-    private void solveAndMeasure(){
-
-        long start = System.nanoTime();
-
-        Solver solver = new Solver(model.getPuzzle().getClue(), model.getGrid());
-        solver.solveAtOnce();
-
-        long end = System.nanoTime();
-        long elapsedNano = end - start;
-        double elapsedMilli = elapsedNano / 1_000_000.0;
-
-        view.updateTimer(elapsedMilli);
-
-        model.setGrid(solver.getGrid());
-        view.updateCellAll(solver.getGrid());
     }
 
 }

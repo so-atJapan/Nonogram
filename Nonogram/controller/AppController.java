@@ -52,6 +52,7 @@ public class AppController {
      */
     public AppController(Stage stage) {
         this.stage = stage;
+        this.stage.setAlwaysOnTop(true);
     }
 
     /**

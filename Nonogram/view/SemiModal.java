@@ -105,24 +105,18 @@ public class SemiModal {
         difficultyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
         updateDifficultyLabel(puzzle.getGridSizeX(), puzzle.getGridSizeY());
 
-        // テキストフィールドの値が変わるたびに呼ばれる処理
-        // 入力値を数値に変換して難易度ラベルを再描画する
-        // NumberFormatException: 数値以外が入力された場合は「-」を表示
-        Runnable onSizeChanged = () -> {
+        // row/col の変更に応じてリアルタイム更新
+        Runnable refreshDifficulty = () -> {
             try {
-                int rows = Integer.parseInt(rowTextField.getText());
-                int cols = Integer.parseInt(colTextField.getText());
-                updateDifficultyLabel(rows, cols);
+                int r = Integer.parseInt(rowTextField.getText());
+                int c = Integer.parseInt(colTextField.getText());
+                updateDifficultyLabel(r, c);
             } catch (NumberFormatException e) {
                 difficultyLabel.setText("難易度: -");
             }
         };
-
-        // addListener: プロパティの値が変化したときに自動で処理を呼び出す仕組み
-        // textProperty() はテキストフィールドの文字列を監視するプロパティ
-        // 3引数が渡されるが今回は使わない
-        rowTextField.textProperty().addListener((unused1, unused2, unused3) -> onSizeChanged.run());
-        colTextField.textProperty().addListener((unused1, unused2, unused3) -> onSizeChanged.run());
+        rowTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
+        colTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
         
         VBox dialogRoot = new VBox(15);
         dialogRoot.setPadding(new Insets(20));
@@ -145,30 +139,6 @@ public class SemiModal {
         // 閉じるまで待つ
         settingStage.showAndWait();
     }
-
-    public void settingConfirm(){
-        settingStage.close();
-    }
-
-    public void setTitleTextField(String title){
-        titleTextField.setText(title);
-    }
-
-    public void setRowTextField(int gridSizeX){
-        rowTextField.setText(String.valueOf(gridSizeX));
-    }
-
-    public void setColTextField(int gridSizeY){
-        colTextField.setText(String.valueOf(gridSizeY));
-    }
-
-    public Button getOkButton() { return okButton; }
-
-    public String getTitleTextField(){ return titleTextField.getText(); }
-
-    public int getGridSizeX(){ return Integer.parseInt(rowTextField.getText()); }
-
-    public int getGridSizeY(){ return Integer.parseInt(colTextField.getText()); }
 
     /**
      * row・col の最大値から難易度を算出してラベルに反映する。
@@ -195,4 +165,30 @@ public class SemiModal {
             "-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: " + color + ";"
         );
     }
+
+    public void settingConfirm(){
+        settingStage.close();
+    }
+
+    public void setTitleTextField(String title){
+        titleTextField.setText(title);
+    }
+
+    public void setRowTextField(int gridSizeX){
+        rowTextField.setText(String.valueOf(gridSizeX));
+    }
+
+    public void setColTextField(int gridSizeY){
+        colTextField.setText(String.valueOf(gridSizeY));
+    }
+
+    public Button getOkButton() { return okButton; }
+
+    public String getTitleTextField(){ return titleTextField.getText(); }
+
+    public int getGridSizeX(){ return Integer.parseInt(rowTextField.getText()); }
+
+    public int getGridSizeY(){ return Integer.parseInt(colTextField.getText()); }
+
+    
 }
