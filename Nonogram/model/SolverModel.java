@@ -96,10 +96,6 @@ public class SolverModel {
         return this.gridLog.get();
     }
 
-    public void updatePuzzleTitle(String title){
-        puzzle.setTitle(title);
-    }
-
     public void updatePuzzleGridSizeX(int gridSizeX){
         puzzle.setGridSizeX(gridSizeX);
     }
