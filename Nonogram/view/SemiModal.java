@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -27,6 +28,7 @@ public class SemiModal {
     private TextField rowTextField;
     private TextField colTextField;
     private Button okButton;
+    private Button deleteButton;
     private Label difficultyLabel;
 
     // コンストラクタ
@@ -100,6 +102,12 @@ public class SemiModal {
 
         okButton = new Button("OK");
 
+        // 削除ボタン（CREATE時は非表示）
+        deleteButton = new Button("削除");
+        deleteButton.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white;");
+        deleteButton.setVisible(puzzle.getPuzzleId() != -1);
+        deleteButton.setManaged(puzzle.getPuzzleId() != -1);
+
         // 難易度プレビューラベル
         difficultyLabel = new Label();
         difficultyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
@@ -118,6 +126,8 @@ public class SemiModal {
         rowTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
         colTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
         
+        HBox buttonBox = new HBox(10, okButton, deleteButton);
+
         VBox dialogRoot = new VBox(15);
         dialogRoot.setPadding(new Insets(20));
         dialogRoot.getChildren().addAll(
@@ -125,7 +135,7 @@ public class SemiModal {
                 titleTextField,
                 sizeTilePane,
                 difficultyLabel,
-                okButton
+                buttonBox
         );
 
         dialogScene = new Scene(dialogRoot, 300, 240);
@@ -183,6 +193,8 @@ public class SemiModal {
     }
 
     public Button getOkButton() { return okButton; }
+
+    public Button getDeleteButton() { return deleteButton; }
 
     public String getTitleTextField(){ return titleTextField.getText(); }
 

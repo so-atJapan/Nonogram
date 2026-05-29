@@ -267,6 +267,8 @@ public class PuzzleEditorView {
     public Button getSettingButton() { return settingButton; }
 
     public Button getOkButton() { return this.semiModal.getOkButton(); }
+
+    public Button getDeleteButton() { return this.semiModal.getDeleteButton(); }
  
     public Button getCheckButton() { return checkButton; }
 
