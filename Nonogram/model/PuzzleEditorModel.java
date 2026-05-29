@@ -123,6 +123,10 @@ public class PuzzleEditorModel {
         puzzle.setGridSizeY(gridSizeY);
     }
 
+    public void deletePuzzle(){
+        dao.deletePuzzle(puzzle.getPuzzleId());
+    }
+
     public void updateDB(){
         puzzle.setClue(this.grid);
         puzzle.setSolution(this.grid);
