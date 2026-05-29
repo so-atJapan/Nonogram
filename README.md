@@ -37,9 +37,14 @@ nonogramをプレイするにあたってアカウントの作成が可能
 
 
 ### 🔳PLAYボタン
-問題(難易度)一覧 <br>
+・問題(難易度)一覧 <br>
 EASY,NORMAL,HARD<br>
-![examplePlay1](/imageReadme/examplePlay1.png)
+![examplePlay1](/imageReadme/examplePlay1.png) <br><br>
+・ログ機能 <br>
+⓵ → ⓶ → ⓷の順にマスを塗りつぶすと、ログとして記録が残る。 <br>
+＜・・・1つ前に戻る <br>
+＞・・・1つ後に進む <br>
+![exampleLog](/imageReadme/exampleLog1.png) ![exampleLog](/imageReadme/exampleLog2.png) ![exampleLog](/imageReadme/exampleLog3.png)
 
 
 
