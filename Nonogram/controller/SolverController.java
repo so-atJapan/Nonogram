@@ -132,7 +132,6 @@ public class SolverController {
      * 設定の決定ボタンが押されたときの処理。
      */
     public void onSettingConfirm() {
-        model.updatePuzzleTitle(view.getTitleTextField());
         model.updatePuzzleGridSizeX(view.getGridSizeX());
         model.updatePuzzleGridSizeY(view.getGridSizeY());
         model.gridReSize();
