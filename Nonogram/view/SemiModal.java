@@ -27,6 +27,7 @@ public class SemiModal {
     private TextField rowTextField;
     private TextField colTextField;
     private Button okButton;
+    private Label difficultyLabel;
 
     // コンストラクタ
     public SemiModal(Stage primaryStage){
@@ -98,6 +99,24 @@ public class SemiModal {
         sizeTilePane.setHgap(0);                             // 横の間隔
 
         okButton = new Button("OK");
+
+        // 難易度プレビューラベル
+        difficultyLabel = new Label();
+        difficultyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
+        updateDifficultyLabel(puzzle.getGridSizeX(), puzzle.getGridSizeY());
+
+        // row/col の変更に応じてリアルタイム更新
+        Runnable refreshDifficulty = () -> {
+            try {
+                int r = Integer.parseInt(rowTextField.getText());
+                int c = Integer.parseInt(colTextField.getText());
+                updateDifficultyLabel(r, c);
+            } catch (NumberFormatException e) {
+                difficultyLabel.setText("難易度: -");
+            }
+        };
+        rowTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
+        colTextField.textProperty().addListener((obs, old, nv) -> refreshDifficulty.run());
         
         VBox dialogRoot = new VBox(15);
         dialogRoot.setPadding(new Insets(20));
@@ -105,10 +124,11 @@ public class SemiModal {
                 titleLabel,
                 titleTextField,
                 sizeTilePane,
+                difficultyLabel,
                 okButton
         );
 
-        dialogScene = new Scene(dialogRoot, 300, 200);
+        dialogScene = new Scene(dialogRoot, 300, 240);
     }
 
     public void render(){
@@ -118,6 +138,32 @@ public class SemiModal {
 
         // 閉じるまで待つ
         settingStage.showAndWait();
+    }
+
+    /**
+     * row・col の最大値から難易度を算出してラベルに反映する。
+     */
+    private void updateDifficultyLabel(int rows, int cols) {
+        int totalSize = rows + cols;
+        String name;
+        String color;
+        if (totalSize <= 20) {
+            name  = "EASY";
+            color = "#27ae60";
+        } else if (totalSize <= 40) {
+            name  = "NORMAL";
+            color = "#2980b9";
+        } else if (totalSize <= 100) {
+            name  = "HARD";
+            color = "#e67e22";
+        } else {
+            name  = "EXPERT";
+            color = "#c0392b";
+        }
+        difficultyLabel.setText("難易度: " + name);
+        difficultyLabel.setStyle(
+            "-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: " + color + ";"
+        );
     }
 
     public void settingConfirm(){
@@ -143,4 +189,6 @@ public class SemiModal {
     public int getGridSizeX(){ return Integer.parseInt(rowTextField.getText()); }
 
     public int getGridSizeY(){ return Integer.parseInt(colTextField.getText()); }
+
+    
 }
