@@ -1,14 +1,14 @@
 package Nonogram.model;
 
-public abstract class Player{
-    private String userName;
+public abstract class Player {
+    private final String USER_NAME;
 
     public Player(String userName){
-        this.userName = userName;
+        this.USER_NAME = userName;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUSER_NAME() {
+        return USER_NAME;
     }
 
     public abstract int getPlayerId();

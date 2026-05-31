@@ -3,16 +3,16 @@ package Nonogram.model;
 import java.util.ArrayList;
 
 public class Solver {
-    private Clue clue;
+    private final Clue CLUE;
     private Grid grid;
 
     public Solver(Clue clue, Grid grid) {
-        this.clue = clue;
+        this.CLUE = clue;
         this.grid = grid;
     }
 
     public Solver(Clue clue) {
-        this(clue, new Grid(clue.getRowClues().size(), clue.getColClues().size()));
+        this(clue, new Grid(clue.getROW_CLUES().size(), clue.getCOL_CLUES().size()));
     }
 
     public Grid getGrid() {
@@ -20,7 +20,7 @@ public class Solver {
     }
 
     public void solveAtOnce() {
-        for (int i = 0; i < 100; i++) {
+        for (int passCount = 0; passCount < 100; passCount++) {
             System.out.println(this.grid.filledPercent());
             if (this.grid.filledPercent() == 1.0) break;
             solveStepByStep();
@@ -32,14 +32,14 @@ public class Solver {
     }
 
     private void step1() {
-        for (int x = 0; x < clue.getRowClues().size(); x++) {
+        for (int x = 0; x < CLUE.getROW_CLUES().size(); x++) {
             Cell[] row = grid.getRow(x);
-            step1Line(clue.getRowClues().get(x), row);
+            step1Line(CLUE.getROW_CLUES().get(x), row);
             grid.setRow(row, x);
         }
-        for (int y = 0; y < clue.getColClues().size(); y++) {
+        for (int y = 0; y < CLUE.getCOL_CLUES().size(); y++) {
             Cell[] col = grid.getCol(y);
-            step1Line(clue.getColClues().get(y), col);
+            step1Line(CLUE.getCOL_CLUES().get(y), col);
             grid.setCol(col, y);
         }
     }
@@ -49,181 +49,138 @@ public class Solver {
     private static final int S_MARKED  = 2;
 
     private void step1Line(ArrayList<Integer> question, Cell[] line) {
-        int len = line.length;
-        int k   = question.size();
+        final int LENGTH = line.length;
+        final int CLUE_COUNT   = question.size();
 
         // Cell[] → int[] 変換
-        int[] ls = new int[len];
-        for (int i = 0; i < len; i++) {
-            CellState cs = line[i].getState();
-            if      (cs == CellState.FILLED) ls[i] = S_FILLED;
-            else if (cs == CellState.MARKED) ls[i] = S_MARKED;
+        int[] lineStates = new int[LENGTH];
+        for (int cellIndex = 0; cellIndex < LENGTH; cellIndex++) {
+            CellState cellState = line[cellIndex].getState();
+            if      (cellState == CellState.FILLED) lineStates[cellIndex] = S_FILLED;
+            else if (cellState == CellState.MARKED) lineStates[cellIndex] = S_MARKED;
         }
 
         // ヒントを int[] に
-        int[] q = new int[k];
-        for (int i = 0; i < k; i++) q[i] = question.get(i);
+        int[] clueBlockLengths = new int[CLUE_COUNT];
+        for (int clueIndex = 0; clueIndex < CLUE_COUNT; clueIndex++) clueBlockLengths[clueIndex] = question.get(clueIndex);
 
-        // -------------------------------------------------------
         // 前向き DP
-        // fwd[i][j] = 「ブロック j-1 まで配置し終えて位置 i にいる」パターン数
-        //
-        //   j == 0          : まだブロックを1つも置いていない
-        //   j == 1..k       : ブロック j-1 を置き終えた直後
-        //
-        // 遷移:
-        //   EMPTY セルを消費 (スペース or ブロック後スペース):
-        //     fwd[i+1][j] += fwd[i][j]   (ls[i] != S_FILLED)
-        //   ブロック j を pos=i から置く:
-        //     fwd[i + q[j] + 1][j+1] += fwd[i][j]  or  fwd[i + q[j]][k] if j==k-1
-        //     ただし [i, i+q[j]) に MARKED がなく、
-        //            最後のブロック以外は i+q[j] が FILLED でないこと
-        // -------------------------------------------------------
-        long[][] fwd = new long[len + 1][k + 1];
-        fwd[0][0] = 1L;
+        long[][] forwardPatternCounts = new long[LENGTH + 1][CLUE_COUNT + 1];
+        forwardPatternCounts[0][0] = 1L;
 
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j <= k; j++) {
-                if (fwd[i][j] == 0) continue;
-                long ways = fwd[i][j];
+        for (int cellIndex = 0; cellIndex < LENGTH; cellIndex++) {
+            for (int clueIndex = 0; clueIndex <= CLUE_COUNT; clueIndex++) {
+                if (forwardPatternCounts[cellIndex][clueIndex] == 0) continue;
+                long patternCount = forwardPatternCounts[cellIndex][clueIndex];
 
-                if (j == k) {
-                    // すべてのブロックを置き終えた → 残りは EMPTY のみ
-                    if (ls[i] != S_FILLED) {
-                        fwd[i + 1][k] += ways;
+                if (clueIndex == CLUE_COUNT) {
+                    if (lineStates[cellIndex] != S_FILLED) {
+                        forwardPatternCounts[cellIndex + 1][CLUE_COUNT] += patternCount;
                     }
                     continue;
                 }
 
-                // ① 現在位置を EMPTY として読み飛ばす（ls[i] が FILLED でなければ）
-                if (ls[i] != S_FILLED) {
-                    fwd[i + 1][j] += ways;
+                if (lineStates[cellIndex] != S_FILLED) {
+                    forwardPatternCounts[cellIndex + 1][clueIndex] += patternCount;
                 }
 
-                // ② ブロック j を位置 i から置く
-                int blen = q[j];
-                if (i + blen > len) continue;
+                int blockLength = clueBlockLengths[clueIndex];
+                if (cellIndex + blockLength > LENGTH) continue;
 
-                // ブロック範囲に MARKED がないか確認
                 boolean canPlace = true;
-                for (int bi = i; bi < i + blen; bi++) {
-                    if (ls[bi] == S_MARKED) { canPlace = false; break; }
+                for (int blockCellIndex = cellIndex; blockCellIndex < cellIndex + blockLength; blockCellIndex++) {
+                    if (lineStates[blockCellIndex] == S_MARKED) { canPlace = false; break; }
                 }
                 if (!canPlace) continue;
 
-                int after = i + blen;
-                if (j == k - 1) {
-                    // 最後のブロック：後続スペース不要
-                    fwd[after][k] += ways;
+                int afterBlockIndex = cellIndex + blockLength;
+                if (clueIndex == CLUE_COUNT - 1) {
+                    forwardPatternCounts[afterBlockIndex][CLUE_COUNT] += patternCount;
                 } else {
-                    // 最後以外：直後は FILLED であってはならない
-                    if (after < len && ls[after] != S_FILLED) {
-                        fwd[after + 1][j + 1] += ways;
+                    if (afterBlockIndex < LENGTH && lineStates[afterBlockIndex] != S_FILLED) {
+                        forwardPatternCounts[afterBlockIndex + 1][clueIndex + 1] += patternCount;
                     }
                 }
             }
         }
 
-        long total = fwd[len][k];
-        if (total == 0) return; // 矛盾（解なし）
+        final long TOTAL_PATTERN_COUNT = forwardPatternCounts[LENGTH][CLUE_COUNT];
+        if (TOTAL_PATTERN_COUNT == 0) return; // 矛盾（解なし）
 
-        // -------------------------------------------------------
         // 後向き DP
-        // bwd[i][j] = 「位置 i・状態 j からゴールまでの」パターン数
-        // -------------------------------------------------------
-        long[][] bwd = new long[len + 1][k + 1];
-        bwd[len][k] = 1L;
+        long[][] backwardPatternCounts = new long[LENGTH + 1][CLUE_COUNT + 1];
+        backwardPatternCounts[LENGTH][CLUE_COUNT] = 1L;
 
-        for (int i = len - 1; i >= 0; i--) {
-            for (int j = 0; j <= k; j++) {
+        for (int cellIndex = LENGTH - 1; cellIndex >= 0; cellIndex--) {
+            for (int clueIndex = 0; clueIndex <= CLUE_COUNT; clueIndex++) {
 
-                if (j == k) {
-                    if (ls[i] != S_FILLED) {
-                        bwd[i][k] += bwd[i + 1][k];
+                if (clueIndex == CLUE_COUNT) {
+                    if (lineStates[cellIndex] != S_FILLED) {
+                        backwardPatternCounts[cellIndex][CLUE_COUNT] += backwardPatternCounts[cellIndex + 1][CLUE_COUNT];
                     }
                     continue;
                 }
 
-                // ① EMPTY として読み飛ばす
-                if (ls[i] != S_FILLED) {
-                    bwd[i][j] += bwd[i + 1][j];
+                if (lineStates[cellIndex] != S_FILLED) {
+                    backwardPatternCounts[cellIndex][clueIndex] += backwardPatternCounts[cellIndex + 1][clueIndex];
                 }
 
-                // ② ブロック j を位置 i から置く
-                int blen = q[j];
-                if (i + blen > len) continue;
+                int blockLength = clueBlockLengths[clueIndex];
+                if (cellIndex + blockLength > LENGTH) continue;
 
                 boolean canPlace = true;
-                for (int bi = i; bi < i + blen; bi++) {
-                    if (ls[bi] == S_MARKED) { canPlace = false; break; }
+                for (int blockCellIndex = cellIndex; blockCellIndex < cellIndex + blockLength; blockCellIndex++) {
+                    if (lineStates[blockCellIndex] == S_MARKED) { canPlace = false; break; }
                 }
                 if (!canPlace) continue;
 
-                int after = i + blen;
-                if (j == k - 1) {
-                    bwd[i][j] += bwd[after][k];
+                int afterBlockIndex = cellIndex + blockLength;
+                if (clueIndex == CLUE_COUNT - 1) {
+                    backwardPatternCounts[cellIndex][clueIndex] += backwardPatternCounts[afterBlockIndex][CLUE_COUNT];
                 } else {
-                    if (after < len && ls[after] != S_FILLED) {
-                        bwd[i][j] += bwd[after + 1][j + 1];
+                    if (afterBlockIndex < LENGTH && lineStates[afterBlockIndex] != S_FILLED) {
+                        backwardPatternCounts[cellIndex][clueIndex] += backwardPatternCounts[afterBlockIndex + 1][clueIndex + 1];
                     }
                 }
             }
         }
 
-        // -------------------------------------------------------
-        // 各セルの FILLED 寄与数を計算
-        //
-        // セル i が FILLED になるのは「ブロック j が位置 s から始まり
-        // s <= i < s+q[j]」を満たすすべての (j, s) の組み合わせ。
-        //
-        // FILLED 寄与数 = Σ_{j,s} fwd[s][j] * bwd[s+q[j]+sep][j+1]
-        //   ただし s <= i < s+q[j]
-        //
-        // 差分配列で O(n*k) に抑える:
-        //   ブロック (j,s) が確定したとき diff[s] += 寄与, diff[s+q[j]] -= 寄与
-        // -------------------------------------------------------
-        long[] filledWays = new long[len];
-        long[] diff = new long[len + 1];
+        // 差分配列で FILLED 寄与数を計算
+        long[] fillCoverageDiff = new long[LENGTH + 1];
 
-        for (int j = 0; j < k; j++) {
-            int blen = q[j];
-            for (int s = 0; s + blen <= len; s++) {
-                if (fwd[s][j] == 0) continue;
+        for (int clueIndex = 0; clueIndex < CLUE_COUNT; clueIndex++) {
+            int blockLength = clueBlockLengths[clueIndex];
+            for (int startIndex = 0; startIndex + blockLength <= LENGTH; startIndex++) {
+                if (forwardPatternCounts[startIndex][clueIndex] == 0) continue;
 
-                // ブロック j を s に置けるか
                 boolean canPlace = true;
-                for (int bi = s; bi < s + blen; bi++) {
-                    if (ls[bi] == S_MARKED) { canPlace = false; break; }
+                for (int blockCellIndex = startIndex; blockCellIndex < startIndex + blockLength; blockCellIndex++) {
+                    if (lineStates[blockCellIndex] == S_MARKED) { canPlace = false; break; }
                 }
                 if (!canPlace) continue;
 
-                int after = s + blen;
-                long bwdVal;
-                if (j == k - 1) {
-                    bwdVal = bwd[after][k];
+                int afterBlockIndex = startIndex + blockLength;
+                long backwardPatternCount;
+                if (clueIndex == CLUE_COUNT - 1) {
+                    backwardPatternCount = backwardPatternCounts[afterBlockIndex][CLUE_COUNT];
                 } else {
-                    if (after >= len || ls[after] == S_FILLED) continue;
-                    bwdVal = bwd[after + 1][j + 1];
+                    if (afterBlockIndex >= LENGTH || lineStates[afterBlockIndex] == S_FILLED) continue;
+                    backwardPatternCount = backwardPatternCounts[afterBlockIndex + 1][clueIndex + 1];
                 }
 
-                long contrib = fwd[s][j] * bwdVal;
-                if (contrib == 0) continue;
-                diff[s]        += contrib;
-                diff[s + blen] -= contrib;
+                long contributionCount = forwardPatternCounts[startIndex][clueIndex] * backwardPatternCount;
+                if (contributionCount == 0) continue;
+                fillCoverageDiff[startIndex]        += contributionCount;
+                fillCoverageDiff[startIndex + blockLength] -= contributionCount;
             }
         }
 
-        // 差分配列を累積して filledWays に変換
+        // 差分配列を累積して確定セルを書き戻す
         long running = 0;
-        for (int i = 0; i < len; i++) {
-            running += diff[i];
-            filledWays[i] = running;
-        }
-
-        // 確定セルを書き戻し
-        for (int i = 0; i < len; i++) {
-            if      (filledWays[i] == total)          line[i].setState(CellState.FILLED);
-            else if (filledWays[i] == 0)              line[i].setState(CellState.MARKED);
+        for (int cellIndex = 0; cellIndex < LENGTH; cellIndex++) {
+            running += fillCoverageDiff[cellIndex];
+            if      (running == TOTAL_PATTERN_COUNT) line[cellIndex].setState(CellState.FILLED);
+            else if (running == 0)     line[cellIndex].setState(CellState.MARKED);
         }
     }
 }

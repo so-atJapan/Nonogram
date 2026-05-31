@@ -6,19 +6,15 @@ package Nonogram.model;
  */
 public class Timer {
 
+    private int timeCount;
 
-    private int timeCount ;
-
-    /**
-     * コンストラクタ
-     */
     public Timer() {
         this.timeCount = 0;
     }
 
     /**
      * 一秒ごとに呼ばれる処理
-     * 
+     *
      * @return 経過時間
      */
     public int tick() {
@@ -28,7 +24,7 @@ public class Timer {
 
     /**
      * 現在の経過秒数を取得する
-     * 
+     *
      * @return 経過秒数
      */
     public int getTickSeconds() {

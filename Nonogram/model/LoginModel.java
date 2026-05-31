@@ -5,27 +5,24 @@ package Nonogram.model;
  */
 public class LoginModel {
 
-    private static DAO dao = new DAO();
+    private static final DAO DAO = new DAO();
     private LoginPlayer loginPlayer;
 
     /**
      * メールアドレスとパスワードを検証してログインする
      *
-     * @param email 入力されたメールアドレス
-     * @param password 入力されたパスワード
+     * @param email         入力されたメールアドレス
+     * @param plainPassword 入力されたパスワード
      * @return ログインに成功した場合はtrue
      */
     public boolean login(String email, String plainPassword) {
-        // String passwordHash = passwordHasher.hash(password);
-        LoginPlayer challengePlayer = dao.getLoginPlayer(email);
-        
-        if(challengePlayer == null) return false;
+        LoginPlayer challengePlayer = DAO.getLoginPlayer(email);
 
+        if (challengePlayer == null) return false;
 
-        if(PasswordVerify.verify(plainPassword, challengePlayer.getHashedPassword())){
+        if (PASSWORD_HASH.verify(plainPassword, challengePlayer.getHashedPassword())) {
             this.loginPlayer = challengePlayer;
         }
-        
 
         return loginPlayer != null;
     }

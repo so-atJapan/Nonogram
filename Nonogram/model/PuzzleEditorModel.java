@@ -6,13 +6,12 @@ public class PuzzleEditorModel {
     private Grid grid;
     private GridLog gridLog;
 
-    private static DAO dao = new DAO();
+    private static final DAO DAO = new DAO();
 
-    // コンストラクタ
-    public PuzzleEditorModel(Puzzle puzzle) { //編集時
+    /** 編集時のコンストラクタ */
+    public PuzzleEditorModel(Puzzle puzzle) {
         this.puzzle = puzzle;
 
-        // 初期化
         grid = new Grid(puzzle.getGridSizeX(), puzzle.getGridSizeY());
 
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
@@ -31,37 +30,31 @@ public class PuzzleEditorModel {
         this.gridLog = new GridLog(grid);
     }
 
-    //コンストラクタ
-    public PuzzleEditorModel(Player editPlayer){  //新規作成時
+    /** 新規作成時のコンストラクタ */
+    public PuzzleEditorModel(Player editPlayer) {
         this(new Puzzle());
         this.puzzle.setCreatedBy(editPlayer);
     }
 
-    // Puzzle取得
     public Puzzle getPuzzle() {
         return puzzle;
     }
 
-    // 全セル取得
     public Grid getGrid() {
         return grid;
     }
 
-    // セル状態切り替え
     public void toggle(int x, int y, CellState cellState) {
         grid.getCellAt(x, y).toggle(cellState);
     }
 
-    //グリッド更新
     public void gridReSize(){
         Grid reSizedGrid = new Grid(puzzle.getGridSizeX(), puzzle.getGridSizeY());
         Grid oldGrid = this.grid;
 
         for (int x = 0; x < oldGrid.getSizeX(); x++) {
             for (int y = 0; y < oldGrid.getSizeY(); y++) {
-
-                if(x >= reSizedGrid.getSizeX() || y >= reSizedGrid.getSizeY()) continue;
-
+                if (x >= reSizedGrid.getSizeX() || y >= reSizedGrid.getSizeY()) continue;
                 switch (oldGrid.getCellAt(x, y).getState()) {
                     case FILLED:
                         reSizedGrid.setCellAt(x, y, CellState.FILLED);
@@ -76,7 +69,6 @@ public class PuzzleEditorModel {
         this.grid = reSizedGrid;
     }
 
-    // 盤面リセット
     public void reset() {
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
@@ -97,16 +89,16 @@ public class PuzzleEditorModel {
         this.gridLog.push(this.grid);
         this.grid = this.gridLog.get();
     }
-    
+
     public void undoGridLog(){
         this.gridLog.undo();
         this.grid = this.gridLog.get();
     }
-    
+
     public void redoGridLog(){
         this.gridLog.redo();
     }
-    
+
     public Grid getCurrentLog(){
         return this.gridLog.get();
     }
@@ -124,7 +116,7 @@ public class PuzzleEditorModel {
     }
 
     public void deletePuzzle(){
-        dao.deletePuzzle(puzzle.getPuzzleId());
+        DAO.deletePuzzle(puzzle.getPuzzleId());
     }
 
     public void updateDB(){
@@ -132,15 +124,10 @@ public class PuzzleEditorModel {
         puzzle.setSolution(this.grid);
         puzzle.setDifficultyBySize();
 
-        
-        if(puzzle.getPuzzleId() == -1){
-
-            dao.setPuzzle(this.puzzle);
-
-        }else{
-    
-            dao.updatePuzzle(this.puzzle);
-
+        if (puzzle.getPuzzleId() == -1) {
+            DAO.setPuzzle(this.puzzle);
+        } else {
+            DAO.updatePuzzle(this.puzzle);
         }
     }
 }

@@ -1,29 +1,29 @@
 package Nonogram.model;
 
 public class LoginPlayer extends Player {
-    private int playerId;
-    private String eMail;
-    private String hashedPassword;
+    private final int PLAYER_ID;
+    private final String E_MAIL;
+    private final String HASH_PASSWORD;
 
     public LoginPlayer(String name, int playerId, String eMail, String hashedPassword){
         super(name);
-        this.playerId = playerId;
-        this.eMail = eMail;
-        this.hashedPassword = hashedPassword;
+        this.PLAYER_ID = playerId;
+        this.E_MAIL = eMail;
+        this.HASH_PASSWORD = hashedPassword;
     }
 
     @Override
     public int getPlayerId() {
-        return playerId;
+        return PLAYER_ID;
     }
 
     @Override
     public String getEMail() {
-        return eMail;
+        return E_MAIL;
     }
 
     @Override
     public String getHashedPassword() {
-        return hashedPassword;
+        return HASH_PASSWORD;
     }
 }

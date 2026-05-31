@@ -2,12 +2,11 @@ package Nonogram.model;
 import java.sql.*;
 import java.util.ArrayList;
 
-
 public class DAO {
-    
-    private final String DB_PATH = "jdbc:sqlite:Nonogram\\model\\Nonogram.DB";
 
-    private final String SELECT_ALL_PUZZLES =
+    private static final String DB_PATH = "jdbc:sqlite:Nonogram\\model\\Nonogram.DB";
+
+    private static final String SELECT_ALL_PUZZLES =
         "SELECT" +
         "    p.puzzle_id," +
         "    p.title," +
@@ -24,7 +23,7 @@ public class DAO {
         "JOIN difficulty d" +
         "    ON p.difficulty_id = d.difficulty_id;";
 
-    private final String INSERT_PUZZLE = 
+    private static final String INSERT_PUZZLE =
         "INSERT INTO puzzles ( " +
         "    title, " +
         "    grid_size_x, " +
@@ -52,7 +51,7 @@ public class DAO {
         "    ? " +
         "    ); ";
 
-    private final String UPDATE_PUZZLE =
+    private static final String UPDATE_PUZZLE =
         "UPDATE puzzles " +
         "SET " +
         "    title = ?, " +
@@ -71,11 +70,11 @@ public class DAO {
         "    clue_col = ? " +
         "WHERE puzzle_id = ?";
 
-    private final String DELETE_PUZZLE = 
+    private static final String DELETE_PUZZLE =
         "DELETE FROM puzzles " +
         "WHERE puzzle_id = ? ";
 
-    private final String SELECT_PLAYER_BY_PLAYER_ID =
+    private static final String SELECT_PLAYER_BY_PLAYER_ID =
         "SELECT " +
         "   player_id," +
         "   user_name," +
@@ -84,7 +83,7 @@ public class DAO {
         "FROM players " +
         "WHERE player_id = ?";
 
-    private final String SELECT_PLAYER_BY_EMAIL =
+    private static final String SELECT_PLAYER_BY_EMAIL =
         "SELECT " +
         "   player_id, " +
         "   user_name, e_mail, " +
@@ -92,7 +91,7 @@ public class DAO {
         "FROM players " +
         "WHERE e_mail = ?";
 
-    private final String INSERT_PLAYER =
+    private static final String INSERT_PLAYER =
         "INSERT INTO players( " +
         "   user_name, " +
         "   password_hash, " +
@@ -104,7 +103,7 @@ public class DAO {
         "   ? " +
         ")";
 
-    private final String INSERT_PUZZLE_RECORD =
+    private static final String INSERT_PUZZLE_RECORD =
         "INSERT INTO puzzle_records( " +
         "   player_id, " +
         "   puzzle_id " +
@@ -114,14 +113,13 @@ public class DAO {
         "   ? " +
         ")";
 
-    private final String SELECT_PUZZLE_RECORD =
+    private static final String SELECT_PUZZLE_RECORD =
         "SELECT puzzle_id " +
         "FROM puzzle_records " +
         "WHERE player_id = ?";
 
-    public  ArrayList<Puzzle> getPuzzleAll(){
+    public ArrayList<Puzzle> getPuzzleAll(){
         ArrayList<Puzzle> puzzleList = new ArrayList<Puzzle>();
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(SELECT_ALL_PUZZLES);
@@ -129,7 +127,6 @@ public class DAO {
             try(ResultSet rs = ps.executeQuery();){
                 while(rs.next()){
                     Puzzle puzzle = new Puzzle();
-
                     puzzle.setPuzzleId(rs.getInt("puzzle_id"));
                     puzzle.setTitle(rs.getString("title"));
                     puzzle.setGridSizeX(rs.getInt("grid_size_x"));
@@ -140,7 +137,6 @@ public class DAO {
                     puzzle.setCreatedBy(getLoginPlayer(rs.getInt("created_by")));
                     puzzle.setSolution(rs.getString("solution"));
                     puzzle.setClue(new Clue(rs.getString("clue_row"), rs.getString("clue_col")));
-
                     puzzleList.add(puzzle);
                 }
             }
@@ -152,12 +148,10 @@ public class DAO {
     }
 
     public void setPuzzle(Puzzle puzzle){
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(INSERT_PUZZLE);
         ){
-
             ps.setString(1, puzzle.getTitle());
             ps.setInt(2, puzzle.getGridSizeX());
             ps.setInt(3, puzzle.getGridSizeY());
@@ -167,9 +161,7 @@ public class DAO {
             ps.setString(7, puzzle.getSolution().toString());
             ps.setString(8, puzzle.getClue().rowToString());
             ps.setString(9, puzzle.getClue().colToString());
-
             ps.executeUpdate();
-
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("更新失敗");
@@ -177,12 +169,10 @@ public class DAO {
     }
 
     public void updatePuzzle(Puzzle puzzle){
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(UPDATE_PUZZLE);
         ) {
-
             ps.setString(1, puzzle.getTitle());
             ps.setInt(2, puzzle.getGridSizeX());
             ps.setInt(3, puzzle.getGridSizeY());
@@ -194,32 +184,24 @@ public class DAO {
             ps.setString(9, puzzle.getClue().rowToString());
             ps.setString(10, puzzle.getClue().colToString());
             ps.setInt(11, puzzle.getPuzzleId());
-
             ps.executeUpdate();
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void deletePuzzle(int id){
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(DELETE_PUZZLE);
         ) {
-
             ps.setInt(1, id);
-
             ps.executeUpdate();
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * プレイヤーIDからログインプレイヤー情報を取得する
      *
@@ -227,13 +209,11 @@ public class DAO {
      * @return 見つかったログインプレイヤー。存在しない場合はnull
      */
     private LoginPlayer getLoginPlayer(int playerId) {
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(SELECT_PLAYER_BY_PLAYER_ID);
         ) {
             ps.setInt(1, playerId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new LoginPlayer(
@@ -244,14 +224,12 @@ public class DAO {
                     );
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
-    
+
     /**
      * メールアドレスからログインプレイヤー情報を取得する
      *
@@ -259,13 +237,11 @@ public class DAO {
      * @return 見つかったログインプレイヤー。存在しない場合はnull
      */
     public LoginPlayer getLoginPlayer(String email) {
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(SELECT_PLAYER_BY_EMAIL);
         ) {
             ps.setString(1, email);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new LoginPlayer(
@@ -276,19 +252,14 @@ public class DAO {
                     );
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
     /**
      * 指定されたメールアドレスのプレイヤーが存在するか判定する
-     *
-     * @param email 確認するメールアドレス
-     * @return 存在する場合はtrue
      */
     public boolean existsPlayerByEmail(String email) {
         return getLoginPlayer(email) != null;
@@ -296,14 +267,8 @@ public class DAO {
 
     /**
      * 新しいプレイヤーをDBへ登録する
-     *
-     * @param userName 登録するユーザー名
-     * @param email 登録するメールアドレス
-     * @param passwordHash ハッシュ化済みパスワード
-     * @return 登録に成功した場合はtrue
      */
     public boolean insertPlayer(String userName, String email, String passwordHash) {
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(INSERT_PLAYER);
@@ -311,71 +276,48 @@ public class DAO {
             ps.setString(1, userName);
             ps.setString(2, passwordHash);
             ps.setString(3, email);
-
             return ps.executeUpdate() == 1;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
     /**
      * 新しいパズルレコードをDBへ登録する
-     *
-     * @param player 登録するユーザー
-     * @param puzzle 登録するパズル
-     * @return 登録に成功した場合はtrue
      */
     public boolean insertPuzzleRecord(Player player, Puzzle puzzle) {
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(INSERT_PUZZLE_RECORD);
         ) {
             ps.setInt(1, player.getPlayerId());
             ps.setInt(2, puzzle.getPuzzleId());
-
             return ps.executeUpdate() == 1;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
     /**
      * 指定されたプレイヤーからクリアパズルIDの配列を返す
-     *
-     * @param player 取得するユーザー
-     * @return パズルIDのint型配列
      */
     public ArrayList<Integer> getPuzzleRecords(Player player) {
-        
         ArrayList<Integer> puzzleIds = new ArrayList<Integer>();
-
         try (
             Connection connection = DriverManager.getConnection(DB_PATH);
             PreparedStatement ps = connection.prepareStatement(SELECT_PUZZLE_RECORD);
         ) {
-
             ps.setInt(1, player.getPlayerId());
-
             try(ResultSet rs = ps.executeQuery();){
                 while(rs.next()){
-
                     puzzleIds.add(rs.getInt(1));
-                    
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return puzzleIds;
     }
-
 }

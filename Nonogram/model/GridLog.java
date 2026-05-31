@@ -3,12 +3,12 @@ package Nonogram.model;
 import java.util.LinkedList;
 
 public class GridLog {
-    private LinkedList<Grid> gridLogs;
+    private final LinkedList<Grid> GRID_ROGS;
     private int pointer;
 
     //コンストラクタ
     public GridLog(){
-        this.gridLogs = new LinkedList<Grid>();
+        this.GRID_ROGS = new LinkedList<Grid>();
         this.pointer = -1;
     }
     public GridLog(Grid grid){
@@ -19,10 +19,10 @@ public class GridLog {
     // 新しい操作を記録
     public void push(Grid grid) {
         // pointer より先を削除
-        while (gridLogs.size() > pointer + 1) {
-            gridLogs.removeLast();
+        while (GRID_ROGS.size() > pointer + 1) {
+            GRID_ROGS.removeLast();
         }
-        gridLogs.addLast(grid.copy());
+        GRID_ROGS.addLast(grid.copy());
         pointer++;
         System.out.println(pointer);
     }
@@ -33,19 +33,19 @@ public class GridLog {
     }
 
     public void redo() {
-        if (pointer < gridLogs.size() - 1) pointer++;
+        if (pointer < GRID_ROGS.size() - 1) pointer++;
         System.out.println(pointer);
     }
 
     // 任意ステップ参照
     public Grid get(int step) {
-        return gridLogs.get(step).copy();
+        return GRID_ROGS.get(step).copy();
     }
 
     public Grid get() {
-        return gridLogs.get(pointer).copy();
+        return GRID_ROGS.get(pointer).copy();
     }
 
     public boolean canUndo() { return pointer > 0; }
-    public boolean canRedo() { return pointer < gridLogs.size() - 1; }
+    public boolean canRedo() { return pointer < GRID_ROGS.size() - 1; }
 }

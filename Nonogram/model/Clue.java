@@ -4,82 +4,64 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Clue {
-    private ArrayList<ArrayList<Integer>> rowClues;
-    private ArrayList<ArrayList<Integer>> colClues;
+    private final ArrayList<ArrayList<Integer>> ROW_CLUES;
+    private final ArrayList<ArrayList<Integer>> COL_CLUES;
 
     public Clue(ArrayList<ArrayList<Integer>> rowClues, ArrayList<ArrayList<Integer>> colClues){
-        this.rowClues = rowClues;
-        this.colClues = colClues;
+        this.ROW_CLUES = rowClues;
+        this.COL_CLUES = colClues;
     }
 
     public Clue(String rowClues, String colClues){
         this(beArrayList(rowClues), beArrayList(colClues));
     }
 
-    //ゲッター
-    public ArrayList<ArrayList<Integer>> getRowClues() {return rowClues;}
-    public ArrayList<ArrayList<Integer>> getColClues() {return colClues;}
+    // ゲッター
+    public ArrayList<ArrayList<Integer>> getROW_CLUES() { return ROW_CLUES; }
+    public ArrayList<ArrayList<Integer>> getCOL_CLUES() { return COL_CLUES; }
 
     private static ArrayList<ArrayList<Integer>> beArrayList(String clues){
-        ArrayList<String> temp1 = new ArrayList<String>(Arrays.asList(clues.split(" ")));
-        ArrayList<ArrayList<Integer>> temp2 = new ArrayList<ArrayList<Integer>>();
-        for (int i = 0; i < temp1.size(); i++) {
-            ArrayList<Integer> temp3 = new ArrayList<Integer>();
-            for (String s : temp1.get(i).split(",")) {
-                temp3.add(Integer.parseInt(s));
+        ArrayList<String> clueLineText = new ArrayList<String>(Arrays.asList(clues.split(" ")));
+        ArrayList<ArrayList<Integer>> parsedClues = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < clueLineText.size(); i++) {
+            ArrayList<Integer> clueNumbers = new ArrayList<Integer>();
+            for (String s : clueLineText.get(i).split(",")) {
+                clueNumbers.add(Integer.parseInt(s));
             }
-
-            temp2.add(temp3);
+            parsedClues.add(clueNumbers);
         }
-
-        return temp2;
+        return parsedClues;
     }
 
     public String rowToString(){
-
-        StringBuilder sb = new StringBuilder();
-
-        for (int x = 0; x < rowClues.size(); x++) {
-            for (int y = 0; y < rowClues.get(x).size(); y++) {
-
-                sb.append(rowClues.get(x).get(y));
-
-                if (y != rowClues.get(x).size() - 1) {
-                    sb.append(",");
+        StringBuilder clueTextBuilder = new StringBuilder();
+        for (int x = 0; x < ROW_CLUES.size(); x++) {
+            for (int y = 0; y < ROW_CLUES.get(x).size(); y++) {
+                clueTextBuilder.append(ROW_CLUES.get(x).get(y));
+                if (y != ROW_CLUES.get(x).size() - 1) {
+                    clueTextBuilder.append(",");
                 }
             }
-
-            if (x != rowClues.size() - 1) {
-                sb.append(" ");
+            if (x != ROW_CLUES.size() - 1) {
+                clueTextBuilder.append(" ");
             }
         }
-
-        return sb.toString();
-
+        return clueTextBuilder.toString();
     }
 
     public String colToString(){
-
-        StringBuilder sb = new StringBuilder();
-
-        for (int x = 0; x < colClues.size(); x++) {
-            for (int y = 0; y < colClues.get(x).size(); y++) {
-
-                sb.append(colClues.get(x).get(y));
-
-                if (y != colClues.get(x).size() - 1) {
-                    sb.append(",");
+        StringBuilder clueTextBuilder = new StringBuilder();
+        for (int x = 0; x < COL_CLUES.size(); x++) {
+            for (int y = 0; y < COL_CLUES.get(x).size(); y++) {
+                clueTextBuilder.append(COL_CLUES.get(x).get(y));
+                if (y != COL_CLUES.get(x).size() - 1) {
+                    clueTextBuilder.append(",");
                 }
             }
-
-            if (x != colClues.size() - 1) {
-                sb.append(" ");
+            if (x != COL_CLUES.size() - 1) {
+                clueTextBuilder.append(" ");
             }
         }
-
-        return sb.toString();
-
+        return clueTextBuilder.toString();
     }
-
-
 }

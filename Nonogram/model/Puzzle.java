@@ -12,7 +12,7 @@ public class Puzzle {
    private int gridSizeX = 10;
    private int gridSizeY = 10;
    private Difficulty difficulty = Difficulty.NORMAL;
-   private boolean isPublic = true;  //TODO faulseに変更
+   private boolean isPublic = true;
    private LocalDateTime createdAt;
    private Player createdBy = new GuestPlayer();
    private Grid solution = new Grid(10, 10);
@@ -127,12 +127,12 @@ public class Puzzle {
    }
    
    public void setSolution(String solution) {
-      String[] temp1 = solution.split(" ");
-      String[][] temp2 = new String[temp1.length][0];
-      for (int i = 0; i < temp1.length; i++) {
-         temp2[i] = temp1[i].split(",");
+      String[] rowText = solution.split(" ");
+      String[][] solutionTextGrid = new String[rowText.length][0];
+      for (int i = 0; i < rowText.length; i++) {
+         solutionTextGrid[i] = rowText[i].split(",");
       }
-      this.solution = new Grid(temp2.length, temp2[0].length, temp2);
+      this.solution = new Grid(solutionTextGrid.length, solutionTextGrid[0].length, solutionTextGrid);
    }
 
 }

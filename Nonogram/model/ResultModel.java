@@ -6,52 +6,32 @@ package Nonogram.model;
  */
 public class ResultModel {
 
-    private Puzzle puzzle;
-    private Grid completedGrid;
-    private int clearTimeSeconds;
-    // private PlayRecord record; // TODO: PlayRecordクラス実装後、記録保存用に追加予定
+    private final Puzzle PUZZLE;
+    private final Grid COMPLETED_GRID;
+    private final int CLEAR_TIME_SECONDS;
 
     /**
      * コンストラクタ
-     * 
-     * @param puzzle クリアしたパズル
-     * @param completedGrid 完成時の盤面
-     * @param elapsedSeconds クリアまでにかかった秒数
+     *
+     * @param puzzle          クリアしたパズル
+     * @param completedGrid   完成時の盤面
+     * @param tickSeconds  クリアまでにかかった秒数
      */
-    public ResultModel(Puzzle puzzle, Grid completedGrid, int elapsedSeconds) {
-        this.puzzle = puzzle;
-        this.completedGrid = completedGrid;
-        this.clearTimeSeconds = elapsedSeconds;
+    public ResultModel(Puzzle puzzle, Grid completedGrid, int tickSeconds) {
+        this.PUZZLE = puzzle;
+        this.COMPLETED_GRID = completedGrid;
+        this.CLEAR_TIME_SECONDS = tickSeconds;
     }
 
-    /**
-     * クリアしたパズルを取得する
-     * 
-     * @return パズル
-     */
-    public Puzzle getPuzzle() {
-        return puzzle;
+    public Puzzle getPUZZLE() {
+        return PUZZLE;
     }
 
-    /**
-     * 完成時の盤面を取得する
-     * 
-     * @return 完成時の盤面
-     */
-    public Grid getCompletedGrid() {
-        return completedGrid;
+    public Grid getCOMPLETED_GRID() {
+        return COMPLETED_GRID;
     }
 
-    /**
-     * クリアまでにかかった秒数を取得する
-     * 
-     * @return クリア時間
-     */
     public int getTickSeconds() {
-        return clearTimeSeconds;
+        return CLEAR_TIME_SECONDS;
     }
-
-    // public PlayRecord getRecord() {
-    //     return record;
-    // }
 }

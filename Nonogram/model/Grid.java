@@ -49,11 +49,11 @@ public class Grid {
     }
 
     public Cell[] getCol(int y){
-        Cell[] temp = new Cell[sizeX];
-        for (int x = 0; x < temp.length; x++) {
-            temp[x] = this.cells[x][y];
+        Cell[] columnCells = new Cell[sizeX];
+        for (int x = 0; x < columnCells.length; x++) {
+            columnCells[x] = this.cells[x][y];
         }
-        return temp;
+        return columnCells;
     }
 
     public void setRow(Cell[] row, int x){
@@ -101,7 +101,7 @@ public class Grid {
 
     public double filledPercent(){
 
-        double allCellAmount       = this.sizeX * this.sizeY;
+        final double ALL_CELL_AMOUNT       = this.sizeX * this.sizeY;
         double filledCellAmount = 0;
 
         for (int x = 0; x < cells.length; x++) {
@@ -114,7 +114,7 @@ public class Grid {
             }
         }
 
-        double filledPercent = filledCellAmount / allCellAmount;
+        double filledPercent = filledCellAmount / ALL_CELL_AMOUNT;
 
         return filledPercent;
     }
@@ -122,28 +122,28 @@ public class Grid {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder gridTextBuilder = new StringBuilder();
 
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
 
                 if (this.cells[x][y].getState() == CellState.FILLED) {
-                    sb.append(1);
+                    gridTextBuilder.append(1);
                 } else {
-                    sb.append(0);
+                    gridTextBuilder.append(0);
                 }
 
                 if (y != sizeY - 1) {
-                    sb.append(",");
+                    gridTextBuilder.append(",");
                 }
             }
 
             if (x != sizeX - 1) {
-                sb.append(" ");
+                gridTextBuilder.append(" ");
             }
         }
 
-        return sb.toString();
+        return gridTextBuilder.toString();
     }
 
 }
