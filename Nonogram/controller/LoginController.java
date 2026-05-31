@@ -1,7 +1,6 @@
 package Nonogram.controller;
 
 import Nonogram.model.LoginModel;
-
 import Nonogram.view.LoginView;
 
 /**
@@ -9,80 +8,54 @@ import Nonogram.view.LoginView;
  */
 public class LoginController {
 
-    private LoginModel model;
-    private LoginView view;
-    private AppController appController;
+    private final LoginModel LOGIN_MODEL;
+    private final LoginView LOGIN_VIEW;
+    private final AppController APP_CONTROLLER;
     private String nextDestination;
 
-    /**
-     * コンストラクタ
-     *
-     * @param model ログイン処理で使用するModel
-     * @param view ログイン画面のView
-     * @param appController 画面遷移を管理するコントローラ
-     */
-    public LoginController(LoginModel model, LoginView view, AppController appController) {
-        this.model = model;
-        this.view = view;
-        this.appController = appController;
+    public LoginController(LoginModel loginModel, LoginView loginView, AppController appController) {
+        this.LOGIN_MODEL = loginModel;
+        this.LOGIN_VIEW = loginView;
+        this.APP_CONTROLLER = appController;
     }
 
-    /**
-     * ログイン画面を初期化し、ボタンイベントを登録する
-     */
     public void initialize() {
-        view.initialize();
-
-        view.getLoginButton().setOnAction(e -> onLogin());
-        view.getSignupLink().setOnAction(e -> onSignup());
-        view.getCancelButton().setOnAction(e -> view.close());
-
-        view.render();
+        LOGIN_VIEW.initialize();
+        LOGIN_VIEW.getLoginButton().setOnAction(e -> onLogin());
+        LOGIN_VIEW.getSignupLink().setOnAction(e -> onSignup());
+        LOGIN_VIEW.getCancelButton().setOnAction(e -> LOGIN_VIEW.close());
+        LOGIN_VIEW.render();
 
         if (nextDestination != null) {
-            appController.navigateTo(nextDestination);
+            APP_CONTROLLER.navigateTo(nextDestination);
         }
     }
 
-    /**
-     * ログインボタンが押されたときの処理
-     * 入力情報が正しければログイン済みプレイヤーを保持し、問題リスト画面へ遷移する
-     */
     private void onLogin() {
-        String challengeEmail = view.getEmail();
-        String challengePassword = view.getPassword();
+        final String CHALLENGE_EMAIL    = LOGIN_VIEW.getEmail();
+        final String CHALLENGE_PASSWORD = LOGIN_VIEW.getPassword();
 
-        if (isBlank(challengeEmail) || isBlank(challengePassword)) {
-            view.showMessage("メールアドレスとパスワードを入力してください。");
+        if (isBlank(CHALLENGE_EMAIL) || isBlank(CHALLENGE_PASSWORD)) {
+            LOGIN_VIEW.showMessage("メールアドレスとパスワードを入力してください。");
             return;
         }
 
-
-        boolean success = model.login(challengeEmail, challengePassword);
+        boolean success = LOGIN_MODEL.login(CHALLENGE_EMAIL, CHALLENGE_PASSWORD);
         if (success) {
-            appController.setCurrentPlayer(model.getLoginPlayer());
+            APP_CONTROLLER.setCurrentPlayer(LOGIN_MODEL.getLoginPlayer());
             nextDestination = "home";
-            view.confirmLogin();
+            LOGIN_VIEW.confirmLogin();
         } else {
-            view.showMessage("メールアドレスまたはパスワードが正しくありません。");
+            LOGIN_VIEW.showMessage("メールアドレスまたはパスワードが正しくありません。");
         }
     }
 
-    /**
-     * サインアップ画面へのリンクが押されたときの処理
-     */
     private void onSignup() {
         nextDestination = "signup";
-        view.confirmLogin();
+        LOGIN_VIEW.confirmLogin();
     }
 
-    /**
-     * 文字列が未入力かどうかを判定する
-     *
-     * @param value 判定する文字列
-     * @return nullまたは空文字の場合はtrue
-     */
-    private boolean isBlank(String value) {
+    private static boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 }

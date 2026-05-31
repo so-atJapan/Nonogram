@@ -2,7 +2,6 @@ package Nonogram.controller;
 
 import Nonogram.model.DAO;
 import Nonogram.model.ResultModel;
-
 import Nonogram.view.ResultView;
 
 /**
@@ -11,55 +10,36 @@ import Nonogram.view.ResultView;
  */
 public class ResultController {
 
-    private ResultModel model;
-    private ResultView view;
-    private AppController appController;
+    private final ResultModel RESULT_MODEL;
+    private final ResultView RESULT_VIEW;
+    private final AppController APP_CONTROLLER;
 
-    /**
-     * コンストラクタ
-     * 
-     * @param model リザルト画面で使用するデータ
-     * @param view リザルト画面のView
-     * @param appController 画面遷移を管理するコントローラ
-     */
-    public ResultController(ResultModel model, ResultView view, AppController appController) {
-        this.model = model;
-        this.view = view;
-        this.appController = appController;
+    public ResultController(ResultModel resultModel, ResultView resultView, AppController appController) {
+        this.RESULT_MODEL = resultModel;
+        this.RESULT_VIEW = resultView;
+        this.APP_CONTROLLER = appController;
     }
 
-    /**
-     * リザルト画面を初期化し、ボタンイベントを登録する
-     */
     public void initialize() {
-        view.initialize(model);
-        view.render();
+        RESULT_VIEW.initialize(RESULT_MODEL);
+        RESULT_VIEW.render();
         showResult();
         savePuzzleRecord();
-        view.showHomeButton().setOnAction(e -> onPuzzleList());
+        RESULT_VIEW.showHomeButton().setOnAction(e -> onPuzzleList());
     }
 
-    /**
-     * ログイン済みの場合、クリアしたパズルの記録をDBへ保存する
-     */
     private void savePuzzleRecord() {
-        if (appController.isLoggedIn()) {
+        if (APP_CONTROLLER.isLoggedIn()) {
             DAO dao = new DAO();
-            dao.insertPuzzleRecord(appController.getCurrentPlayer(), model.getPuzzle());
+            dao.insertPuzzleRecord(APP_CONTROLLER.getCurrentPlayer(), RESULT_MODEL.getPUZZLE());
         }
     }
 
-    /**
-     * リザルト内容をViewに表示する
-     */
     public void showResult() {
-        view.displayResult(model);
+        RESULT_VIEW.displayResult(RESULT_MODEL);
     }
 
-    /**
-     * 問題リスト画面へ戻る
-     */
     public void onPuzzleList() {
-        appController.navigateTo("list");
+        APP_CONTROLLER.navigateTo("list");
     }
 }

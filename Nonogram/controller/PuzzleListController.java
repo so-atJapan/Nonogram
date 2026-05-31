@@ -2,7 +2,7 @@ package Nonogram.controller;
 
 import Nonogram.model.DAO;
 import Nonogram.model.Puzzle;
-import Nonogram.model.PuzzleList;
+import Nonogram.model.PuzzleListModel;
 
 import Nonogram.view.PuzzleDetailDialog;
 import Nonogram.view.PuzzleListView;
@@ -14,100 +14,83 @@ import java.util.ArrayList;
  */
 public class PuzzleListController {
 
-    private PuzzleListView view;
-    private PuzzleList puzzlelist;
-    private AppController appController;
+    private final PuzzleListView PUZZLE_LIST_VIEW;
+    private final PuzzleListModel PUZZLE_LIST_MODEL;
+    private final AppController APP_CONTROLLER;
 
-    // ログインプレイヤーのクリア済みパズルIDリスト
+    /** ログインプレイヤーのクリア済みパズルIDリスト */
     private ArrayList<Integer> clearedIds = new ArrayList<>();
 
-    /**
-     * コンストラクタ
-     */
-    public PuzzleListController(PuzzleListView view, PuzzleList puzzlelist, AppController appController) {
-        this.view = view;
-        this.puzzlelist = puzzlelist;
-        this.appController = appController;
+    public PuzzleListController(PuzzleListView puzzleListView, PuzzleListModel puzzleListModel, AppController appController) {
+        this.PUZZLE_LIST_VIEW = puzzleListView;
+        this.PUZZLE_LIST_MODEL = puzzleListModel;
+        this.APP_CONTROLLER = appController;
     }
 
-    /**
-     * 問題リストを初期化、イベント登録
-     * ログイン済みの場合、クリア済みパズルIDをDBから取得
-     */
     public void initialize() {
-
-        if (appController.isLoggedIn()) {
+        if (APP_CONTROLLER.isLoggedIn()) {
             DAO dao = new DAO();
-            clearedIds = dao.getPuzzleRecords(appController.getCurrentPlayer());
+            clearedIds = dao.getPuzzleRecords(APP_CONTROLLER.getCurrentPlayer());
         } else {
             clearedIds = new ArrayList<>();
         }
 
-        int currentPlayerId;
-        if (appController.isLoggedIn()) {
-            currentPlayerId = appController.getCurrentPlayer().getPlayerId();
-        } else {
-            currentPlayerId = -1;
-        }
-        view.initialize(puzzlelist, clearedIds, appController.isAdmin(), currentPlayerId, appController);
-        view.render();
+        final int CURRENT_PLAYER_ID = APP_CONTROLLER.isLoggedIn()
+                ? APP_CONTROLLER.getCurrentPlayer().getPlayerId()
+                : -1;
 
+        PUZZLE_LIST_VIEW.initialize(PUZZLE_LIST_MODEL, clearedIds, APP_CONTROLLER.isAdmin(), CURRENT_PLAYER_ID, APP_CONTROLLER);
+        PUZZLE_LIST_VIEW.render();
 
-        view.getSortComboBox().setOnAction(e -> {
-            String selected = view.getSortComboBox().getValue();
+        PUZZLE_LIST_VIEW.getSortComboBox().setOnAction(e -> {
+            String selected = PUZZLE_LIST_VIEW.getSortComboBox().getValue();
             ArrayList<Puzzle> sorted = getSortedList(selected);
-            view.updateList(sorted, clearedIds);
+            PUZZLE_LIST_VIEW.updateList(sorted, clearedIds);
             rebindButtons(sorted);
         });
 
-        rebindButtons(puzzlelist.getPuzzleList());
+        rebindButtons(PUZZLE_LIST_MODEL.getPuzzleList());
     }
 
-    /**
-     * プレイ・詳細ボタンを現在のリストに再バインドする
-     */
     private void rebindButtons(ArrayList<Puzzle> list) {
-        for (int i = 0; i < view.getSelectButtons().length; i++) {
-            int index = i;
-            if (index < list.size()) {
-                Puzzle p = list.get(index);
-                view.getSelectButtons()[index].setOnAction(e -> onSelectPuzzle(p));
-                view.getDetailButtons()[index].setOnAction(e -> onShowDetail(p));
-                view.getEditButtons()[index].setOnAction(e -> onEditPuzzle(p));
+        for (int i = 0; i < PUZZLE_LIST_VIEW.getSelectButtons().length; i++) {
+            final int INDEX = i;
+            if (INDEX < list.size()) {
+                final Puzzle PUZZLE = list.get(INDEX);
+                PUZZLE_LIST_VIEW.getSelectButtons()[INDEX].setOnAction(e -> onSelectPuzzle(PUZZLE));
+                PUZZLE_LIST_VIEW.getDetailButtons()[INDEX].setOnAction(e -> onShowDetail(PUZZLE));
+                PUZZLE_LIST_VIEW.getEditButtons()[INDEX].setOnAction(e -> onEditPuzzle(PUZZLE));
             }
         }
     }
 
-    /**
-     * 並び順に応じてソートされたリストを返す
-     */
-    private ArrayList<Puzzle> getSortedList(String order) {
-        ArrayList<Puzzle> list = new ArrayList<>(puzzlelist.getPuzzleList());
-        if (order == null) return list;
-        switch (order) {
+    private ArrayList<Puzzle> getSortedList(String sortOrder) {
+        ArrayList<Puzzle> currentPuzzleList = new ArrayList<>(PUZZLE_LIST_MODEL.getPuzzleList());
+        if (sortOrder == null) return currentPuzzleList;
+        switch (sortOrder) {
             case "名前順":
-                list.sort((a, b) -> a.getTitle().compareTo(b.getTitle()));
+                currentPuzzleList.sort((a, b) -> a.getTitle().compareTo(b.getTitle()));
                 break;
             case "難易度：低い順":
-                list.sort((a, b) -> a.getDifficulty().ordinal() - b.getDifficulty().ordinal());
+                currentPuzzleList.sort((a, b) -> a.getDifficulty().ordinal() - b.getDifficulty().ordinal());
                 break;
             case "難易度：高い順":
-                list.sort((a, b) -> b.getDifficulty().ordinal() - a.getDifficulty().ordinal());
+                currentPuzzleList.sort((a, b) -> b.getDifficulty().ordinal() - a.getDifficulty().ordinal());
                 break;
             case "サイズ：小さい順":
-                list.sort((a, b) -> (a.getGridSizeX() * a.getGridSizeY()) - (b.getGridSizeX() * b.getGridSizeY()));
+                currentPuzzleList.sort((a, b) -> (a.getGridSizeX() * a.getGridSizeY()) - (b.getGridSizeX() * b.getGridSizeY()));
                 break;
             case "サイズ：大きい順":
-                list.sort((a, b) -> (b.getGridSizeX() * b.getGridSizeY()) - (a.getGridSizeX() * a.getGridSizeY()));
+                currentPuzzleList.sort((a, b) -> (b.getGridSizeX() * b.getGridSizeY()) - (a.getGridSizeX() * a.getGridSizeY()));
                 break;
             case "作成日時：新しい順":
-                list.sort((a, b) -> {
+                currentPuzzleList.sort((a, b) -> {
                     if (a.getCreatedAt() == null || b.getCreatedAt() == null) return 0;
                     return b.getCreatedAt().compareTo(a.getCreatedAt());
                 });
                 break;
             case "作成日時：古い順":
-                list.sort((a, b) -> {
+                currentPuzzleList.sort((a, b) -> {
                     if (a.getCreatedAt() == null || b.getCreatedAt() == null) return 0;
                     return a.getCreatedAt().compareTo(b.getCreatedAt());
                 });
@@ -115,49 +98,33 @@ public class PuzzleListController {
             default:
                 break;
         }
-        return list;
+        return currentPuzzleList;
     }
 
-    /**
-     * パズル選択（プレイ開始）
-     */
     public Puzzle onSelectPuzzle(Puzzle puzzle) {
-        appController.setPendingPuzzle(puzzle);
-        appController.navigateTo("game");
+        APP_CONTROLLER.setPendingPuzzle(puzzle);
+        APP_CONTROLLER.navigateTo("game");
         return puzzle;
     }
 
-    /**
-     * 詳細ダイアログを表示する
-     * ダイアログ内の「編集」「ソルバー」ボタンにもイベントを設定する
-     */
     public void onShowDetail(Puzzle puzzle) {
-        boolean cleared = clearedIds.contains(puzzle.getPuzzleId());
-
-        PuzzleDetailDialog dialog = new PuzzleDetailDialog(view.getStage());
-        dialog.initialize(puzzle, cleared);
-
+        final boolean CLEARED = clearedIds.contains(puzzle.getPuzzleId());
+        PuzzleDetailDialog dialog = new PuzzleDetailDialog(PUZZLE_LIST_VIEW.getSTAGE());
+        dialog.initialize(puzzle, CLEARED);
         dialog.getSolverButton().setOnAction(e -> {
             dialog.close();
             onSolverPuzzle(puzzle);
         });
-
         dialog.show();
     }
 
-    /**
-     * パズル編集
-     */
     public void onEditPuzzle(Puzzle puzzle) {
-        appController.setPendingPuzzle(puzzle);
-        appController.navigateTo("editor");
+        APP_CONTROLLER.setPendingPuzzle(puzzle);
+        APP_CONTROLLER.navigateTo("editor");
     }
 
-    /**
-     * ソルバー起動
-     */
     public void onSolverPuzzle(Puzzle puzzle) {
-        appController.setPendingPuzzle(puzzle);
-        appController.navigateTo("solver");
+        APP_CONTROLLER.setPendingPuzzle(puzzle);
+        APP_CONTROLLER.navigateTo("solver");
     }
 }

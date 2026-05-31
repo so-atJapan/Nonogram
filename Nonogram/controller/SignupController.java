@@ -1,7 +1,6 @@
 package Nonogram.controller;
 
 import Nonogram.model.SignupModel;
-
 import Nonogram.view.SignupView;
 
 /**
@@ -9,103 +8,74 @@ import Nonogram.view.SignupView;
  */
 public class SignupController {
 
-    private SignupModel model;
-    private SignupView view;
-    private AppController appController;
+    private final SignupModel SIGNUP_MODEL;
+    private final SignupView SIGNUP_VIEW;
+    private final AppController APP_CONTROLLER;
     private String nextDestination;
 
-    /**
-     * コンストラクタ
-     *
-     * @param model サインアップ処理で使用するModel
-     * @param view サインアップ画面のView
-     * @param appController 画面遷移を管理するコントローラ
-     */
-    public SignupController(SignupModel model, SignupView view, AppController appController) {
-        this.model = model;
-        this.view = view;
-        this.appController = appController;
+    public SignupController(SignupModel signupModel, SignupView signupView, AppController appController) {
+        this.SIGNUP_MODEL = signupModel;
+        this.SIGNUP_VIEW = signupView;
+        this.APP_CONTROLLER = appController;
     }
 
-    /**
-     * サインアップ画面を初期化し、ボタンイベントを登録する
-     */
     public void initialize() {
-        view.initialize();
-
-        view.getSignupButton().setOnAction(e -> onSignup());
-        view.getLoginLink().setOnAction(e -> onLogin());
-        view.getCancelButton().setOnAction(e -> view.close());
-
-        view.render();
+        SIGNUP_VIEW.initialize();
+        SIGNUP_VIEW.getSignupButton().setOnAction(e -> onSignup());
+        SIGNUP_VIEW.getLoginLink().setOnAction(e -> onLogin());
+        SIGNUP_VIEW.getCancelButton().setOnAction(e -> SIGNUP_VIEW.close());
+        SIGNUP_VIEW.render();
 
         if (nextDestination != null) {
-            appController.navigateTo(nextDestination);
+            APP_CONTROLLER.navigateTo(nextDestination);
         }
     }
 
-    /**
-     * サインアップボタンが押されたときの処理
-     * 入力情報が正しければアカウントを作成し、問題リスト画面へ遷移する
-     */
     private void onSignup() {
-        if (isBlank(view.getUserName()) || isBlank(view.getEmail())
-                || isBlank(view.getPassword()) || isBlank(view.getConfirmPassword())) {
-            view.showMessage("すべての項目を入力してください。");
+        if (isBlank(SIGNUP_VIEW.getUserName()) || isBlank(SIGNUP_VIEW.getEmail())
+                || isBlank(SIGNUP_VIEW.getPassword()) || isBlank(SIGNUP_VIEW.getConfirmPassword())) {
+            SIGNUP_VIEW.showMessage("すべての項目を入力してください。");
+            return;
+        }
+        if (!SIGNUP_VIEW.getEmail().contains("@")) {
+            SIGNUP_VIEW.showMessage("メールアドレスの形式を確認してください。");
+            return;
+        }
+        if (SIGNUP_VIEW.getPassword().length() < 4) {
+            SIGNUP_VIEW.showMessage("パスワードは4文字以上で入力してください。");
+            return;
+        }
+        if (!SIGNUP_VIEW.getPassword().equals(SIGNUP_VIEW.getConfirmPassword())) {
+            SIGNUP_VIEW.showMessage("確認用パスワードが一致しません。");
+            return;
+        }
+        if (SIGNUP_MODEL.existsPlayerByEmail(SIGNUP_VIEW.getEmail())) {
+            SIGNUP_VIEW.showMessage("このメールアドレスはすでに登録されています。");
             return;
         }
 
-        if (!view.getEmail().contains("@")) {
-            view.showMessage("メールアドレスの形式を確認してください。");
-            return;
-        }
-
-        if (view.getPassword().length() < 4) {
-            view.showMessage("パスワードは4文字以上で入力してください。");
-            return;
-        }
-
-        if (!view.getPassword().equals(view.getConfirmPassword())) {
-            view.showMessage("確認用パスワードが一致しません。");
-            return;
-        }
-
-        if (model.existsPlayerByEmail(view.getEmail())) {
-            view.showMessage("このメールアドレスはすでに登録されています。");
-            return;
-        }
-
-        boolean success = model.signup(
-                view.getUserName(),
-                view.getEmail(),
-                view.getPassword(),
-                view.getConfirmPassword()
+        boolean success = SIGNUP_MODEL.signup(
+                SIGNUP_VIEW.getUserName(),
+                SIGNUP_VIEW.getEmail(),
+                SIGNUP_VIEW.getPassword(),
+                SIGNUP_VIEW.getConfirmPassword()
         );
 
         if (success) {
-            appController.setCurrentPlayer(model.getCreatedPlayer());
+            APP_CONTROLLER.setCurrentPlayer(SIGNUP_MODEL.getCreatedPlayer());
             nextDestination = "home";
-            view.confirmSignup();
+            SIGNUP_VIEW.confirmSignup();
         } else {
-            view.showMessage("アカウントを作成できませんでした。");
+            SIGNUP_VIEW.showMessage("アカウントを作成できませんでした。");
         }
     }
 
-    /**
-     * ログイン画面へのリンクが押されたときの処理
-     */
     private void onLogin() {
         nextDestination = "login";
-        view.confirmSignup();
+        SIGNUP_VIEW.confirmSignup();
     }
 
-    /**
-     * 文字列が未入力かどうかを判定する
-     *
-     * @param value 判定する文字列
-     * @return nullまたは空文字の場合はtrue
-     */
-    private boolean isBlank(String value) {
+    private static boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }
 }

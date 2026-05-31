@@ -19,156 +19,104 @@ import java.util.Set;
  */
 public class GameController {
 
-    private GameModel model;
-    private GameView view;
-    private AppController appController;
-    private Timer timer = new Timer();
+    private final GameModel GAME_MODEL;
+    private final GameView GAME_VIEW;
+    private final AppController APP_CONTROLLER;
+    private final Timer timer = new Timer();
     private Timeline timeline;
     private int startX;
     private int startY;
-    // ドラッグ中に適用するアクション（FILLED or MARKED or EMPTY）
+    /** ドラッグ中に適用するアクション（FILLED or MARKED or EMPTY） */
     private CellState dragAction = null;
-    // ドラッグ中に処理済みのセルを記録
-    private final Set<String> draggedCells = new HashSet<>();
+    /** ドラッグ中に処理済みのセルを記録 */
+    private final Set<String> DRAGGED_CELLS = new HashSet<>();
 
-    /**
-     * コンストラクタ
-     *
-     * @param model 
-     * @param view  
-     * @param appController 画面遷移を管理するコントローラ
-     */
-    public GameController(GameModel model, GameView view, AppController appController) {
-        this.model = model;
-        this.view  = view;
-        this.appController = appController;
+    public GameController(GameModel gameModel, GameView gameView, AppController appController) {
+        this.GAME_MODEL = gameModel;
+        this.GAME_VIEW  = gameView;
+        this.APP_CONTROLLER = appController;
     }
 
-    /**
-     * ゲームを起動
-     * ボタン描画呼び出し、初期化
-     */
     public void initialize() {
-        // PuzzleのデータをViewに渡す
-        view.initialize(model.getPuzzle(), appController);
-        view.render();
-
+        GAME_VIEW.initialize(GAME_MODEL.getPuzzle(), APP_CONTROLLER);
+        GAME_VIEW.render();
 
         bindAllCellEvents();
 
-
-        // undoボタン
-        view.getPrevButton().setOnAction(e -> onUndo());
-
-        // redoボタン
-        view.getNextButton().setOnAction(e -> onRedo());
-
-        // チェックボタン
-        view.getCheckButton().setOnAction(e -> onJudge());
-
+        GAME_VIEW.getPrevButton().setOnAction(e -> onUndo());
+        GAME_VIEW.getNextButton().setOnAction(e -> onRedo());
+        GAME_VIEW.getCheckButton().setOnAction(e -> onJudge());
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            view.updateTimer(timer.tick());
+            GAME_VIEW.updateTimer(timer.tick());
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-        
     }
 
-    /**
-     * セルが左クリックされたときの処理。
-     *
-     * @param x クリックされたセルのX座標
-     * @param y クリックされたセルのY座標
-     * @return  更新後のセルの状態を返す
-     */
     public CellState onCellLeftClicked(int x, int y) {
-        
-        model.toggle(x, y, CellState.FILLED);
-        view.updateCell(x, y, model.getGrid());
-
-        return model.getGrid().getCellAt(x, y).getState();
+        GAME_MODEL.toggle(x, y, CellState.FILLED);
+        GAME_VIEW.updateCell(x, y, GAME_MODEL.getGrid());
+        return GAME_MODEL.getGrid().getCellAt(x, y).getState();
     }
 
-    /**
-     * セルが右クリックされた時の処理
-     * 
-     * @param x
-     * @param y
-     * @return
-     */
     public CellState onCellRightClicked(int x, int y) {
-        
-        model.toggle(x, y, CellState.MARKED);
-        view.updateCell(x, y, model.getGrid());
-
-        return model.getGrid().getCellAt(x, y).getState();
+        GAME_MODEL.toggle(x, y, CellState.MARKED);
+        GAME_VIEW.updateCell(x, y, GAME_MODEL.getGrid());
+        return GAME_MODEL.getGrid().getCellAt(x, y).getState();
     }
 
-    /**
-     * ドラッグ中に確定済みアクションをセルへ適用する
-     *
-     * @param x 適用するセルのX座標
-     * @param y 適用するセルのY座標
-     */
     private void applyDragAction(int x, int y) {
         if (dragAction == null) return;
-        model.setState(x, y, dragAction);
-        view.updateCell(x, y, model.getGrid());
+        GAME_MODEL.setState(x, y, dragAction);
+        GAME_VIEW.updateCell(x, y, GAME_MODEL.getGrid());
     }
 
     public void onJudge() {
-        boolean result = model.check();
-        if (result) {
+        boolean resultCollect = GAME_MODEL.check();
+        if (resultCollect) {
             timeline.stop();
-            appController.setResultData(model.getPuzzle(), model.getGrid(), timer.getTickSeconds());
-            appController.navigateTo("result");
+            APP_CONTROLLER.setResultData(GAME_MODEL.getPuzzle(), GAME_MODEL.getGrid(), timer.getTickSeconds());
+            APP_CONTROLLER.navigateTo("result");
         } else {
-            view.showResult(false);
+            GAME_VIEW.showResult(false);
         }
     }
 
-    /**
-     * タイムラインを停止する
-     * MenuItemBar からホーム遷移時に呼ばれる
-     */
+    /** タイムラインを停止する（MenuItemBar からホーム遷移時に呼ばれる） */
     public void stopTimeline() {
         timeline.stop();
     }
 
     public void onUndo(){
-        model.undoGridLog();
-        model.setGrid(model.getCurrentLog().copy());
-        view.updateCellAll(model.getGrid());
+        GAME_MODEL.undoGridLog();
+        GAME_MODEL.setGrid(GAME_MODEL.getCurrentLog().copy());
+        GAME_VIEW.updateCellAll(GAME_MODEL.getGrid());
     }
 
     public void onRedo(){
-        model.redoGridLog();
-        model.setGrid(model.getCurrentLog().copy());
-        view.updateCellAll(model.getGrid());
+        GAME_MODEL.redoGridLog();
+        GAME_MODEL.setGrid(GAME_MODEL.getCurrentLog().copy());
+        GAME_VIEW.updateCellAll(GAME_MODEL.getGrid());
     }
 
-    // 全イベントをまとめて設定するメソッド
     private void bindAllCellEvents() {
-
-        Puzzle puzzle = model.getPuzzle();
+        Puzzle puzzle = GAME_MODEL.getPuzzle();
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
 
-                int finalX = x;
-                int finalY = y;
+                final int FINAL_X = x;
+                final int FINAL_Y = y;
 
-                var button = view.getButtons()[finalX][finalY];
+                var button = GAME_VIEW.getButtons()[FINAL_X][FINAL_Y];
 
-                // クリック（単体操作用）
                 button.setOnMouseClicked(e -> {
-
                     if (e.getButton() == MouseButton.PRIMARY) {
-                        onCellLeftClicked(finalX, finalY);
-                        model.pushGridLog();
+                        onCellLeftClicked(FINAL_X, FINAL_Y);
+                        GAME_MODEL.pushGridLog();
                     } else if (e.getButton() == MouseButton.SECONDARY) {
-                        onCellRightClicked(finalX, finalY);
-                        model.pushGridLog();
+                        onCellRightClicked(FINAL_X, FINAL_Y);
+                        GAME_MODEL.pushGridLog();
                     }
                 });
 
@@ -180,61 +128,41 @@ public class GameController {
                     }
                 });
 
-                // ドラッグ開始
                 button.setOnDragDetected(e -> {
+                    startX = FINAL_X;
+                    startY = FINAL_Y;
 
-                    // スタート位置を保存
-                    startX = finalX;
-                    startY = finalY;
-
-                    // 開始セルをtoggleし、その結果をドラッグ中のアクションとして固定
                     if (e.isPrimaryButtonDown()) {
-                        dragAction = onCellLeftClicked(finalX, finalY);
+                        dragAction = onCellLeftClicked(FINAL_X, FINAL_Y);
                     } else if (e.isSecondaryButtonDown()) {
-                        dragAction = onCellRightClicked(finalX, finalY);
+                        dragAction = onCellRightClicked(FINAL_X, FINAL_Y);
                     }
 
-                    draggedCells.clear();
-                    draggedCells.add(finalX + "," + finalY);
-
-                    // フルドラッグ開始（必須）
+                    DRAGGED_CELLS.clear();
+                    DRAGGED_CELLS.add(FINAL_X + "," + FINAL_Y);
                     button.startFullDrag();
                 });
 
-                // ドラッグ中にマスへ入ったとき
                 button.setOnMouseDragEntered(e -> {
+                    int distanceX = FINAL_X - startX;
+                    int distanceY = FINAL_Y - startY;
+                    if (distanceX != 0 && distanceY != 0) return;
 
-                    // 直線判定（縦 or 横のみ許可、斜めは禁止）
-                    int dx = finalX - startX;
-                    int dy = finalY - startY;
-
-                    boolean isStraight = (dx == 0 || dy == 0);
-
-                    if (!isStraight) {
-                        return;
-                    }
-
-                    // 同一セルへの重複適用を防止
-                    String key = finalX + "," + finalY;
-                    if (draggedCells.contains(key)) return;
-                    draggedCells.add(key);
-
-                    applyDragAction(finalX, finalY);
+                    final String KEY = FINAL_X + "," + FINAL_Y;
+                    if (DRAGGED_CELLS.contains(KEY)) return;
+                    DRAGGED_CELLS.add(KEY);
+                    applyDragAction(FINAL_X, FINAL_Y);
                 });
 
-                // ドラッグ終了時にリセット
                 button.setOnMouseReleased(e -> {
-
-                    if((e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY) && dragAction != null){
-                        model.pushGridLog();
+                    if ((e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)
+                            && dragAction != null) {
+                        GAME_MODEL.pushGridLog();
                     }
-
                     dragAction = null;
-                    draggedCells.clear();
+                    DRAGGED_CELLS.clear();
                 });
             }
         }
-
     }
-
 }

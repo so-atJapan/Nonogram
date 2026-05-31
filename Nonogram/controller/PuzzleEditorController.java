@@ -12,144 +12,87 @@ import javafx.scene.input.MouseButton;
 import javafx.application.Platform;
 
 import java.util.Optional;
-
 import java.util.HashSet;
 import java.util.Set;
 
 public class PuzzleEditorController {
 
-    private PuzzleEditorModel model;
-    private PuzzleEditorView view;
-    private AppController appController;
+    private final PuzzleEditorModel PUZZLE_EDITOR_MODEL;
+    private final PuzzleEditorView PUZZLE_EDITOR_VIEW;
+    private final AppController APP_CONTROLLER;
 
     private int startX;
     private int startY;
 
-    // ドラッグ中に適用するアクション（FILLED or MARKED or EMPTY）
+    /** ドラッグ中に適用するアクション */
     private CellState dragAction = null;
-    // ドラッグ中に処理済みのセルを記録
-    private final Set<String> draggedCells = new HashSet<>();
+    /** ドラッグ中に処理済みのセルを記録 */
+    private final Set<String> DRAGGED_CELLS = new HashSet<>();
 
-
-    /**
-     * コンストラクタ
-     *
-     * @param model 
-     * @param view  
-     */
-    public PuzzleEditorController(PuzzleEditorModel model, PuzzleEditorView view, AppController appController) {
-        this.model = model;
-        this.view  = view;
-        this.appController = appController;
-
+    public PuzzleEditorController(PuzzleEditorModel puzzleEitorModel, PuzzleEditorView puzzleEditorView, AppController appController) {
+        this.PUZZLE_EDITOR_MODEL = puzzleEitorModel;
+        this.PUZZLE_EDITOR_VIEW  = puzzleEditorView;
+        this.APP_CONTROLLER = appController;
     }
 
-    /**
-     * ゲームを起動
-     * ボタン描画呼び出し、初期化
-     */
     public void initialize() {
-        // PuzzleのデータをViewに渡す
-        view.initialize(model.getPuzzle(), appController);
-
+        PUZZLE_EDITOR_VIEW.initialize(PUZZLE_EDITOR_MODEL.getPuzzle(), APP_CONTROLLER);
 
         bindAllCellEvents();
 
-        
-        
-        // リセットボタン
-        // view.getResetButton().setOnAction(e -> onReset());
-        
-        // 設定ボタン
-        view.getSettingButton().setOnAction(e -> view.semiModalRender(model.getPuzzle()));
-        
-        //　OKボタン
-        view.getOkButton().setOnAction(e -> onSettingConfirm());
+        PUZZLE_EDITOR_VIEW.getSettingButton().setOnAction(e -> PUZZLE_EDITOR_VIEW.semiModalRender(PUZZLE_EDITOR_MODEL.getPuzzle()));
+        PUZZLE_EDITOR_VIEW.getOkButton().setOnAction(e -> onSettingConfirm());
+        PUZZLE_EDITOR_VIEW.getDeleteButton().setOnAction(e -> onDelete());
+        PUZZLE_EDITOR_VIEW.getCheckButton().setOnAction(e -> onCheck());
 
-        // 削除ボタン（CREATE時はSemiModal側で非表示。念のためpuzzleId guard）
-        view.getDeleteButton().setOnAction(e -> onDelete());
-        
-        // チェックボタン
-        view.getCheckButton().setOnAction(e -> onCheck());
-        
-        
-        // 描画
-        view.render();
-        view.semiModalRender(model.getPuzzle());
+        PUZZLE_EDITOR_VIEW.render();
+        PUZZLE_EDITOR_VIEW.semiModalRender(PUZZLE_EDITOR_MODEL.getPuzzle());
     }
 
-    /**
-     * セルが左クリックされたときの処理。
-     *
-     * @param x クリックされたセルのX座標
-     * @param y クリックされたセルのY座標
-     * @return  更新後のセルの状態を返す
-     */
     public CellState onCellLeftClicked(int x, int y) {
-        
-        model.toggle(x, y, CellState.FILLED);
-        view.updateCell(x, y, model.getGrid());
-
-        return model.getGrid().getCellAt(x, y).getState();
+        PUZZLE_EDITOR_MODEL.toggle(x, y, CellState.FILLED);
+        PUZZLE_EDITOR_VIEW.updateCell(x, y, PUZZLE_EDITOR_MODEL.getGrid());
+        return PUZZLE_EDITOR_MODEL.getGrid().getCellAt(x, y).getState();
     }
 
-    /**
-     * ドラッグ中に確定済みアクションをセルへ適用する
-     *
-     * @param x 適用するセルのX座標
-     * @param y 適用するセルのY座標
-     */
     private void applyDragAction(int x, int y) {
         if (dragAction == null) return;
-        model.setState(x, y, dragAction);
-        view.updateCell(x, y, model.getGrid());
+        PUZZLE_EDITOR_MODEL.setState(x, y, dragAction);
+        PUZZLE_EDITOR_VIEW.updateCell(x, y, PUZZLE_EDITOR_MODEL.getGrid());
     }
 
-    /**
-     * 設定の決定ボタンが押されたときの処理。
-     */
     public void onSettingConfirm() {
-        model.updatePuzzleTitle(view.getTitleTextField());
-        model.updatePuzzleGridSizeX(view.getGridSizeX());
-        model.updatePuzzleGridSizeY(view.getGridSizeY());
-        model.gridReSize();
-        view.gridReSize(model.getGrid());
-        view.settingConfirm();
-
+        PUZZLE_EDITOR_MODEL.updatePuzzleTitle(PUZZLE_EDITOR_VIEW.getTitleTextField());
+        PUZZLE_EDITOR_MODEL.updatePuzzleGridSizeX(PUZZLE_EDITOR_VIEW.getGridSizeX());
+        PUZZLE_EDITOR_MODEL.updatePuzzleGridSizeY(PUZZLE_EDITOR_VIEW.getGridSizeY());
+        PUZZLE_EDITOR_MODEL.gridReSize();
+        PUZZLE_EDITOR_VIEW.gridReSize(PUZZLE_EDITOR_MODEL.getGrid());
+        PUZZLE_EDITOR_VIEW.settingConfirm();
         bindAllCellEvents();
-
-        view.render();
+        PUZZLE_EDITOR_VIEW.render();
     }
 
     public void onUndo(){
-        model.undoGridLog();
-        model.setGrid(model.getCurrentLog().copy());
-        view.updateCellAll(model.getGrid());
+        PUZZLE_EDITOR_MODEL.undoGridLog();
+        PUZZLE_EDITOR_MODEL.setGrid(PUZZLE_EDITOR_MODEL.getCurrentLog().copy());
+        PUZZLE_EDITOR_VIEW.updateCellAll(PUZZLE_EDITOR_MODEL.getGrid());
     }
 
     public void onRedo(){
-        model.redoGridLog();
-        model.setGrid(model.getCurrentLog().copy());
-        view.updateCellAll(model.getGrid());
+        PUZZLE_EDITOR_MODEL.redoGridLog();
+        PUZZLE_EDITOR_MODEL.setGrid(PUZZLE_EDITOR_MODEL.getCurrentLog().copy());
+        PUZZLE_EDITOR_VIEW.updateCellAll(PUZZLE_EDITOR_MODEL.getGrid());
     }
 
-    /**
-     * リセットボタンが押されたときの処理。
-     */
     public void onReset() {
-        model.reset();
-        view.updateCell(0, 0, model.getGrid());
+        PUZZLE_EDITOR_MODEL.reset();
+        PUZZLE_EDITOR_VIEW.updateCell(0, 0, PUZZLE_EDITOR_MODEL.getGrid());
     }
 
-    /**
-     * 削除ボタンが押されたときの処理。
-     * CREATE画面（puzzleId == -1）では何もしない。
-     * 確認アラートでOKが押された場合のみDBから削除してListへ戻る。
-     */
     public void onDelete() {
-        if (model.getPuzzle().getPuzzleId() == -1) return;
+        if (PUZZLE_EDITOR_MODEL.getPuzzle().getPuzzleId() == -1) return;
 
-        view.settingConfirm();
+        PUZZLE_EDITOR_VIEW.settingConfirm();
 
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -159,36 +102,30 @@ public class PuzzleEditorController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                model.deletePuzzle();
-                appController.navigateTo("home");
+                PUZZLE_EDITOR_MODEL.deletePuzzle();
+                APP_CONTROLLER.navigateTo("home");
             }
         });
     }
 
-    /**
-     * チェックボタンが押されたときの処理。
-     */
     public void onCheck() {
-        model.updateDB();
-        appController.navigateTo("home");
+        PUZZLE_EDITOR_MODEL.updateDB();
+        APP_CONTROLLER.navigateTo("home");
     }
 
-    // 全イベントをまとめて設定するメソッド
     private void bindAllCellEvents() {
-        Puzzle puzzle = model.getPuzzle();
+        Puzzle puzzle = PUZZLE_EDITOR_MODEL.getPuzzle();
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
-                int finalX = x;
-                int finalY = y;
+                final int FINAL_X = x;
+                final int FINAL_Y = y;
 
-                var button = view.getButtons()[finalX][finalY];
+                var button = PUZZLE_EDITOR_VIEW.getButtons()[FINAL_X][FINAL_Y];
 
-                // クリック（単体操作用）
                 button.setOnMouseClicked(e -> {
-
                     if (e.getButton() == MouseButton.PRIMARY) {
-                        onCellLeftClicked(finalX, finalY);
-                        model.pushGridLog();
+                        onCellLeftClicked(FINAL_X, FINAL_Y);
+                        PUZZLE_EDITOR_MODEL.pushGridLog();
                     }
                 });
 
@@ -200,49 +137,36 @@ public class PuzzleEditorController {
                     }
                 });
 
-                // ドラッグ開始
                 button.setOnDragDetected(e -> {
+                    startX = FINAL_X;
+                    startY = FINAL_Y;
 
-                    // スタート位置を保存
-                    startX = finalX;
-                    startY = finalY;
-
-                    // 開始セルをtoggleし、その結果をドラッグ中のアクションとして固定
                     if (e.isPrimaryButtonDown()) {
-                        dragAction = onCellLeftClicked(finalX, finalY);
+                        dragAction = onCellLeftClicked(FINAL_X, FINAL_Y);
                     }
 
-                    draggedCells.clear();
-                    draggedCells.add(finalX + "," + finalY);
-
-                    // フルドラッグ開始
+                    DRAGGED_CELLS.clear();
+                    DRAGGED_CELLS.add(FINAL_X + "," + FINAL_Y);
                     button.startFullDrag();
                 });
 
-                // ドラッグ中にマスへ入ったとき
                 button.setOnMouseDragEntered(e -> {
+                    int distanceX = FINAL_X - startX;
+                    int distanceY = FINAL_Y - startY;
+                    if (distanceX != 0 && distanceY != 0) return;
 
-                    // 直線判定（縦 or 横のみ許可、斜めは禁止）
-                    int dx = finalX - startX;
-                    int dy = finalY - startY;
-
-                    // 同一セルへの重複適用を防止
-                    if (dx != 0 && dy != 0) return;
-                    String key = finalX + "," + finalY;
-                    if (draggedCells.contains(key)) return;
-                    draggedCells.add(key);
-                    applyDragAction(finalX, finalY);
+                    final String KEY = FINAL_X + "," + FINAL_Y;
+                    if (DRAGGED_CELLS.contains(KEY)) return;
+                    DRAGGED_CELLS.add(KEY);
+                    applyDragAction(FINAL_X, FINAL_Y);
                 });
 
-                // ドラッグ終了時にリセット
                 button.setOnMouseReleased(e -> {
-
-                    if((e.getButton() == MouseButton.PRIMARY) && dragAction != null){
-                        model.pushGridLog();
+                    if (e.getButton() == MouseButton.PRIMARY && dragAction != null) {
+                        PUZZLE_EDITOR_MODEL.pushGridLog();
                     }
-
                     dragAction = null;
-                    draggedCells.clear();
+                    DRAGGED_CELLS.clear();
                 });
             }
         }
