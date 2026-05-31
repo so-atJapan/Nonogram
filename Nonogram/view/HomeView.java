@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  
 public class HomeView{
  
-    private Stage stage;
+    private final Stage STAGE;
     private Scene scene;
 
     Button playButton;
@@ -27,7 +27,7 @@ public class HomeView{
     Button signupButton;
 
     public HomeView(Stage stage){
-        this.stage = stage;
+        this.STAGE = stage;
     }
     
     public void initialize() {
@@ -162,12 +162,12 @@ public class HomeView{
 
     // パズル描画
     public void render() {
-        stage.setTitle("Nonogram");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        STAGE.setTitle("Nonogram");
+        STAGE.setScene(scene);
+        STAGE.setResizable(false);
+        STAGE.sizeToScene();
+        STAGE.centerOnScreen();
+        STAGE.show();
     }
 
     public Button getPlayButton() {return playButton;}

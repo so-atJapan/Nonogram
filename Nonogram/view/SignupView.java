@@ -21,7 +21,7 @@ import javafx.stage.Stage;
  */
 public class SignupView {
 
-    private Stage primaryStage;
+    private final Stage PRIMARY_STAGE;
     private Stage dialogStage;
     private Scene scene;
 
@@ -42,7 +42,7 @@ public class SignupView {
      * @param primaryStage 親画面のStage
      */
     public SignupView(Stage primaryStage) {
-        this.primaryStage = primaryStage;
+        this.PRIMARY_STAGE = primaryStage;
     }
 
     /**
@@ -53,7 +53,7 @@ public class SignupView {
         loginRequested = false;
 
         dialogStage = new Stage();
-        dialogStage.initOwner(primaryStage);
+        dialogStage.initOwner(PRIMARY_STAGE);
         dialogStage.initModality(Modality.WINDOW_MODAL);
 
         Label titleLabel = new Label("サインアップ");

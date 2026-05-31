@@ -23,9 +23,9 @@ import javafx.stage.Stage;
  
 public class SolverView {
 
-    private SolverSettingView semiModal;
+    private SolverSettingDialog solverSettingDialog;
  
-    private Stage stage;
+    private final Stage STAGE;
     private Scene scene;
  
     private GridPane gridPanel;
@@ -50,34 +50,34 @@ public class SolverView {
     private int maxColClueRows;
 
     // ここだけ変えれば全体のサイズが変わる（ヒントもグリッドも同じ値で統一）
-    private final int cellSize = 20;
+    private static final int CELL_SIZE = 20;
  
     // コンストラクト
     public SolverView(Stage stage) {
-        this.stage = stage;
+        this.STAGE = stage;
     }
 
     //初期化
     public void initialize(Puzzle puzzle, AppController appController){
 
-        this.semiModal = new SolverSettingView(this.stage);
-        this.semiModal.initialize(puzzle);
+        this.solverSettingDialog = new SolverSettingDialog(this.STAGE);
+        this.solverSettingDialog.initialize(puzzle);
 
         menuItemBar = new MenuItemBar(appController);
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
     
-        ArrayList<ArrayList<Integer>> rowClues = puzzle.getClue().getRowClues();
-        ArrayList<ArrayList<Integer>> colClues = puzzle.getClue().getColClues();
+        ArrayList<ArrayList<Integer>> rowClues = puzzle.getClue().getROW_CLUES();
+        ArrayList<ArrayList<Integer>> colClues = puzzle.getClue().getCOL_CLUES();
 
         // ヒントの最大数から左・上のヒントエリアサイズを決定
         maxColClueRows = colClues.stream().mapToInt(ArrayList::size).max().orElse(1);
         maxRowClueCols = rowClues.stream().mapToInt(ArrayList::size).max().orElse(1);
 
         // すべて cellSize 単位で計算
-        int clueAreaWidth  = maxRowClueCols * cellSize; // 左ヒントエリアの幅
-        int clueAreaHeight = maxColClueRows * cellSize; // 上ヒントエリアの高さ
+        int clueAreaWidth  = maxRowClueCols * CELL_SIZE; // 左ヒントエリアの幅
+        int clueAreaHeight = maxColClueRows * CELL_SIZE; // 上ヒントエリアの高さ
 
         // ===== 左上コーナー（タイマー）=====
         timerLabel = new Label("0 s");
@@ -93,7 +93,7 @@ public class SolverView {
 
         for (int col = 0; col < cols; col++) {
             VBox colBox = new VBox();
-            colBox.setPrefSize(cellSize, clueAreaHeight);
+            colBox.setPrefSize(CELL_SIZE, clueAreaHeight);
             colBox.setAlignment(Pos.BOTTOM_CENTER);
             colBox.setSpacing(0);
 
@@ -118,7 +118,7 @@ public class SolverView {
 
         for (int row = 0; row < rows; row++) {
             HBox rowBox = new HBox();
-            rowBox.setPrefSize(clueAreaWidth, cellSize);
+            rowBox.setPrefSize(clueAreaWidth, CELL_SIZE);
             rowBox.setAlignment(Pos.CENTER_RIGHT);
             rowBox.setSpacing(0);
 
@@ -128,9 +128,9 @@ public class SolverView {
             for (int slot = 0; slot < maxRowClueCols; slot++) {
                 // slot < padding の間は空白マス、以降は実際のヒント値
                 String initialValue = (slot < padding) ? "" : String.valueOf(clues.get(slot - padding));
-                TextField tf = createClueField(initialValue);
-                rowClueFields[row][slot] = tf;
-                rowBox.getChildren().add(tf);
+                TextField textField = createClueField(initialValue);
+                rowClueFields[row][slot] = textField;
+                rowBox.getChildren().add(textField);
             }
             cluePanelSide.getChildren().add(rowBox);
         }
@@ -141,12 +141,12 @@ public class SolverView {
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                Button btn = new Button();
-                btn.setPrefSize(cellSize, cellSize);
-                btn.setFocusTraversable(false);
-                applyCellStyle(btn, "empty", row, col);
-                buttons[row][col] = btn;
-                gridPanel.add(btn, col, row);
+                Button cellButton = new Button();
+                cellButton.setPrefSize(CELL_SIZE, CELL_SIZE);
+                cellButton.setFocusTraversable(false);
+                applyCellStyle(cellButton, "empty", row, col);
+                buttons[row][col] = cellButton;
+                gridPanel.add(cellButton, col, row);
             }
         }
     
@@ -203,13 +203,13 @@ public class SolverView {
         // 実際のパズルサイズを計算
         int maxRowHintColsForSize = rowClues.stream().mapToInt(ArrayList::size).max().orElse(1);
         int maxColHintRowsForSize = colClues.stream().mapToInt(ArrayList::size).max().orElse(1);
-        int puzzleWidth  = (maxRowHintColsForSize + cols) * cellSize ;
-        int puzzleHeight = (maxColHintRowsForSize + rows) * cellSize ;
+        int puzzleWidth  = (maxRowHintColsForSize + cols) * CELL_SIZE ;
+        int puzzleHeight = (maxColHintRowsForSize + rows) * CELL_SIZE ;
 
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
-        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomButtons);
+        VBox root = new VBox(menuItemBar.getMENU_BAR(), scrollPane, bottomButtons);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 
@@ -223,10 +223,10 @@ public class SolverView {
      * - 空欄は「ヒントなし」を意味する（0 への補正はしない）
      */
     private TextField createClueField(String initialValue) {
-        TextField tf = new TextField(initialValue);
-        tf.setPrefSize(cellSize, cellSize);
-        tf.setAlignment(Pos.CENTER);
-        tf.setStyle(
+        TextField hintTextField = new TextField(initialValue);
+        hintTextField.setPrefSize(CELL_SIZE, CELL_SIZE);
+        hintTextField.setAlignment(Pos.CENTER);
+        hintTextField.setStyle(
             "-fx-border-color: #cccccc;" +
             "-fx-border-width: 0.5;" +
             "-fx-font-size: 11px;" +
@@ -236,57 +236,56 @@ public class SolverView {
         );
 
         // 入力を数字2桁以内に制限（空欄は許可）
-        tf.textProperty().addListener((obs, oldVal, newVal) -> {
+        hintTextField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d{0,2}")) {
-                tf.setText(oldVal);
+                hintTextField.setText(oldVal);
             }
         });
 
         // Enter キーでフォーカスを外す（フォーカスアウトで検証が走る）
-        tf.setOnAction(e -> tf.getParent().requestFocus());
+        hintTextField.setOnAction(e -> hintTextField.getParent().requestFocus());
 
-        return tf;
+        return hintTextField;
     }
 
     // パズル描画
     public void render() {
-        stage.setTitle("Nonogram");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        STAGE.setTitle("Nonogram");
+        STAGE.setScene(scene);
+        STAGE.setResizable(false);
+        STAGE.sizeToScene();
+        STAGE.centerOnScreen();
+        STAGE.show();
     }
 
     //セミモーダル描画
     public void semiModalRender(Puzzle puzzle){
-        this.semiModal.setRowTextField(puzzle.getGridSizeX());
-        this.semiModal.setColTextField(puzzle.getGridSizeY());
-        //TODO
-        this.semiModal.render();
+        this.solverSettingDialog.setRowTextField(puzzle.getGridSizeX());
+        this.solverSettingDialog.setColTextField(puzzle.getGridSizeY());
+        this.solverSettingDialog.render();
     }
     
     // 設定確定
     public void settingConfirm(){
-        this.semiModal.settingConfirm();
+        this.solverSettingDialog.settingConfirm();
     }
 
     // セル更新（row, col の順で統一）
     public void updateCell(int x, int y, Grid grid) {
-        Button btn = buttons[x][y];
+        Button cellButton = buttons[x][y];
 
         switch (grid.getCellAt(x, y).getState()) {
             case FILLED:
-                applyCellStyle(btn, "filled", x, y);
-                btn.setText("");
+                applyCellStyle(cellButton, "filled", x, y);
+                cellButton.setText("");
                 break;
             case MARKED:
-                applyCellStyle(btn, "marked", x, y);
-                btn.setText("✕");
+                applyCellStyle(cellButton, "marked", x, y);
+                cellButton.setText("✕");
                 break;
             default:
-                applyCellStyle(btn, "empty", x, y);
-                btn.setText("");
+                applyCellStyle(cellButton, "empty", x, y);
+                cellButton.setText("");
                 break;
         }
     }
@@ -301,13 +300,13 @@ public class SolverView {
 
         for (int x = 0; x < grid.getSizeX(); x++) {
             for (int y = 0; y < grid.getSizeY(); y++) {
-                Button btn = new Button();
-                btn.setPrefSize(cellSize, cellSize);
-                btn.setFocusTraversable(false);
-                applyCellStyle(btn, "empty", x, y);
+                Button cellButton = new Button();
+                cellButton.setPrefSize(CELL_SIZE, CELL_SIZE);
+                cellButton.setFocusTraversable(false);
+                applyCellStyle(cellButton, "empty", x, y);
                 
-                buttons[x][y] = btn;
-                gridPanel.add(btn, y, x);
+                buttons[x][y] = cellButton;
+                gridPanel.add(cellButton, y, x);
                 
                 updateCell(x, y, grid);
             }
@@ -319,20 +318,20 @@ public class SolverView {
         final int MAX_VIEW_WIDTH  = 1000;
         final int MAX_VIEW_HEIGHT = 800;
 
-        int puzzleWidth  = this.cols * cellSize;
-        int puzzleHeight = this.rows * cellSize;
+        int puzzleWidth  = this.cols * CELL_SIZE;
+        int puzzleHeight = this.rows * CELL_SIZE;
 
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
         // ウィンドウをコンテンツに合わせて再フィット
-        stage.sizeToScene();
-        stage.centerOnScreen();
+        STAGE.sizeToScene();
+        STAGE.centerOnScreen();
     }
 
     public void clueFieldReSize(Puzzle puzzle, int clueSize) {
-        ArrayList<ArrayList<Integer>> rowClues = puzzle.getClue().getRowClues();
-        ArrayList<ArrayList<Integer>> colClues = puzzle.getClue().getColClues();
+        ArrayList<ArrayList<Integer>> rowClues = puzzle.getClue().getROW_CLUES();
+        ArrayList<ArrayList<Integer>> colClues = puzzle.getClue().getCOL_CLUES();
 
         this.rows = puzzle.getGridSizeX();
         this.cols = puzzle.getGridSizeY();
@@ -344,8 +343,8 @@ public class SolverView {
         this.maxRowClueCols = newMaxRowClueCols;
         this.maxColClueRows = newMaxColClueRows;
 
-        int clueAreaWidth  = maxRowClueCols * cellSize;
-        int clueAreaHeight = maxColClueRows * cellSize;
+        int clueAreaWidth  = maxRowClueCols * CELL_SIZE;
+        int clueAreaHeight = maxColClueRows * CELL_SIZE;
 
         // ===== タイマーラベルのサイズ更新 =====
         timerLabel.setPrefSize(clueAreaWidth, clueAreaHeight);
@@ -357,7 +356,7 @@ public class SolverView {
 
         for (int col = 0; col < cols; col++) {
             VBox colBox = new VBox();
-            colBox.setPrefSize(cellSize, clueAreaHeight);
+            colBox.setPrefSize(CELL_SIZE, clueAreaHeight);
             colBox.setAlignment(Pos.BOTTOM_CENTER);
             colBox.setSpacing(0);
 
@@ -376,7 +375,7 @@ public class SolverView {
 
         for (int row = 0; row < rows; row++) {
             HBox rowBox = new HBox();
-            rowBox.setPrefSize(clueAreaWidth, cellSize);
+            rowBox.setPrefSize(clueAreaWidth, CELL_SIZE);
             rowBox.setAlignment(Pos.CENTER_RIGHT);
             rowBox.setSpacing(0);
 
@@ -409,7 +408,7 @@ public class SolverView {
     }
  
     // セルスタイル適用
-    private void applyCellStyle(Button btn, String state, int row, int col) {
+    private void applyCellStyle(Button styleButton, String state, int row, int col) {
         // 5マスごとに太い線（0行目・0列目も太く）
         double top    = (row % 5 == 0) ? 2.0 : 0.5;
         double left   = (col % 5 == 0) ? 2.0 : 0.5;
@@ -427,13 +426,13 @@ public class SolverView {
 
         switch (state) {
             case "filled":
-                btn.setStyle(base + "-fx-background-color: #222222; -fx-text-fill: #222222;");
+                styleButton.setStyle(base + "-fx-background-color: #222222; -fx-text-fill: #222222;");
                 break;
             case "marked":
-                btn.setStyle(base + "-fx-background-color: #f0f0f0; -fx-text-fill: #cc0000;");
+                styleButton.setStyle(base + "-fx-background-color: #f0f0f0; -fx-text-fill: #cc0000;");
                 break;
             default:
-                btn.setStyle(base + "-fx-background-color: white; -fx-text-fill: black;");
+                styleButton.setStyle(base + "-fx-background-color: white; -fx-text-fill: black;");
                 break;
         }
     }
@@ -457,45 +456,45 @@ public class SolverView {
     }
  
  
-    public Stage getStage() { return stage; }
+    public Stage getSTAGE() { return STAGE; }
  
     public Button[][] getButtons() { return buttons; }
  
     public Button getSettingButton() { return settingButton; }
 
-    public Button getOkButton() { return this.semiModal.getOkButton(); }
+    public Button getOkButton() { return this.solverSettingDialog.getOkButton(); }
  
     public Button getCheckButton() { return checkButton; }
 
 
-    public int getGridSizeX(){ return this.semiModal.getGridSizeX(); }
+    public int getGridSizeX(){ return this.solverSettingDialog.getGridSizeX(); }
 
-    public int getGridSizeY(){ return this.semiModal.getGridSizeY(); }
+    public int getGridSizeY(){ return this.solverSettingDialog.getGridSizeY(); }
 
-    public int getClueSize(){ return this.semiModal.getClueSize(); }
+    public int getClueSize(){ return this.solverSettingDialog.getClueSize(); }
 
     public MenuItemBar getMenuItemBar() { return menuItemBar; }
 
         public String getRowClueFields() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder rowClueFieldsBuilder = new StringBuilder();
 
         for (int row = 0; row < rows; row++) {
             StringBuilder rowLine = new StringBuilder();
             for (int slot = 0; slot < maxRowClueCols; slot++) {
-                String val = rowClueFields[row][slot].getText().trim();
-                if (!val.isEmpty()) {
+                String value = rowClueFields[row][slot].getText().trim();
+                if (!value.isEmpty()) {
                     if (rowLine.length() > 0) rowLine.append(",");
-                    rowLine.append(val);
+                    rowLine.append(value);
                 }
             }
-            if (sb.length() > 0) sb.append(" ");
-            sb.append(rowLine.length() > 0 ? rowLine.toString() : "0");
+            if (rowClueFieldsBuilder.length() > 0) rowClueFieldsBuilder.append(" ");
+            rowClueFieldsBuilder.append(rowLine.length() > 0 ? rowLine.toString() : "0");
         }
-        return sb.toString();
+        return rowClueFieldsBuilder.toString();
     }
 
     public String getColClueFields() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder cloClueFieldsBuilder = new StringBuilder();
 
         for (int col = 0; col < cols; col++) {
             StringBuilder colLine = new StringBuilder();
@@ -506,10 +505,10 @@ public class SolverView {
                     colLine.append(val);
                 }
             }
-            if (sb.length() > 0) sb.append(" ");
-            sb.append(colLine.length() > 0 ? colLine.toString() : "0");
+            if (cloClueFieldsBuilder.length() > 0) cloClueFieldsBuilder.append(" ");
+            cloClueFieldsBuilder.append(colLine.length() > 0 ? colLine.toString() : "0");
         }
-        return sb.toString();
+        return cloClueFieldsBuilder.toString();
     }
 
 }

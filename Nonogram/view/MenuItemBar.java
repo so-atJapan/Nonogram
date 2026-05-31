@@ -15,7 +15,7 @@ import javafx.scene.control.MenuItem;
  */
 public class MenuItemBar {
 
-    private MenuBar menuBar;
+    private final MenuBar MENU_BAR;
 
     private MenuItem homeMenuItem;
     private MenuItem helpMenuItem;
@@ -47,8 +47,8 @@ public class MenuItemBar {
         Menu menu = new Menu("メニュー");
         menu.getItems().addAll(homeMenuItem, helpMenuItem, finMenuItem);
 
-        menuBar = new MenuBar(menu);
-        menuBar.setStyle("-fx-font-size: 15px;" + "-fx-background-color: #cccccc");
+        MENU_BAR = new MenuBar(menu);
+        MENU_BAR.setStyle("-fx-font-size: 15px;" + "-fx-background-color: #cccccc");
     }
 
     /**
@@ -70,7 +70,7 @@ public class MenuItemBar {
         });
     }
 
-    public MenuBar getMenuBar()          { return menuBar; }
+    public MenuBar getMENU_BAR()          { return MENU_BAR; }
 
     public MenuItem getHomeMenuItem()    { return homeMenuItem; }
     public MenuItem getHelpMenuItem()    { return helpMenuItem; }

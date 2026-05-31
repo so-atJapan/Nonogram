@@ -3,7 +3,7 @@ package Nonogram.view;
 import Nonogram.controller.AppController;
 
 import Nonogram.model.Puzzle;
-import Nonogram.model.PuzzleList;
+import Nonogram.model.PuzzleListModel;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
  */
 public class PuzzleListView {
 
-    private Stage stage;
+    private final Stage STAGE;
     private Scene scene;
 
     private ArrayList<Puzzle> puzzleList;
@@ -48,14 +48,14 @@ public class PuzzleListView {
     private VBox listVBox;
 
     public PuzzleListView(Stage stage) {
-        this.stage = stage;
+        this.STAGE = stage;
     }
 
     /**
      * @param puzzleList  表示するパズルリスト
      * @param clearedIds  クリア済みパズルIDのリスト（未ログインなら空リスト）
      */
-    public void initialize(PuzzleList puzzleList, ArrayList<Integer> clearedIds, boolean isAdmin, int currentPlayerId, AppController appController) {
+    public void initialize(PuzzleListModel puzzleList, ArrayList<Integer> clearedIds, boolean isAdmin, int currentPlayerId, AppController appController) {
         this.puzzleList = puzzleList.getPuzzleList();
         this.clearedIds = clearedIds;
         this.isAdmin = isAdmin;
@@ -98,7 +98,7 @@ public class PuzzleListView {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
         BorderPane root = new BorderPane();
-        root.setTop(new VBox(menuItemBar.getMenuBar(), headerBox));
+        root.setTop(new VBox(menuItemBar.getMENU_BAR(), headerBox));
         root.setCenter(scrollPane);
 
         scene = new Scene(root, 580, 520);
@@ -115,21 +115,21 @@ public class PuzzleListView {
 
         listVBox.getChildren().clear();
 
-        for (int i = 0; i < length; i++) {
-            Puzzle p = list.get(i);
-            boolean cleared = clearedIds.contains(p.getPuzzleId());
+        for (int puzzleIndex = 0; puzzleIndex < length; puzzleIndex++) {
+            Puzzle puzzle = list.get(puzzleIndex);
+            boolean cleared = clearedIds.contains(puzzle.getPuzzleId());
 
             // 問題名
-            Label nameLabel = new Label(p.getTitle());
+            Label nameLabel = new Label(puzzle.getTitle());
             nameLabel.setFont(new Font(15));
             nameLabel.setMinWidth(120);
             nameLabel.setWrapText(true);
 
             // 難易度 ＋ サイズ
-            Label diffLabel = new Label(p.getDifficulty().name());
+            Label diffLabel = new Label(puzzle.getDifficulty().name());
             diffLabel.setStyle("-fx-font-size: 12px;");
 
-            Label sizeLabel = new Label(p.getGridSizeX() + "×" + p.getGridSizeY());
+            Label sizeLabel = new Label(puzzle.getGridSizeX() + "×" + puzzle.getGridSizeY());
             sizeLabel.setStyle("-fx-font-size: 12px;");
 
             VBox infoBox = new VBox(3, diffLabel, sizeLabel);
@@ -143,39 +143,39 @@ public class PuzzleListView {
             starLabel.setAlignment(Pos.CENTER);
 
             // プレイボタン
-            selectButtons[i] = new Button("▶ プレイ");
-            selectButtons[i].setFont(new Font(12));
+            selectButtons[puzzleIndex] = new Button("▶ プレイ");
+            selectButtons[puzzleIndex].setFont(new Font(12));
 
             // 詳細ボタン
-            detailButtons[i] = new Button("詳細");
-            detailButtons[i].setFont(new Font(12));
-            detailButtons[i].setStyle(
+            detailButtons[puzzleIndex] = new Button("詳細");
+            detailButtons[puzzleIndex].setFont(new Font(12));
+            detailButtons[puzzleIndex].setStyle(
                 "-fx-background-color: #e8e8e8; -fx-border-color: #aaaaaa; -fx-border-radius: 3px;"
             );
 
             // 編集ボタン（adminまたはパズルの製作者に表示）
-            editButtons[i] = new Button("✎ 編集");
-            editButtons[i].setFont(new Font(12));
-            editButtons[i].setStyle(
+            editButtons[puzzleIndex] = new Button("✎ 編集");
+            editButtons[puzzleIndex].setFont(new Font(12));
+            editButtons[puzzleIndex].setStyle(
                 "-fx-background-color: #fff3cd; -fx-border-color: #aaaaaa; -fx-border-radius: 3px;"
             );
             boolean canEdit = isAdmin
                     || (currentPlayerId != -1
-                        && p.getCreatedBy() != null
-                        && p.getCreatedBy().getPlayerId() == currentPlayerId);
-            editButtons[i].setVisible(canEdit);
-            editButtons[i].setManaged(canEdit);
+                        && puzzle.getCreatedBy() != null
+                        && puzzle.getCreatedBy().getPlayerId() == currentPlayerId);
+            editButtons[puzzleIndex].setVisible(canEdit);
+            editButtons[puzzleIndex].setManaged(canEdit);
 
             Region hSpacer = new Region();
             HBox.setHgrow(hSpacer, Priority.ALWAYS);
 
-            HBox cardBox = new HBox(8, nameLabel, infoBox, hSpacer, starLabel, detailButtons[i], editButtons[i], selectButtons[i]);
+            HBox cardBox = new HBox(8, nameLabel, infoBox, hSpacer, starLabel, detailButtons[puzzleIndex], editButtons[puzzleIndex], selectButtons[puzzleIndex]);
             cardBox.setAlignment(Pos.CENTER_LEFT);
             cardBox.setPadding(new Insets(8, 10, 8, 10));
 
             listVBox.getChildren().add(cardBox);
 
-            if (i < length - 1) {
+            if (puzzleIndex < length - 1) {
                 Region separator = new Region();
                 separator.setPrefHeight(1);
                 separator.setStyle("-fx-background-color: #AAAAAA;");
@@ -194,15 +194,15 @@ public class PuzzleListView {
     }
 
     public void render() {
-        stage.setTitle("Nonogram");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        STAGE.setTitle("Nonogram");
+        STAGE.setScene(scene);
+        STAGE.setResizable(false);
+        STAGE.sizeToScene();
+        STAGE.centerOnScreen();
+        STAGE.show();
     }
 
-    public Stage getStage()                   { return stage; }
+    public Stage getSTAGE()                   { return STAGE; }
     public Button[] getSelectButtons()        { return selectButtons; }
     public Button[] getDetailButtons()        { return detailButtons; }
     public Button[] getEditButtons()          { return editButtons; }

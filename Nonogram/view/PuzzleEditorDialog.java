@@ -1,0 +1,206 @@
+package Nonogram.view;
+
+import Nonogram.model.Puzzle;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class PuzzleEditorDialog {
+
+    private final Stage PRIMARY_STAGE;
+    private Stage settingStage;
+
+    private Scene dialogScene;
+
+    private TextField titleTextField;
+    private TextField rowTextField;
+    private TextField colTextField;
+    private Button okButton;
+    private Button deleteButton;
+    private Label difficultyLabel;
+
+    // コンストラクタ
+    public PuzzleEditorDialog(Stage primaryStage){
+        this.PRIMARY_STAGE = primaryStage;
+    }
+    
+    // セミモーダル画面
+    public void initialize(Puzzle puzzle) {
+
+        settingStage = new Stage();
+
+        // 親を指定
+        settingStage.initOwner(this.PRIMARY_STAGE);
+
+        // 親ウィンドウのみ操作不可
+        settingStage.initModality(Modality.WINDOW_MODAL);
+
+        Label titleLabel = new Label("タイトル");
+        titleTextField = new TextField(puzzle.getTitle());
+        
+        Label rowLabel = new Label("row");
+        rowTextField = new TextField(String.valueOf(puzzle.getGridSizeX()));
+        rowTextField.setMaxWidth(30);
+        TextFormatter<String> formatterRow = new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+
+            // 数字のみ、0～2文字まで許可
+            if (newText.matches("\\d{0,2}")) {
+                return change;
+            }
+
+            return null; // 条件外は入力拒否
+        });
+        rowTextField.setTextFormatter(formatterRow);
+        
+        VBox rowVBox = new VBox(rowLabel, rowTextField);
+        rowVBox.setAlignment(Pos.CENTER);
+        
+        Label timesLabel = new Label("x");
+        timesLabel.setFont(new Font(20));
+        
+        Label colLabel = new Label("col");
+        colTextField = new TextField(String.valueOf(puzzle.getGridSizeY()));
+        colTextField.setMaxWidth(30);
+        TextFormatter<String> formatterCol = new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+
+            // 数字のみ、0～2文字まで許可
+            if (newText.matches("\\d{0,2}")) {
+                return change;
+            }
+
+            return null; // 条件外は入力拒否
+        });
+        colTextField.setTextFormatter(formatterCol);
+
+        VBox colVBox = new VBox(colLabel, colTextField);
+        colVBox.setAlignment(Pos.CENTER);
+
+        // HBox → TilePane に変更
+        TilePane sizeTilePane = new TilePane(
+            rowVBox,
+            timesLabel,
+            colVBox
+        );
+
+        sizeTilePane.setOrientation(Orientation.HORIZONTAL); // 横並び
+        sizeTilePane.setAlignment(Pos.BOTTOM_LEFT);          // 全体の配置
+        sizeTilePane.setHgap(0);                             // 横の間隔
+
+        okButton = new Button("OK");
+
+        // 削除ボタン（CREATE時は非表示）
+        deleteButton = new Button("削除");
+        deleteButton.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white;");
+        deleteButton.setVisible(puzzle.getPuzzleId() != -1);
+        deleteButton.setManaged(puzzle.getPuzzleId() != -1);
+
+        // 難易度プレビューラベル
+        difficultyLabel = new Label();
+        difficultyLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
+        updateDifficultyLabel(puzzle.getGridSizeX(), puzzle.getGridSizeY());
+
+        // row/col の変更に応じてリアルタイム更新
+        Runnable refreshDifficulty = () -> {
+            try {
+                int row = Integer.parseInt(rowTextField.getText());
+                int col = Integer.parseInt(colTextField.getText());
+                updateDifficultyLabel(row, col);
+            } catch (NumberFormatException e) {
+                difficultyLabel.setText("難易度: -");
+            }
+        };
+        rowTextField.textProperty().addListener((empty1, empty2, empty3) -> refreshDifficulty.run());
+        colTextField.textProperty().addListener((empty1, empty2, empty3) -> refreshDifficulty.run());
+        
+        HBox buttonBox = new HBox(10, okButton, deleteButton);
+
+        VBox dialogRoot = new VBox(15);
+        dialogRoot.setPadding(new Insets(20));
+        dialogRoot.getChildren().addAll(
+                titleLabel,
+                titleTextField,
+                sizeTilePane,
+                difficultyLabel,
+                buttonBox
+        );
+
+        dialogScene = new Scene(dialogRoot, 300, 240);
+    }
+
+    public void render(){
+
+        settingStage.setTitle("設定");
+        settingStage.setScene(dialogScene);
+
+        // 閉じるまで待つ
+        settingStage.showAndWait();
+    }
+
+    /**
+     * row・col の最大値から難易度を算出してラベルに反映する。
+     */
+    private void updateDifficultyLabel(int rows, int cols) {
+        int totalSize = rows + cols;
+        String name;
+        String color;
+        if (totalSize <= 20) {
+            name  = "EASY";
+            color = "#27ae60";
+        } else if (totalSize <= 40) {
+            name  = "NORMAL";
+            color = "#2980b9";
+        } else if (totalSize <= 100) {
+            name  = "HARD";
+            color = "#e67e22";
+        } else {
+            name  = "EXPERT";
+            color = "#c0392b";
+        }
+        difficultyLabel.setText("難易度: " + name);
+        difficultyLabel.setStyle(
+            "-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: " + color + ";"
+        );
+    }
+
+    public void settingConfirm(){
+        settingStage.close();
+    }
+
+    public void setTitleTextField(String title){
+        titleTextField.setText(title);
+    }
+
+    public void setRowTextField(int gridSizeX){
+        rowTextField.setText(String.valueOf(gridSizeX));
+    }
+
+    public void setColTextField(int gridSizeY){
+        colTextField.setText(String.valueOf(gridSizeY));
+    }
+
+    public Button getOkButton() { return okButton; }
+
+    public Button getDeleteButton() { return deleteButton; }
+
+    public String getTitleTextField(){ return titleTextField.getText(); }
+
+    public int getGridSizeX(){ return Integer.parseInt(rowTextField.getText()); }
+
+    public int getGridSizeY(){ return Integer.parseInt(colTextField.getText()); }
+
+    
+}

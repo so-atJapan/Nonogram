@@ -25,14 +25,14 @@ import javafx.stage.Stage;
  */
 public class PuzzleDetailDialog {
 
-    private Stage ownerStage;
+    private final Stage OWNER_STAGE;
     private Stage dialogStage;
 
     private Button solverButton;
     private Button closeButton;
 
     public PuzzleDetailDialog(Stage ownerStage) {
-        this.ownerStage = ownerStage;
+        this.OWNER_STAGE = ownerStage;
     }
 
     /**
@@ -44,7 +44,7 @@ public class PuzzleDetailDialog {
      */
     public void initialize(Puzzle puzzle, boolean cleared) {
         dialogStage = new Stage();
-        dialogStage.initOwner(ownerStage);
+        dialogStage.initOwner(OWNER_STAGE);
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.setTitle("パズル詳細");
 
@@ -98,7 +98,7 @@ public class PuzzleDetailDialog {
         Player createdBy = puzzle.getCreatedBy();
         String createdByName;
         if (createdBy != null) {
-            createdByName = createdBy.getUserName();
+            createdByName = createdBy.getUSER_NAME();
         } else {
             createdByName = "不明";
         }
@@ -144,17 +144,17 @@ public class PuzzleDetailDialog {
 
     // ラベル＋値を GridPane に1行追加する
     private void addRow(GridPane grid, int rowIndex, String labelText, String valueText) {
-        Label lbl = new Label(labelText);
-        lbl.setFont(Font.font(null, FontWeight.BOLD, 13));
-        lbl.setStyle("-fx-text-fill: #555555;");
-        lbl.setMinWidth(70);
+        Label label = new Label(labelText);
+        label.setFont(Font.font(null, FontWeight.BOLD, 13));
+        label.setStyle("-fx-text-fill: #555555;");
+        label.setMinWidth(70);
 
-        Label val = new Label(valueText);
-        val.setFont(new Font(13));
-        val.setWrapText(true);
+        Label valueLabel = new Label(valueText);
+        valueLabel.setFont(new Font(13));
+        valueLabel.setWrapText(true);
 
-        grid.add(lbl, 0, rowIndex);
-        grid.add(val, 1, rowIndex);
+        grid.add(label, 0, rowIndex);
+        grid.add(valueLabel, 1, rowIndex);
     }
 
     // ダイアログを表示（閉じるまでブロック）

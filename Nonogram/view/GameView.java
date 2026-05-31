@@ -22,7 +22,7 @@ import javafx.stage.Stage;
  
 public class GameView {
  
-    private Stage stage;
+    private final Stage STAGE;
     private Scene scene;
  
     private GridPane gridPanel;
@@ -37,11 +37,11 @@ public class GameView {
     private int cols;
  
     // ここだけ変えれば全体のサイズが変わる（ヒントもグリッドも同じ値で統一）
-    private final int cellSize = 20;
+    private static final int CELL_SIZE = 20;
  
     // コンストラクト
     public GameView(Stage stage) {
-        this.stage = stage;
+        this.STAGE = stage;
     }
 
     //初期化
@@ -52,16 +52,16 @@ public class GameView {
 
         menuItemBar = new MenuItemBar(appController);
     
-        ArrayList<ArrayList<Integer>> rowHints = puzzle.getClue().getRowClues();
-        ArrayList<ArrayList<Integer>> colHints = puzzle.getClue().getColClues();
+        ArrayList<ArrayList<Integer>> rowHints = puzzle.getClue().getROW_CLUES();
+        ArrayList<ArrayList<Integer>> colHints = puzzle.getClue().getCOL_CLUES();
     
         // ヒントの最大数から左・上のヒントエリアサイズを決定
         int maxColHintRows = colHints.stream().mapToInt(ArrayList::size).max().orElse(1);
         int maxRowHintCols = rowHints.stream().mapToInt(ArrayList::size).max().orElse(1);
     
         // すべて cellSize 単位で計算
-        int hintAreaWidth  = maxRowHintCols * cellSize; // 左ヒントエリアの幅
-        int hintAreaHeight = maxColHintRows * cellSize; // 上ヒントエリアの高さ
+        int hintAreaWidth  = maxRowHintCols * CELL_SIZE; // 左ヒントエリアの幅
+        int hintAreaHeight = maxColHintRows * CELL_SIZE; // 上ヒントエリアの高さ
     
         // ===== 左上コーナー（タイマー）=====
         timerLabel = new Label("00:00");
@@ -76,28 +76,28 @@ public class GameView {
     
         for (int col = 0; col < cols; col++) {
             VBox colBox = new VBox();
-            colBox.setPrefSize(cellSize, hintAreaHeight);
+            colBox.setPrefSize(CELL_SIZE, hintAreaHeight);
             colBox.setAlignment(Pos.BOTTOM_CENTER);
             colBox.setSpacing(0);
     
             ArrayList<Integer> hints = colHints.get(col);
     
             // 上を空白で埋めて下揃えにする
-            for (int p = 0; p < maxColHintRows - hints.size(); p++) {
-                Label pad = new Label();
-                pad.setPrefSize(cellSize, cellSize);
-                colBox.getChildren().add(pad);
+            for (int paddingIndex = 0; paddingIndex < maxColHintRows - hints.size(); paddingIndex++) {
+                Label emptyHintLabel = new Label();
+                emptyHintLabel.setPrefSize(CELL_SIZE, CELL_SIZE);
+                colBox.getChildren().add(emptyHintLabel);
             }
             for (int num : hints) {
-                Label lbl = new Label(String.valueOf(num));
-                lbl.setPrefSize(cellSize, cellSize);
-                lbl.setAlignment(Pos.CENTER);
-                lbl.setStyle(
+                Label label = new Label(String.valueOf(num));
+                label.setPrefSize(CELL_SIZE, CELL_SIZE);
+                label.setAlignment(Pos.CENTER);
+                label.setStyle(
                     "-fx-border-color: #cccccc;" +
                     "-fx-border-width: 0 0.5 0.5 0.5;" +
                     "-fx-font-size: 11px;"
                 );
-                colBox.getChildren().add(lbl);
+                colBox.getChildren().add(label);
             }
             hintPanelTop.getChildren().add(colBox);
         }
@@ -109,28 +109,28 @@ public class GameView {
     
         for (int row = 0; row < rows; row++) {
             HBox rowBox = new HBox();
-            rowBox.setPrefSize(hintAreaWidth, cellSize);
+            rowBox.setPrefSize(hintAreaWidth, CELL_SIZE);
             rowBox.setAlignment(Pos.CENTER_RIGHT);
             rowBox.setSpacing(0);
     
             ArrayList<Integer> hints = rowHints.get(row);
     
             // 左を空白で埋めて右揃えにする
-            for (int p = 0; p < maxRowHintCols - hints.size(); p++) {
-                Label pad = new Label();
-                pad.setPrefSize(cellSize, cellSize);
-                rowBox.getChildren().add(pad);
+            for (int paddingIndex = 0; paddingIndex < maxRowHintCols - hints.size(); paddingIndex++) {
+                Label emptyHintLabel = new Label();
+                emptyHintLabel.setPrefSize(CELL_SIZE, CELL_SIZE);
+                rowBox.getChildren().add(emptyHintLabel);
             }
             for (int num : hints) {
-                Label lbl = new Label(String.valueOf(num));
-                lbl.setPrefSize(cellSize, cellSize);
-                lbl.setAlignment(Pos.CENTER);
-                lbl.setStyle(
+                Label label = new Label(String.valueOf(num));
+                label.setPrefSize(CELL_SIZE, CELL_SIZE);
+                label.setAlignment(Pos.CENTER);
+                label.setStyle(
                     "-fx-border-color: #cccccc;" +
                     "-fx-border-width: 0.5 0.5 0.5 0;" +
                     "-fx-font-size: 11px;"
                 );
-                rowBox.getChildren().add(lbl);
+                rowBox.getChildren().add(label);
             }
             hintPanelSide.getChildren().add(rowBox);
         }
@@ -141,13 +141,13 @@ public class GameView {
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                Button btn = new Button();
-                btn.setPrefSize(cellSize, cellSize);
-                btn.setFocusTraversable(false);
-                applyCellStyle(btn, "empty", row, col);  // ← row, col を追加
+                Button cellButton = new Button();
+                cellButton.setPrefSize(CELL_SIZE, CELL_SIZE);
+                cellButton.setFocusTraversable(false);
+                applyCellStyle(cellButton, "empty", row, col);  // ← row, col を追加
 
-                buttons[row][col] = btn;
-                gridPanel.add(btn, col, row);
+                buttons[row][col] = cellButton;
+                gridPanel.add(cellButton, col, row);
             }
         }
     
@@ -197,13 +197,13 @@ public class GameView {
         // 実際のパズルサイズを計算
         int maxRowHintColsForSize = rowHints.stream().mapToInt(ArrayList::size).max().orElse(1);
         int maxColHintRowsForSize = colHints.stream().mapToInt(ArrayList::size).max().orElse(1);
-        int puzzleWidth  = (maxRowHintColsForSize + cols) * cellSize ;
-        int puzzleHeight = (maxColHintRowsForSize + rows) * cellSize ;
+        int puzzleWidth  = (maxRowHintColsForSize + cols) * CELL_SIZE ;
+        int puzzleHeight = (maxColHintRowsForSize + rows) * CELL_SIZE ;
 
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
-        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomRow);
+        VBox root = new VBox(menuItemBar.getMENU_BAR(), scrollPane, bottomRow);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 
@@ -212,30 +212,30 @@ public class GameView {
  
     // パズル描画
     public void render() {
-        stage.setTitle("Nonogram");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        STAGE.setTitle("Nonogram");
+        STAGE.setScene(scene);
+        STAGE.setResizable(false);
+        STAGE.sizeToScene();
+        STAGE.centerOnScreen();
+        STAGE.show();
     }
  
     // セル更新（row, col の順で統一）
     public void updateCell(int x, int y, Grid grid) {
-        Button btn = buttons[x][y];
+        Button cellButton = buttons[x][y];
 
         switch (grid.getCellAt(x, y).getState()) {
             case FILLED:
-                applyCellStyle(btn, "filled", x, y);  // ← 追加
-                btn.setText("");
+                applyCellStyle(cellButton, "filled", x, y);  // ← 追加
+                cellButton.setText("");
                 break;
             case MARKED:
-                applyCellStyle(btn, "marked", x, y);  // ← 追加
-                btn.setText("✕");
+                applyCellStyle(cellButton, "marked", x, y);  // ← 追加
+                cellButton.setText("✕");
                 break;
             default:
-                applyCellStyle(btn, "empty", x, y);   // ← 追加
-                btn.setText("");
+                applyCellStyle(cellButton, "empty", x, y);   // ← 追加
+                cellButton.setText("");
                 break;
         }
     }
@@ -249,7 +249,7 @@ public class GameView {
     }
  
     // セルスタイル適用
-    private void applyCellStyle(Button btn, String state, int row, int col) {
+    private void applyCellStyle(Button styleButton, String state, int row, int col) {
         // 5マスごとに太い線（0行目・0列目も太く）
         double top    = (row % 5 == 0) ? 2.0 : 0.5;
         double left   = (col % 5 == 0) ? 2.0 : 0.5;
@@ -267,13 +267,13 @@ public class GameView {
 
         switch (state) {
             case "filled":
-                btn.setStyle(base + "-fx-background-color: #222222; -fx-text-fill: #222222;");
+                styleButton.setStyle(base + "-fx-background-color: #222222; -fx-text-fill: #222222;");
                 break;
             case "marked":
-                btn.setStyle(base + "-fx-background-color: #f0f0f0; -fx-text-fill: #cc0000;");
+                styleButton.setStyle(base + "-fx-background-color: #f0f0f0; -fx-text-fill: #cc0000;");
                 break;
             default:
-                btn.setStyle(base + "-fx-background-color: white; -fx-text-fill: black;");
+                styleButton.setStyle(base + "-fx-background-color: white; -fx-text-fill: black;");
                 break;
         }
     }
@@ -294,7 +294,7 @@ public class GameView {
         alert.showAndWait();
     }
  
-    public Stage getStage() { return stage; }
+    public Stage getSTAGE() { return STAGE; }
 
     public Button[][] getButtons() { return buttons; }
  

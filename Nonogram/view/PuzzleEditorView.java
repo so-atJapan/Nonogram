@@ -19,9 +19,9 @@ import javafx.stage.Stage;
  
 public class PuzzleEditorView {
 
-    private SemiModal semiModal;
+    private PuzzleEditorDialog puzzleEditorDialog;
  
-    private Stage stage;
+    private final Stage STAGE;
     private Scene scene;
  
     private GridPane gridPanel;
@@ -39,18 +39,18 @@ public class PuzzleEditorView {
     private int cols;
  
     // ここだけ変えれば全体のサイズが変わる（ヒントもグリッドも同じ値で統一）
-    private final int cellSize = 20;
+    private static final int CELL_SIZE = 20;
  
     // コンストラクト
     public PuzzleEditorView(Stage stage) {
-        this.stage = stage;
+        this.STAGE = stage;
     }
 
     //初期化
     public void initialize(Puzzle puzzle, AppController appController){
 
-        this.semiModal = new SemiModal(this.stage);
-        this.semiModal.initialize(puzzle);
+        this.puzzleEditorDialog = new PuzzleEditorDialog(this.STAGE);
+        this.puzzleEditorDialog.initialize(puzzle);
 
         menuItemBar = new MenuItemBar(appController);
 
@@ -63,13 +63,13 @@ public class PuzzleEditorView {
     
         for (int x = 0; x < puzzle.getGridSizeX(); x++) {
             for (int y = 0; y < puzzle.getGridSizeY(); y++) {
-                Button btn = new Button();
-                btn.setPrefSize(cellSize, cellSize);
-                btn.setFocusTraversable(false);
-                applyCellStyle(btn, "empty", x, y);
+                Button button = new Button();
+                button.setPrefSize(CELL_SIZE, CELL_SIZE);
+                button.setFocusTraversable(false);
+                applyCellStyle(button, "empty", x, y);
                 
-                buttons[x][y] = btn;
-                gridPanel.add(btn, y, x);
+                buttons[x][y] = button;
+                gridPanel.add(button, y, x);
                 
                 updateCell(x, y, puzzle.getSolution());
             }
@@ -118,13 +118,13 @@ public class PuzzleEditorView {
         final int MAX_VIEW_HEIGHT = 800;
 
         // 実際のパズルサイズを計算
-        int puzzleWidth  = cols * cellSize ;
-        int puzzleHeight = rows * cellSize ;
+        int puzzleWidth  = cols * CELL_SIZE ;
+        int puzzleHeight = rows * CELL_SIZE ;
 
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
-        VBox root = new VBox(menuItemBar.getMenuBar(), scrollPane, bottomButtons);
+        VBox root = new VBox(menuItemBar.getMENU_BAR(), scrollPane, bottomButtons);
         root.setSpacing(0);
         root.setPadding(new Insets(8));
 
@@ -133,43 +133,43 @@ public class PuzzleEditorView {
  
     // パズル描画
     public void render() {
-        stage.setTitle("Nonogram");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        stage.show();
+        STAGE.setTitle("Nonogram");
+        STAGE.setScene(scene);
+        STAGE.setResizable(false);
+        STAGE.sizeToScene();
+        STAGE.centerOnScreen();
+        STAGE.show();
     }
 
     //セミモーダル描画
     public void semiModalRender(Puzzle puzzle){
-        this.semiModal.setTitleTextField(puzzle.getTitle());
-        this.semiModal.setRowTextField(puzzle.getGridSizeX());
-        this.semiModal.setColTextField(puzzle.getGridSizeY());
-        this.semiModal.render();
+        this.puzzleEditorDialog.setTitleTextField(puzzle.getTitle());
+        this.puzzleEditorDialog.setRowTextField(puzzle.getGridSizeX());
+        this.puzzleEditorDialog.setColTextField(puzzle.getGridSizeY());
+        this.puzzleEditorDialog.render();
     }
     
     // 設定確定
     public void settingConfirm(){
-        this.semiModal.settingConfirm();
+        this.puzzleEditorDialog.settingConfirm();
     }
 
     // セル更新（row, col の順で統一）
     public void updateCell(int x, int y, Grid grid) {
-        Button btn = buttons[x][y];
+        Button button = buttons[x][y];
 
         switch (grid.getCellAt(x, y).getState()) {
             case FILLED:
-                applyCellStyle(btn, "filled", x, y);
-                btn.setText("");
+                applyCellStyle(button, "filled", x, y);
+                button.setText("");
                 break;
             case MARKED:
-                applyCellStyle(btn, "marked", x, y);
-                btn.setText("✕");
+                applyCellStyle(button, "marked", x, y);
+                button.setText("✕");
                 break;
             default:
-                applyCellStyle(btn, "empty", x, y);
-                btn.setText("");
+                applyCellStyle(button, "empty", x, y);
+                button.setText("");
                 break;
         }
     }
@@ -184,13 +184,13 @@ public class PuzzleEditorView {
 
         for (int x = 0; x < grid.getSizeX(); x++) {
             for (int y = 0; y < grid.getSizeY(); y++) {
-                Button btn = new Button();
-                btn.setPrefSize(cellSize, cellSize);
-                btn.setFocusTraversable(false);
-                applyCellStyle(btn, "empty", x, y);
+                Button cellButton = new Button();
+                cellButton.setPrefSize(CELL_SIZE, CELL_SIZE);
+                cellButton.setFocusTraversable(false);
+                applyCellStyle(cellButton, "empty", x, y);
                 
-                buttons[x][y] = btn;
-                gridPanel.add(btn, y, x);
+                buttons[x][y] = cellButton;
+                gridPanel.add(cellButton, y, x);
                 
                 updateCell(x, y, grid);
             }
@@ -202,15 +202,15 @@ public class PuzzleEditorView {
         final int MAX_VIEW_WIDTH  = 1000;
         final int MAX_VIEW_HEIGHT = 800;
 
-        int puzzleWidth  = this.cols * cellSize;
-        int puzzleHeight = this.rows * cellSize;
+        int puzzleWidth  = this.cols * CELL_SIZE;
+        int puzzleHeight = this.rows * CELL_SIZE;
 
         scrollPane.setPrefViewportWidth( Math.min(puzzleWidth,  MAX_VIEW_WIDTH));
         scrollPane.setPrefViewportHeight(Math.min(puzzleHeight, MAX_VIEW_HEIGHT));
 
         // ウィンドウをコンテンツに合わせて再フィット
-        stage.sizeToScene();
-        stage.centerOnScreen();
+        STAGE.sizeToScene();
+        STAGE.centerOnScreen();
     }
 
     public void updateCellAll(Grid grid) {
@@ -223,7 +223,7 @@ public class PuzzleEditorView {
     }
  
     // セルスタイル適用
-    private void applyCellStyle(Button btn, String state, int row, int col) {
+    private void applyCellStyle(Button styleButton, String state, int row, int col) {
         // 5マスごとに太い線（0行目・0列目も太く）
         double top    = (row % 5 == 0) ? 2.0 : 0.5;
         double left   = (col % 5 == 0) ? 2.0 : 0.5;
@@ -241,13 +241,13 @@ public class PuzzleEditorView {
 
         switch (state) {
             case "filled":
-                btn.setStyle(base + "-fx-background-color: #222222; -fx-text-fill: #222222;");
+                styleButton.setStyle(base + "-fx-background-color: #222222; -fx-text-fill: #222222;");
                 break;
             case "marked":
-                btn.setStyle(base + "-fx-background-color: #f0f0f0; -fx-text-fill: #cc0000;");
+                styleButton.setStyle(base + "-fx-background-color: #f0f0f0; -fx-text-fill: #cc0000;");
                 break;
             default:
-                btn.setStyle(base + "-fx-background-color: white; -fx-text-fill: black;");
+                styleButton.setStyle(base + "-fx-background-color: white; -fx-text-fill: black;");
                 break;
         }
     }
@@ -260,23 +260,23 @@ public class PuzzleEditorView {
     }
  
  
-    public Stage getStage() { return stage; }
+    public Stage getSTAGE() { return STAGE; }
  
     public Button[][] getButtons() { return buttons; }
  
     public Button getSettingButton() { return settingButton; }
 
-    public Button getOkButton() { return this.semiModal.getOkButton(); }
+    public Button getOkButton() { return this.puzzleEditorDialog.getOkButton(); }
 
-    public Button getDeleteButton() { return this.semiModal.getDeleteButton(); }
+    public Button getDeleteButton() { return this.puzzleEditorDialog.getDeleteButton(); }
  
     public Button getCheckButton() { return checkButton; }
 
-    public String getTitleTextField(){ return this.semiModal.getTitleTextField(); }
+    public String getTitleTextField(){ return this.puzzleEditorDialog.getTitleTextField(); }
 
-    public int getGridSizeX(){ return this.semiModal.getGridSizeX(); }
+    public int getGridSizeX(){ return this.puzzleEditorDialog.getGridSizeX(); }
 
-    public int getGridSizeY(){ return this.semiModal.getGridSizeY(); }
+    public int getGridSizeY(){ return this.puzzleEditorDialog.getGridSizeY(); }
 
     public MenuItemBar getMenuItemBar() { return menuItemBar; }
 
